@@ -1,10 +1,4 @@
 // ==========================================================================
-// PRETTY LOGSEQ - CONTENT STYLES
-// ==========================================================================
-// Styles for Logseq content elements (page properties, headers, etc.)
-// Migrated from logseq graph custom.css
-
-// ==========================================================================
 // PAGE PROPERTIES
 // ==========================================================================
 
@@ -74,24 +68,4 @@
 // Hide the bullet before page properties
 div.ls-block:has(.page-properties) > div > div.block-control-wrap {
   display: none;
-}
-
-// ==========================================================================
-// HEADERS
-// ==========================================================================
-
-.ls-block {
-  h1, h2, h3, h4, h5, h6 {
-    border-bottom: none;
-    text-decoration: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  // Decreasing margin-top for header hierarchy
-  h2 { margin-top: 24px; }
-  h3 { margin-top: 20px; }
-  h4 { margin-top: 16px; }
-  h5 { margin-top: 12px; }
-  h6 { margin-top: 8px; }
 }

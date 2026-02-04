@@ -1,0 +1,34 @@
+// ==========================================================================
+// HEADERS
+// ==========================================================================
+
+.ls-block {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    border-bottom: none;
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  // Decreasing margin-top for header hierarchy
+  h2 {
+    margin-top: 24px;
+  }
+  h3 {
+    margin-top: 20px;
+  }
+  h4 {
+    margin-top: 16px;
+  }
+  h5 {
+    margin-top: 12px;
+  }
+  h6 {
+    margin-top: 8px;
+  }
+}

@@ -1,0 +1,102 @@
+// ==========================================================================
+// LEFT SIDEBAR NAVIGATION
+// ==========================================================================
+// Converts the primary navigation items (Journals, Whiteboards, Flashcards,
+// Graph View, All Pages) into a compact inline icon bar at the top.
+// Reference: https://github.com/yoyurec/logseq-awesome-ui
+
+#left-sidebar {
+  .nav-header {
+    // Container styling - full width with purple gradient
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 12px 12px;
+    margin: 0 -12px;
+    width: calc(100% + 28px);
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.15) 0%,
+      rgba(168, 85, 247, 0.15) 100%
+    );
+    border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+
+    // Individual nav items
+    .item {
+      padding: 6px;
+      border-radius: 6px;
+      background-color: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      transition: all 0.15s ease;
+
+      .ui__icon {
+        color: rgb(167, 139, 250);
+        opacity: 0.7;
+        transition: opacity 0.15s ease;
+      }
+
+      &:hover {
+        background-color: rgba(139, 92, 246, 0.2);
+        border-color: rgba(139, 92, 246, 0.4);
+
+        .ui__icon {
+          opacity: 1;
+        }
+      }
+
+      // Active/selected state
+      &.active,
+      &[data-active="true"] {
+        background-color: rgba(139, 92, 246, 0.25);
+        border-color: rgb(139, 92, 246);
+        box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.5);
+
+        .ui__icon {
+          opacity: 1;
+          color: rgb(167, 139, 250);
+        }
+      }
+    }
+
+    // Icon styling - base reset
+    .ui__icon {
+      margin: 0;
+      padding: 0;
+      font-size: 18px;
+    }
+
+    // Hide text labels (sibling of icon)
+    // Keeps .text-xs visible (badge counts)
+    .ui__icon ~ :is(.flex-1, .ml-1:not(.text-xs)) {
+      display: none;
+    }
+
+    // Individual nav item tweaks
+    .journals-nav .ui__icon {
+      margin-top: 1px;
+    }
+
+    .whiteboard .ui__icon {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .all-pages-nav .ui__icon {
+      margin-top: 2px;
+    }
+  }
+
+  // Reset margin for nav content items below the header
+  .nav-content-item {
+    margin-top: 0;
+  }
+
+  // Flashcards nav item uses different structure
+  .flashcards-nav .rounded-full {
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,36 @@
+// ==========================================================================
+// GRAPH SELECTOR AT BOTTOM
+// ==========================================================================
+// Moves the graph/vault selection menu to the bottom of the sidebar.
+// Reference: https://github.com/yoyurec/logseq-awesome-ui
+
+// Position graph selector trigger at bottom
+.cp__menubar-repos .ui__dropdown-trigger {
+  position: fixed;
+  z-index: 9;
+  left: 0;
+  bottom: 4px;
+  width: calc(var(--ls-left-sidebar-width) - 1rem);
+  margin: 0 0.5rem;
+  border-top: 1px solid var(--ls-border-color);
+}
+
+// Adjust nav container height to prevent overlap
+.left-sidebar-inner .nav-contents-container {
+  height: calc(100% - 76px);
+}
+
+// Position dropdown menu above the trigger
+.cp__menubar-repos .dropdown-wrapper {
+  bottom: 30px;
+  box-shadow: none;
+}
+
+.cp__menubar-repos .menu-links-wrapper {
+  box-shadow: none;
+}
+
+// Adjust create button position when visible
+#left-sidebar .left-sidebar-inner .create {
+  bottom: 26px;
+}
