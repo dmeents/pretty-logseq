@@ -7,13 +7,13 @@
  */
 
 import { getSettings } from '../settings';
-import baseStyles from '../styles/base.scss?inline';
 import headersStyles from '../styles/components/headers.scss?inline';
 import pagePropertiesStyles from '../styles/components/page-properties.scss?inline';
 import sidebarGraphBottomStyles from '../styles/components/sidebar-graph-bottom.scss?inline';
 import sidebarHideCreateStyles from '../styles/components/sidebar-hide-create.scss?inline';
 import sidebarNavStyles from '../styles/components/sidebar-nav.scss?inline';
 import { registry } from './registry';
+import { generateThemeCSS } from './theme';
 
 const STYLE_KEY = 'pretty-logseq-styles';
 
@@ -41,8 +41,8 @@ export function injectStyles(): void {
     '   Pretty Logseq Plugin Styles',
     '   ======================================== */',
     '',
-    '/* Base Styles */',
-    baseStyles,
+    '/* Theme Colors (auto-detected from Logseq) */',
+    generateThemeCSS(),
     '',
     '/* Component Styles */',
     ...componentStyles,

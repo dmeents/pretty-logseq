@@ -3,13 +3,9 @@
 // ==========================================================================
 
 .page-properties {
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.15) 0%,
-    rgba(168, 85, 247, 0.15) 100%
-  );
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  border-left: 4px solid rgb(139, 92, 246);
+  background: var(--pl-accent-subtle);
+  border: 1px solid var(--pl-accent-border);
+  border-left: 4px solid var(--pl-accent);
   border-radius: 0;
   padding: 16px 20px;
   margin-bottom: 24px;
@@ -23,7 +19,7 @@
 
   // Property keys
   .page-property-key {
-    color: rgb(167, 139, 250);
+    color: var(--pl-accent-text);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.75em;
@@ -35,7 +31,7 @@
 
   // Property values
   .page-property-value {
-    color: rgb(226, 232, 240);
+    color: var(--ls-primary-text-color);
     font-weight: 500;
     margin-left: 8px;
   }
@@ -43,7 +39,7 @@
   // Individual properties
   .property {
     padding: 6px 0;
-    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    border-bottom: 1px solid var(--pl-accent-light);
 
     &:last-child {
       border-bottom: none;
@@ -59,7 +55,7 @@
       content: "|";
       visibility: visible;
       font-size: 14px;
-      color: rgba(139, 92, 246, 0.5);
+      color: var(--pl-accent-border);
       margin: 0 8px;
     }
   }

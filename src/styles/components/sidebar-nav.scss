@@ -7,19 +7,15 @@
 
 #left-sidebar {
   .nav-header {
-    // Container styling - full width with purple gradient
+    // Container styling - full width with theme-derived gradient
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 12px 12px;
     margin: 0 -12px;
     width: calc(100% + 28px);
-    background: linear-gradient(
-      135deg,
-      rgba(99, 102, 241, 0.15) 0%,
-      rgba(168, 85, 247, 0.15) 100%
-    );
-    border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    background: var(--pl-accent-subtle);
+    border-bottom: 1px solid var(--pl-accent-border);
     backdrop-filter: blur(8px);
     overflow: hidden;
 
@@ -27,19 +23,19 @@
     .item {
       padding: 6px;
       border-radius: 6px;
-      background-color: rgba(139, 92, 246, 0.1);
-      border: 1px solid rgba(139, 92, 246, 0.2);
+      background-color: var(--pl-accent-light);
+      border: 1px solid var(--pl-accent-medium);
       transition: all 0.15s ease;
 
       .ui__icon {
-        color: rgb(167, 139, 250);
-        opacity: 0.7;
+        color: var(--pl-accent-text);
+        opacity: 0.8;
         transition: opacity 0.15s ease;
       }
 
       &:hover {
-        background-color: rgba(139, 92, 246, 0.2);
-        border-color: rgba(139, 92, 246, 0.4);
+        background-color: var(--pl-accent-medium);
+        border-color: var(--pl-accent-border);
 
         .ui__icon {
           opacity: 1;
@@ -49,13 +45,13 @@
       // Active/selected state
       &.active,
       &[data-active="true"] {
-        background-color: rgba(139, 92, 246, 0.25);
-        border-color: rgb(139, 92, 246);
-        box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.5);
+        background-color: var(--pl-accent-strong);
+        border-color: var(--pl-accent);
+        box-shadow: 0 0 0 1px var(--pl-accent-border);
 
         .ui__icon {
           opacity: 1;
-          color: rgb(167, 139, 250);
+          color: var(--pl-accent-text);
         }
       }
     }
