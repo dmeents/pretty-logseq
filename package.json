@@ -4,8 +4,12 @@
   "description": "A Logseq plugin for custom page preview popovers with rich property display",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "npx vite build --watch",
-    "build": "npx vite build"
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check --write ."
   },
   "logseq": {
     "id": "pretty-logseq",
@@ -13,7 +17,9 @@
     "icon": "./icon.png"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
     "@logseq/libs": "^0.0.17",
+    "sass": "^1.97.3",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
     "vite-plugin-logseq": "^1.1.2"
@@ -25,5 +31,6 @@
     "preview",
     "ui"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "yarn@4.12.0"
 }

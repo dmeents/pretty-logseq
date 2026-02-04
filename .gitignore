@@ -4,6 +4,14 @@ node_modules/
 # Build output
 dist/
 
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # IDE
 .idea/
 .vscode/
@@ -21,3 +29,6 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+
+# Claude
+.claude/

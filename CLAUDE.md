@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**Pretty Logseq** is a Logseq plugin that provides custom page preview popovers. Instead of Logseq's default Tippy.js-based hover previews, this plugin renders rich, customizable popovers that display page properties (type, status, description, etc.) in a styled format.
+**Pretty Logseq** is a Logseq plugin for frontend customizations. It provides a modular system for custom popovers, navigation styling, sidebar modifications, and content styling.
 
 ## Tech Stack
 
@@ -40,53 +40,104 @@ pretty-logseq/
 ├── tsconfig.json         # TypeScript configuration
 ├── vite.config.ts        # Vite build configuration
 ├── src/
-│   └── index.ts          # Main plugin entry point
+│   ├── index.ts          # Bootstrap, feature registration
+│   ├── types/            # TypeScript interfaces
+│   │   ├── index.ts      # Re-exports
+│   │   ├── feature.ts    # Feature interface
+│   │   └── logseq.ts     # PageProperties, etc.
+│   ├── core/             # Core infrastructure
+│   │   ├── registry.ts   # Feature lifecycle management
+│   │   └── styles.ts     # Style aggregation and injection
+│   ├── lib/              # Shared utilities
+│   │   ├── dom.ts        # Positioning, element creation
+│   │   └── api.ts        # Logseq API helpers with caching
+│   ├── styles/           # Base and content styles
+│   │   ├── base.ts       # CSS variables, resets
+│   │   └── content.ts    # Page properties, headers
+│   └── features/         # Feature modules
+│       ├── popovers/     # Custom hover previews
+│       ├── topbar/       # Top navigation (placeholder)
+│       ├── sidebar/      # Left sidebar (placeholder)
+│       └── search/       # Search interface (placeholder)
 ├── dist/                 # Built output (gitignored)
 └── docs/
     └── RESEARCH.md       # Research and implementation details
 ```
 
+## Architecture
+
+### Feature System
+
+Each feature implements the `Feature` interface:
+
+```typescript
+interface Feature {
+  id: string
+  name: string
+  description: string
+  getStyles(): string
+  init(): void | Promise<void>
+  destroy(): void
+}
+```
+
+Features are self-contained with their own styles, initialization, and cleanup.
+
+### Adding a New Feature
+
+1. Create a new directory under `src/features/`
+2. Implement the `Feature` interface in `index.ts`
+3. Register the feature in `src/index.ts`
+
+```typescript
+// src/features/myfeature/index.ts
+import type { Feature } from '../../types'
+
+export const myFeature: Feature = {
+  id: 'myfeature',
+  name: 'My Feature',
+  description: 'Description of what it does',
+  getStyles() { return '/* CSS */' },
+  init() { /* setup */ },
+  destroy() { /* cleanup */ }
+}
+```
+
+### Style Management
+
+Styles are aggregated from three sources:
+1. **Base styles** (`styles/base.ts`) - CSS variables, resets
+2. **Content styles** (`styles/content.ts`) - Page properties, headers
+3. **Feature styles** - Each feature's `getStyles()` return value
+
+All styles are injected via a single `logseq.provideStyle()` call.
+
 ## Key Files
 
-- **src/index.ts** - Main plugin logic: hover listeners, page data fetching, popover rendering
-- **docs/RESEARCH.md** - Background research, API reference, and implementation notes
+- **src/index.ts** - Plugin bootstrap, feature registration
+- **src/core/registry.ts** - Feature lifecycle management
+- **src/features/popovers/** - Custom hover previews implementation
+- **src/styles/content.ts** - Content styling (page properties, headers)
+- **docs/RESEARCH.md** - Background research and API reference
 
 ## Logseq Plugin API
 
-Key methods used in this plugin:
+Key methods used:
 
 ```typescript
 // Inject CSS styles
-logseq.provideStyle(cssString)
+logseq.provideStyle({ key: 'my-styles', style: cssString })
 
 // Get page data including properties
 const page = await logseq.Editor.getPage(pageName)
-// page.properties contains { type, status, description, ... }
 
-// Inject UI at specific DOM location (alternative approach)
-logseq.provideUI({
-  key: 'my-ui',
-  path: '#target-element',
-  template: '<div>Content</div>'
-})
+// Cleanup before unload
+logseq.beforeunload(async () => { /* cleanup */ })
 ```
-
-## Architecture Decisions
-
-### Event Delegation
-We use event delegation (listeners on `document`) rather than attaching to each `.page-ref` element. This handles dynamically added elements and is more performant.
-
-### Direct DOM vs provideUI
-The current implementation uses direct DOM manipulation for the popover rather than `logseq.provideUI()`. This gives us more control over positioning and lifecycle. Consider switching to `provideUI` if we need better integration with Logseq's UI lifecycle.
-
-### Suppressing Native Previews
-Currently this plugin shows popovers alongside native Tippy previews. To fully replace them, we may need to:
-1. Use CSS to hide `.tippy-box` elements
-2. Or intercept/prevent the native hover behavior
 
 ## Styling
 
-The plugin injects its own CSS via `logseq.provideStyle()`. Styles use Logseq's CSS variables for theme compatibility:
+Uses Logseq's CSS variables for theme compatibility:
 - `--ls-primary-background-color`
 - `--ls-border-color`
 - `--ls-primary-text-color`
@@ -95,14 +146,12 @@ The plugin injects its own CSS via `logseq.provideStyle()`. Styles use Logseq's 
 
 ## Testing
 
-No automated tests currently. Manual testing:
+Manual testing:
 1. Load plugin in Logseq
-2. Hover over various `[[page references]]`
-3. Verify popover shows with correct properties
-4. Test edge cases: pages without properties, long descriptions, theme switching
+2. Verify popovers on `[[page references]]`
+3. Verify content styles (page properties gradient, header margins)
+4. Test plugin load/unload via developer console
 
 ## Related Repository
 
-This plugin is designed to work with properties defined in a companion Logseq graph:
-- `~/Documents/projects/logseq/` - Personal knowledge graph with custom properties system
-- See that repo's `pages/Properties.md` for the property schema
+Works with the companion Logseq graph at `~/Documents/projects/logseq/`

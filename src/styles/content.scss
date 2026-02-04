@@ -1,0 +1,97 @@
+// ==========================================================================
+// PRETTY LOGSEQ - CONTENT STYLES
+// ==========================================================================
+// Styles for Logseq content elements (page properties, headers, etc.)
+// Migrated from logseq graph custom.css
+
+// ==========================================================================
+// PAGE PROPERTIES
+// ==========================================================================
+
+.page-properties {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(168, 85, 247, 0.15) 100%
+  );
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-left: 4px solid rgb(139, 92, 246);
+  border-radius: 0;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  margin-left: 32px;
+  width: 100%;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+
+  // Property keys
+  .page-property-key {
+    color: rgb(167, 139, 250);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75em;
+    letter-spacing: 0.05em;
+    margin-right: 12px;
+    display: inline-block;
+    min-width: 100px;
+  }
+
+  // Property values
+  .page-property-value {
+    color: rgb(226, 232, 240);
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  // Individual properties
+  .property {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  // Replace default separator with pipe
+  > div > span {
+    font-size: 0;
+    visibility: hidden;
+
+    &::after {
+      content: "|";
+      visibility: visible;
+      font-size: 14px;
+      color: rgba(139, 92, 246, 0.5);
+      margin: 0 8px;
+    }
+  }
+}
+
+// Hide the bullet before page properties
+div.ls-block:has(.page-properties) > div > div.block-control-wrap {
+  display: none;
+}
+
+// ==========================================================================
+// HEADERS
+// ==========================================================================
+
+.ls-block {
+  h1, h2, h3, h4, h5, h6 {
+    border-bottom: none;
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  // Decreasing margin-top for header hierarchy
+  h2 { margin-top: 24px; }
+  h3 { margin-top: 20px; }
+  h4 { margin-top: 16px; }
+  h5 { margin-top: 12px; }
+  h6 { margin-top: 8px; }
+}
