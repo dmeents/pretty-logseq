@@ -2,6 +2,7 @@
 // GRAPH SELECTOR AT BOTTOM
 // ==========================================================================
 // Moves the graph/vault selection menu to the bottom of the sidebar.
+// Styled to match the compact navigation bar (accent theme colors).
 // Reference: https://github.com/yoyurec/logseq-awesome-ui
 
 // Position graph selector trigger at bottom
@@ -9,10 +10,23 @@
   position: fixed;
   z-index: 9;
   left: 0;
-  bottom: 4px;
-  width: calc(var(--ls-left-sidebar-width) - 1rem);
-  margin: 0 0.5rem;
-  border-top: 1px solid var(--ls-border-color);
+  bottom: 0;
+  width: calc(var(--ls-left-sidebar-width));
+  margin: 0;
+  padding: 0;
+  background: var(--pl-accent-subtle);
+  border-top: 1px solid var(--pl-accent-border);
+  backdrop-filter: blur(8px);
+
+  // Style the menu button to match nav items
+  > a {
+    padding: 12px 12px;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: var(--pl-accent-medium) !important;
+    }
+  }
 }
 
 // Adjust nav container height to prevent overlap

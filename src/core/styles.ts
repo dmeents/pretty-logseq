@@ -12,6 +12,8 @@ import pagePropertiesStyles from '../styles/components/page-properties.scss?inli
 import sidebarGraphBottomStyles from '../styles/components/sidebar-graph-bottom.scss?inline';
 import sidebarHideCreateStyles from '../styles/components/sidebar-hide-create.scss?inline';
 import sidebarNavStyles from '../styles/components/sidebar-nav.scss?inline';
+import topbarHideHomeStyles from '../styles/components/topbar-hide-home.scss?inline';
+import topbarHideSyncStyles from '../styles/components/topbar-hide-sync.scss?inline';
 import { registry } from './registry';
 import { generateThemeCSS } from './theme';
 
@@ -34,6 +36,12 @@ export function injectStyles(): void {
   }
   if (settings.graphSelectorBottom) {
     componentStyles.push(sidebarGraphBottomStyles);
+  }
+  if (settings.hideHomeButton) {
+    componentStyles.push(topbarHideHomeStyles);
+  }
+  if (settings.hideSyncIndicator) {
+    componentStyles.push(topbarHideSyncStyles);
   }
 
   const aggregatedStyles = [

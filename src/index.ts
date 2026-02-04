@@ -14,9 +14,8 @@ import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
 // Import features
 import { popoversFeature } from './features/popovers';
-import { searchFeature } from './features/search';
 import { sidebarFeature } from './features/sidebar';
-import { topbarFeature } from './features/topbar';
+import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
 import { initSettings, onSettingsChanged } from './settings';
 
 /**
@@ -26,7 +25,6 @@ function registerFeatures(): void {
   registry.register(popoversFeature);
   registry.register(topbarFeature);
   registry.register(sidebarFeature);
-  registry.register(searchFeature);
 }
 
 /**
@@ -53,11 +51,17 @@ async function main(): Promise<void> {
   // 6. Listen for settings changes
   onSettingsChanged((newSettings, oldSettings) => {
     // Refresh styles when any style-related setting changes
-    const styleSettings = ['compactSidebarNav', 'hideCreateButton', 'graphSelectorBottom'] as const;
+    const styleSettings = ['compactSidebarNav', 'hideCreateButton', 'graphSelectorBottom', 'hideHomeButton', 'hideSyncIndicator'] as const;
 
     const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);
 
     if (styleSettingChanged) {
+      refreshStyles();
+    }
+
+    // Handle DOM manipulation settings (also refresh styles for layout CSS)
+    if (newSettings.navArrowsLeft !== oldSettings.navArrowsLeft) {
+      applyNavArrowsSetting();
       refreshStyles();
     }
   });

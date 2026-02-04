@@ -1,0 +1,21 @@
+// ==========================================================================
+// TOPBAR: NAV ARROWS LEFT LAYOUT
+// ==========================================================================
+// When nav arrows are cloned to the left section:
+// 1. Hide the originals in the right section
+// 2. Add spacing to the clones
+
+// Hide the original nav arrows (keeps React happy)
+#head .r .flex.flex-row:has(.navigation) {
+  display: none !important;
+}
+
+// Spread left section: menu | arrows | search
+#head .l {
+  justify-content: space-between;
+}
+
+// Spacing for the cloned nav arrows in the left section
+#pl-nav-arrows {
+  margin: 0 4px;
+}
