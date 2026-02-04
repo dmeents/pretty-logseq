@@ -1,0 +1,29 @@
+{
+  "name": "pretty-logseq",
+  "version": "0.1.0",
+  "description": "A Logseq plugin for custom page preview popovers with rich property display",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "npx vite build --watch",
+    "build": "npx vite build"
+  },
+  "logseq": {
+    "id": "pretty-logseq",
+    "title": "Pretty Logseq",
+    "icon": "./icon.png"
+  },
+  "devDependencies": {
+    "@logseq/libs": "^0.0.17",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-logseq": "^1.1.2"
+  },
+  "keywords": [
+    "logseq",
+    "plugin",
+    "popover",
+    "preview",
+    "ui"
+  ],
+  "license": "MIT"
+}
