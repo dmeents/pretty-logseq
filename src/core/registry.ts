@@ -65,6 +65,51 @@ class FeatureRegistry {
   }
 
   /**
+   * Initialize a single feature by ID
+   */
+  async initializeFeature(id: string): Promise<void> {
+    const registered = this.features.get(id);
+    if (!registered) {
+      console.warn(`[Pretty Logseq] Feature "${id}" not found`);
+      return;
+    }
+    if (registered.initialized) return;
+
+    try {
+      await registered.feature.init();
+      registered.initialized = true;
+      this.initOrder.push(id);
+      console.log(`[Pretty Logseq] Feature "${id}" initialized`);
+    } catch (err) {
+      console.error(`[Pretty Logseq] Failed to initialize feature "${id}":`, err);
+    }
+  }
+
+  /**
+   * Destroy a single feature by ID
+   */
+  destroyFeature(id: string): void {
+    const registered = this.features.get(id);
+    if (!registered?.initialized) return;
+
+    try {
+      registered.feature.destroy();
+      registered.initialized = false;
+      this.initOrder = this.initOrder.filter(i => i !== id);
+      console.log(`[Pretty Logseq] Feature "${id}" destroyed`);
+    } catch (err) {
+      console.error(`[Pretty Logseq] Failed to destroy feature "${id}":`, err);
+    }
+  }
+
+  /**
+   * Check if a feature is currently initialized
+   */
+  isInitialized(id: string): boolean {
+    return this.features.get(id)?.initialized ?? false;
+  }
+
+  /**
    * Cleanup all features in reverse initialization order
    */
   async destroyAll(): Promise<void> {

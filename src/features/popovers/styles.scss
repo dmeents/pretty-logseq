@@ -85,6 +85,73 @@
     color: var(--pl-accent-text);
     border: 1px solid var(--pl-accent-light);
   }
+
+  // Person card layout
+  &__person-card {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  &__person-photo {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--pl-accent-light);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  &__person-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  &__person-subtitle {
+    font-size: 12px;
+    color: var(--ls-secondary-text-color);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  &__person-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--pl-accent-light);
+  }
+
+  &__person-detail {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  &__person-label {
+    color: var(--ls-secondary-text-color);
+    font-weight: 500;
+    flex-shrink: 0;
+    min-width: 56px;
+  }
+
+  &__person-value {
+    color: var(--ls-primary-text-color);
+  }
 }
 
 @keyframes pretty-popover-fade-in {

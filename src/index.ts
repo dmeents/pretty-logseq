@@ -52,6 +52,8 @@ async function main(): Promise<void> {
   onSettingsChanged((newSettings, oldSettings) => {
     // Refresh styles when any style-related setting changes
     const styleSettings = [
+      'enablePrettyTables',
+      'enablePrettyTemplates',
       'compactSidebarNav',
       'hideCreateButton',
       'graphSelectorBottom',
@@ -62,6 +64,16 @@ async function main(): Promise<void> {
     const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);
 
     if (styleSettingChanged) {
+      refreshStyles();
+    }
+
+    // Handle popovers feature toggle
+    if (newSettings.enablePopovers !== oldSettings.enablePopovers) {
+      if (newSettings.enablePopovers) {
+        registry.initializeFeature('popovers');
+      } else {
+        registry.destroyFeature('popovers');
+      }
       refreshStyles();
     }
 

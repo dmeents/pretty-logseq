@@ -5,6 +5,7 @@
  * page properties in a rich, styled popover.
  */
 
+import { getSettings } from '../../settings';
 import type { Feature } from '../../types';
 import { setupPopovers } from './manager';
 import popoverStyles from './styles.scss?inline';
@@ -17,10 +18,11 @@ export const popoversFeature: Feature = {
   description: 'Custom hover previews for page references',
 
   getStyles() {
-    return popoverStyles;
+    return getSettings().enablePopovers ? popoverStyles : '';
   },
 
   init() {
+    if (!getSettings().enablePopovers) return;
     cleanup = setupPopovers();
   },
 

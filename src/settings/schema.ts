@@ -8,6 +8,9 @@
 import type { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
 
 export interface PluginSettings {
+  enablePopovers: boolean;
+  enablePrettyTables: boolean;
+  enablePrettyTemplates: boolean;
   compactSidebarNav: boolean;
   hideCreateButton: boolean;
   graphSelectorBottom: boolean;
@@ -17,6 +20,9 @@ export interface PluginSettings {
 }
 
 export const defaultSettings: PluginSettings = {
+  enablePopovers: true,
+  enablePrettyTables: true,
+  enablePrettyTemplates: true,
   compactSidebarNav: true,
   hideCreateButton: false,
   graphSelectorBottom: false,
@@ -26,6 +32,35 @@ export const defaultSettings: PluginSettings = {
 };
 
 export const settingsSchema: SettingSchemaDesc[] = [
+  {
+    key: 'featuresHeading',
+    title: 'Features',
+    description: '',
+    type: 'heading',
+    default: null,
+  },
+  {
+    key: 'enablePopovers',
+    title: 'Custom Popovers',
+    description: 'Show custom hover previews for page references with page properties.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'enablePrettyTables',
+    title: 'Pretty Tables',
+    description:
+      'Style query result tables with accent borders, refined headers, and hover states.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'enablePrettyTemplates',
+    title: 'Pretty Templates',
+    description: 'Style template blocks as dimmed, contained cards.',
+    type: 'boolean',
+    default: true,
+  },
   {
     key: 'leftSidebarHeading',
     title: 'Left Sidebar',

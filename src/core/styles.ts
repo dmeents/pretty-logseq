@@ -9,10 +9,11 @@
 import { getSettings } from '../settings';
 import headersStyles from '../styles/components/headers.scss?inline';
 import pagePropertiesStyles from '../styles/components/page-properties.scss?inline';
-import templateBlocksStyles from '../styles/components/template-blocks.scss?inline';
 import sidebarGraphBottomStyles from '../styles/components/sidebar-graph-bottom.scss?inline';
 import sidebarHideCreateStyles from '../styles/components/sidebar-hide-create.scss?inline';
 import sidebarNavStyles from '../styles/components/sidebar-nav.scss?inline';
+import tablesStyles from '../styles/components/tables.scss?inline';
+import templateBlocksStyles from '../styles/components/template-blocks.scss?inline';
 import topbarHideHomeStyles from '../styles/components/topbar-hide-home.scss?inline';
 import topbarHideSyncStyles from '../styles/components/topbar-hide-sync.scss?inline';
 import { registry } from './registry';
@@ -26,7 +27,14 @@ const STYLE_KEY = 'pretty-logseq-styles';
 export function injectStyles(): void {
   const settings = getSettings();
 
-  const componentStyles = [pagePropertiesStyles, headersStyles, templateBlocksStyles];
+  const componentStyles = [pagePropertiesStyles, headersStyles];
+
+  if (settings.enablePrettyTables) {
+    componentStyles.push(tablesStyles);
+  }
+  if (settings.enablePrettyTemplates) {
+    componentStyles.push(templateBlocksStyles);
+  }
 
   // Conditionally include sidebar styles based on settings
   if (settings.compactSidebarNav) {

@@ -7,21 +7,25 @@
 
 div.ls-block:has(* > .block-properties a[data-ref="template"]) {
   > .block-children-container > div > div > div.block-children-container {
-    opacity: 0.75;
-    transition: opacity 0.15s ease;
+    opacity: 0.6;
+    transition: all 0.15s ease;
+    border: 1px dashed;
+    border-image: linear-gradient(
+      to right,
+      transparent,
+      rgba(128, 128, 128, 0.75)
+    ) 1;
     background: linear-gradient(
       to right,
       transparent,
       rgba(128, 128, 128, 0.08)
     );
-    /* border: 1px solid rgba(128, 128, 128, 0.2); */
-    /* border-left: 3px solid rgba(128, 128, 128, 0.35); */
-    border-radius: 6px;
     padding: 8px 12px;
     margin: 8px 0;
 
     &:hover {
       opacity: 0.85;
+      color: unset;
     }
 
     // Reset nested .block-children-container to avoid repeated styling

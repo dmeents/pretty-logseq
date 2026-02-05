@@ -1,0 +1,72 @@
+// ==========================================================================
+// TABLES (Query Results)
+// ==========================================================================
+// Styles Logseq's query result tables with the Pretty Logseq design language:
+// accent left border, subtle backgrounds, refined typography, and hover states.
+
+.custom-query {
+  .table-wrapper {
+    border: 1px solid var(--pl-accent-border);
+    border-left: 4px solid var(--pl-accent);
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+
+    table.table-auto {
+      border-collapse: collapse;
+      width: 100%;
+    }
+  }
+
+  // Header row
+  thead {
+    tr {
+      background: var(--pl-accent-subtle);
+      border-bottom: 1px solid var(--pl-accent-border);
+    }
+
+    th {
+      color: var(--pl-accent-text);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75em;
+      letter-spacing: 0.05em;
+      padding: 10px 14px;
+      border: none;
+      white-space: nowrap;
+
+      // Sort indicator
+      .whitespace-nowrap {
+        color: var(--pl-accent-text);
+      }
+    }
+  }
+
+  // Body rows
+  tbody {
+    tr {
+      border-bottom: 1px solid var(--pl-accent-light);
+      transition: background 0.15s ease;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: var(--pl-accent-subtle);
+      }
+    }
+
+    td {
+      padding: 8px 14px;
+      border: none;
+      font-size: 0.875em;
+      color: var(--ls-primary-text-color);
+      vertical-align: middle;
+    }
+  }
+}
