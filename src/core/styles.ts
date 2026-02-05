@@ -16,6 +16,7 @@ import tablesStyles from '../styles/components/tables.scss?inline';
 import templateBlocksStyles from '../styles/components/template-blocks.scss?inline';
 import topbarHideHomeStyles from '../styles/components/topbar-hide-home.scss?inline';
 import topbarHideSyncStyles from '../styles/components/topbar-hide-sync.scss?inline';
+import typographyStyles from '../styles/components/typography.scss?inline';
 import { registry } from './registry';
 import { generateThemeCSS } from './theme';
 
@@ -29,6 +30,9 @@ export function injectStyles(): void {
 
   const componentStyles = [pagePropertiesStyles, headersStyles];
 
+  if (settings.enablePrettyTypography) {
+    componentStyles.push(typographyStyles);
+  }
   if (settings.enablePrettyTables) {
     componentStyles.push(tablesStyles);
   }

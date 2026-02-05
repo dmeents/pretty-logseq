@@ -13,8 +13,10 @@ import { registry } from './core/registry';
 import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
 // Import features
+import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
 import { sidebarFeature } from './features/sidebar';
+import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
 import { initSettings, onSettingsChanged } from './settings';
 
@@ -23,6 +25,8 @@ import { initSettings, onSettingsChanged } from './settings';
  */
 function registerFeatures(): void {
   registry.register(popoversFeature);
+  registry.register(linksFeature);
+  registry.register(todosFeature);
   registry.register(topbarFeature);
   registry.register(sidebarFeature);
 }
@@ -52,8 +56,11 @@ async function main(): Promise<void> {
   onSettingsChanged((newSettings, oldSettings) => {
     // Refresh styles when any style-related setting changes
     const styleSettings = [
+      'enablePrettyTypography',
       'enablePrettyTables',
       'enablePrettyTemplates',
+      'enablePrettyLinks',
+      'enablePrettyTodos',
       'compactSidebarNav',
       'hideCreateButton',
       'graphSelectorBottom',
@@ -73,6 +80,26 @@ async function main(): Promise<void> {
         registry.initializeFeature('popovers');
       } else {
         registry.destroyFeature('popovers');
+      }
+      refreshStyles();
+    }
+
+    // Handle pretty links feature toggle
+    if (newSettings.enablePrettyLinks !== oldSettings.enablePrettyLinks) {
+      if (newSettings.enablePrettyLinks) {
+        registry.initializeFeature('links');
+      } else {
+        registry.destroyFeature('links');
+      }
+      refreshStyles();
+    }
+
+    // Handle pretty todos feature toggle
+    if (newSettings.enablePrettyTodos !== oldSettings.enablePrettyTodos) {
+      if (newSettings.enablePrettyTodos) {
+        registry.initializeFeature('todos');
+      } else {
+        registry.destroyFeature('todos');
       }
       refreshStyles();
     }

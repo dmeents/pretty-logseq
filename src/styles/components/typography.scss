@@ -1,0 +1,93 @@
+// ==========================================================================
+// TYPOGRAPHY
+// Subtle rendering and spacing refinements for modern legibility.
+// Does NOT change the base font family — only enhances how text renders.
+// ==========================================================================
+
+// ---------------------------------------------------------------------------
+// Global text rendering
+// ---------------------------------------------------------------------------
+#app-container {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1,
+    "calt" 1;
+  font-kerning: normal;
+}
+
+// ---------------------------------------------------------------------------
+// Body text — gentle tightening, keep Logseq's natural line-height
+// ---------------------------------------------------------------------------
+#main-content-container {
+  letter-spacing: -0.005em;
+}
+
+// ---------------------------------------------------------------------------
+// Headings — subtle progressive tightening from h6 → h1
+// ---------------------------------------------------------------------------
+.ls-block {
+  h1 {
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  h2 {
+    letter-spacing: -0.017em;
+    line-height: 1.28;
+  }
+
+  h3 {
+    letter-spacing: -0.014em;
+    line-height: 1.32;
+  }
+
+  h4 {
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+
+  h5 {
+    letter-spacing: -0.008em;
+  }
+
+  h6 {
+    letter-spacing: -0.005em;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Page title
+// ---------------------------------------------------------------------------
+.page-title,
+h1.title {
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+// ---------------------------------------------------------------------------
+// Sidebar
+// ---------------------------------------------------------------------------
+.left-sidebar-inner {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ---------------------------------------------------------------------------
+// Code blocks — modern monospace stack with ligatures
+// ---------------------------------------------------------------------------
+.CodeMirror,
+code,
+pre,
+.ls-block pre,
+.ls-block code {
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Source Code Pro",
+    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-feature-settings:
+    "liga" 1,
+    "calt" 1;
+  font-variant-ligatures: common-ligatures contextual;
+}

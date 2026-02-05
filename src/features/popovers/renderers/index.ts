@@ -6,6 +6,7 @@
  */
 
 import type { PageData } from '../../../types';
+import { codebaseRenderer } from './codebase';
 import { defaultRenderer } from './default';
 import { personRenderer } from './person';
 import { resourceRenderer } from './resource';
@@ -16,6 +17,7 @@ const renderers: PopoverRenderer[] = [];
 // Register built-in renderers (checked before default fallback)
 registerRenderer(personRenderer);
 registerRenderer(resourceRenderer);
+registerRenderer(codebaseRenderer);
 
 /**
  * Register a renderer. Registered renderers are checked
