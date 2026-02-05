@@ -7,9 +7,13 @@
 
 import type { PageData } from '../../../types';
 import { defaultRenderer } from './default';
+import { resourceRenderer } from './resource';
 import type { PopoverRenderer } from './types';
 
 const renderers: PopoverRenderer[] = [];
+
+// Register built-in renderers (checked before default fallback)
+registerRenderer(resourceRenderer);
 
 /**
  * Register a renderer. Registered renderers are checked

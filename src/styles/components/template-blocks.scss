@@ -1,0 +1,37 @@
+// ==========================================================================
+// TEMPLATE BLOCKS
+// ==========================================================================
+// Styles the template body (children of the block with template:: property)
+// as a contained, dimmed card so it reads as a "behind the scenes" definition.
+// The template:: definition block itself is left unstyled.
+
+div.ls-block:has(* > .block-properties a[data-ref="template"]) {
+  > .block-children-container > div > div > div.block-children-container {
+    opacity: 0.75;
+    transition: opacity 0.15s ease;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(128, 128, 128, 0.08)
+    );
+    /* border: 1px solid rgba(128, 128, 128, 0.2); */
+    /* border-left: 3px solid rgba(128, 128, 128, 0.35); */
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 8px 0;
+
+    &:hover {
+      opacity: 0.85;
+    }
+
+    // Reset nested .block-children-container to avoid repeated styling
+    .block-children-container {
+      opacity: 1;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

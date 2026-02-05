@@ -8,7 +8,7 @@
  * Uses top.document since plugins run in an iframe.
  */
 
-import { getPage } from '../../lib/api';
+import { getPage, getPageBlocks } from '../../lib/api';
 import { positionElement, removeElementById } from '../../lib/dom';
 import { getRenderer } from './renderers';
 
@@ -85,8 +85,10 @@ function attachPopoverListeners(popover: HTMLElement): void {
 }
 
 async function showPopover(anchor: HTMLElement, pageName: string): Promise<void> {
-  const pageData = await getPage(pageName);
+  const [pageData, blocks] = await Promise.all([getPage(pageName), getPageBlocks(pageName)]);
   if (!pageData) return;
+
+  pageData.blocks = blocks;
 
   // If anchor changed while we were fetching, abort
   if (currentAnchor !== anchor) return;
@@ -163,11 +165,20 @@ export function setupPopovers(): () => void {
     }, SHOW_DELAY);
   };
 
+  const handleClick = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest?.('.page-ref')) {
+      hidePopover();
+    }
+  };
+
   // Capturing phase intercepts before Logseq's own handlers
   doc.addEventListener('mouseenter', handleEnter, true);
+  doc.addEventListener('click', handleClick, true);
 
   return () => {
     doc.removeEventListener('mouseenter', handleEnter, true);
+    doc.removeEventListener('click', handleClick, true);
     cleanupAnchorLeave();
     hidePopover();
   };

@@ -9,6 +9,7 @@
 import { getSettings } from '../settings';
 import headersStyles from '../styles/components/headers.scss?inline';
 import pagePropertiesStyles from '../styles/components/page-properties.scss?inline';
+import templateBlocksStyles from '../styles/components/template-blocks.scss?inline';
 import sidebarGraphBottomStyles from '../styles/components/sidebar-graph-bottom.scss?inline';
 import sidebarHideCreateStyles from '../styles/components/sidebar-hide-create.scss?inline';
 import sidebarNavStyles from '../styles/components/sidebar-nav.scss?inline';
@@ -25,7 +26,7 @@ const STYLE_KEY = 'pretty-logseq-styles';
 export function injectStyles(): void {
   const settings = getSettings();
 
-  const componentStyles = [pagePropertiesStyles, headersStyles];
+  const componentStyles = [pagePropertiesStyles, headersStyles, templateBlocksStyles];
 
   // Conditionally include sidebar styles based on settings
   if (settings.compactSidebarNav) {

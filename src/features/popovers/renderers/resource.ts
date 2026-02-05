@@ -1,11 +1,11 @@
 /**
- * Default Popover Renderer
+ * Resource Popover Renderer
  *
- * Fallback renderer for all pages. Shows icon, title, description,
- * a content snippet from the page's blocks, and property tags.
+ * Renders a compact card-style popover for pages with type: Resource.
+ * Shows icon, title, description, and property tags.
  */
 
-import { cleanBlockContent, cleanPropertyValue } from '../../../lib/api';
+import { cleanPropertyValue } from '../../../lib/api';
 import type { PageData } from '../../../types';
 import type { PopoverRenderer } from './types';
 
@@ -50,46 +50,13 @@ function createTags(pageData: PageData): HTMLElement | null {
   return container;
 }
 
-/**
- * Extract a content snippet from page blocks.
- * Cleans each block's content, skips empty/property-only blocks,
- * and truncates to a character limit at a word boundary.
- */
-function extractSnippet(pageData: PageData, maxLength = 560): string | null {
-  const { blocks } = pageData;
-  if (!blocks || blocks.length === 0) return null;
+export const resourceRenderer: PopoverRenderer = {
+  id: 'resource',
 
-  const textParts: string[] = [];
-
-  for (const block of blocks) {
-    const cleaned = cleanBlockContent(block.content);
-    if (!cleaned) continue;
-    textParts.push(cleaned);
-  }
-
-  if (textParts.length === 0) return null;
-
-  const joined = textParts.join(' ');
-  if (joined.length <= maxLength) return joined;
-
-  const truncated = joined.slice(0, maxLength);
-  const lastSpace = truncated.lastIndexOf(' ');
-  const cutoff = lastSpace > maxLength * 0.6 ? lastSpace : maxLength;
-  return `${truncated.slice(0, cutoff)}\u2026`;
-}
-
-function createSnippet(text: string): HTMLElement {
-  const el = document.createElement('div');
-  el.className = 'pretty-popover__snippet';
-  el.textContent = text;
-  return el;
-}
-
-export const defaultRenderer: PopoverRenderer = {
-  id: 'default',
-
-  match() {
-    return true;
+  match(pageData: PageData): boolean {
+    const { type } = pageData.properties;
+    if (!type) return false;
+    return cleanPropertyValue(type).toLowerCase() === 'resource';
   },
 
   render(pageData: PageData): HTMLElement {
@@ -100,11 +67,6 @@ export const defaultRenderer: PopoverRenderer = {
 
     if (pageData.properties.description) {
       content.appendChild(createDescription(pageData.properties.description));
-    }
-
-    const snippet = extractSnippet(pageData);
-    if (snippet) {
-      content.appendChild(createSnippet(snippet));
     }
 
     const tags = createTags(pageData);

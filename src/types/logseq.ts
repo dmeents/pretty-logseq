@@ -15,12 +15,21 @@ export interface PageProperties {
 }
 
 /**
+ * Minimal block data for popover content snippets
+ */
+export interface BlockData {
+  content: string;
+  children?: BlockData[];
+}
+
+/**
  * Page data returned from Logseq API with typed properties
  */
 export interface PageData {
   name: string;
   originalName?: string;
   properties: PageProperties;
+  blocks?: BlockData[];
 }
 
 /**

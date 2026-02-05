@@ -9,6 +9,7 @@ export type {
 } from './feature';
 
 export type {
+  BlockData,
   PageData,
   PageProperties,
   ThemeMode,

@@ -4,7 +4,7 @@
  * Wrapper functions around Logseq's Plugin API with caching and error handling.
  */
 
-import type { PageData, PageProperties } from '../types';
+import type { BlockData, PageData, PageProperties } from '../types';
 
 interface CacheEntry<T> {
   data: T;
@@ -76,6 +76,46 @@ export async function getThemeMode(): Promise<'light' | 'dark'> {
   } catch {
     return 'light';
   }
+}
+
+/**
+ * Get the block tree for a page.
+ * Returns simplified BlockData[] with content strings.
+ */
+export async function getPageBlocks(pageName: string): Promise<BlockData[]> {
+  try {
+    const blocks = await logseq.Editor.getPageBlocksTree(pageName);
+    if (!blocks) return [];
+    return blocks.map(mapBlock);
+  } catch (err) {
+    console.error(`[Pretty Logseq] Failed to fetch blocks for "${pageName}":`, err);
+    return [];
+  }
+}
+
+function mapBlock(block: Record<string, unknown>): BlockData {
+  const children = block.children as Record<string, unknown>[] | undefined;
+  return {
+    content: (block.content as string) || '',
+    children: children?.map(mapBlock),
+  };
+}
+
+/**
+ * Clean block content for display in popovers.
+ * Strips property lines, block/page references, and markdown formatting.
+ */
+export function cleanBlockContent(content: string): string {
+  return content
+    .replace(/^[a-zA-Z-]+::.*$/gm, '') // Remove property lines
+    .replace(/\(\([a-f0-9-]+\)\)/g, '') // Remove block references
+    .replace(/\[\[([^\]]+)\]\]/g, '$1') // [[Page]] -> Page
+    .replace(/[*_~`]+/g, '') // Remove markdown emphasis
+    .replace(/^#+\s*/gm, '') // Remove heading markers
+    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
+    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // [text](url) -> text
+    .replace(/\n{2,}/g, '\n') // Collapse multiple newlines
+    .trim();
 }
 
 /**
