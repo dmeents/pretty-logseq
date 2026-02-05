@@ -83,13 +83,19 @@ pretty-logseq/
 │   ├── styles/           # Base and content styles (SCSS)
 │   │   ├── base.scss     # CSS variables, resets
 │   │   └── content.scss  # Page properties, headers
+│   ├── settings/         # Plugin settings
+│   │   └── schema.ts     # Settings UI schema and types
 │   └── features/         # Feature modules
 │       ├── popovers/     # Custom hover previews
-│       │   ├── index.ts
-│       │   ├── handlers.ts
-│       │   └── styles.scss
-│       ├── topbar/       # Top navigation (placeholder)
-│       ├── sidebar/      # Left sidebar (placeholder)
+│       │   ├── index.ts        # Feature entry point
+│       │   ├── manager.ts      # Hover lifecycle, show/hide logic
+│       │   ├── styles.scss     # Popover and native suppression styles
+│       │   └── renderers/      # Pluggable popover content renderers
+│       │       ├── index.ts    # Renderer registry and dispatcher
+│       │       ├── types.ts    # PopoverRenderer interface
+│       │       └── default.ts  # Default renderer (title, description, tags)
+│       ├── topbar/       # Top navigation
+│       ├── sidebar/      # Left sidebar
 │       └── search/       # Search interface (placeholder)
 ├── dist/                 # Built output (gitignored)
 └── docs/
@@ -114,6 +120,27 @@ interface Feature {
 ```
 
 Features are self-contained with their own styles, initialization, and cleanup.
+
+### Popover Renderer System
+
+Popovers use a pluggable renderer pattern. Each renderer decides whether it can handle a given page and builds the DOM content:
+
+```typescript
+interface PopoverRenderer {
+  id: string;
+  match(pageData: PageData): boolean;
+  render(pageData: PageData): HTMLElement;
+}
+```
+
+Renderers are checked in registration order (first match wins) with the default renderer as fallback. To add a custom renderer:
+
+1. Implement `PopoverRenderer` in `src/features/popovers/renderers/`
+2. Call `registerRenderer(myRenderer)` during feature init
+
+The **default renderer** displays: page icon + title (clickable), description, and property tags (type, status, area).
+
+The **popover manager** (`manager.ts`) handles the hover lifecycle: event delegation on `mouseenter` (capturing phase to intercept before Logseq), delayed show/hide with timers, viewport-aware positioning, and race condition prevention via anchor tracking.
 
 ### Adding a New Feature
 
@@ -154,9 +181,13 @@ All styles are injected via a single `logseq.provideStyle()` call.
 
 ## Key Files
 
-- **src/index.ts** - Plugin bootstrap, feature registration
+- **src/index.ts** - Plugin bootstrap, feature registration, settings change handling
 - **src/core/registry.ts** - Feature lifecycle management
-- **src/features/popovers/** - Custom hover previews implementation
+- **src/features/popovers/manager.ts** - Popover hover lifecycle (show/hide, timers, positioning)
+- **src/features/popovers/renderers/** - Pluggable renderer system for popover content
+- **src/lib/api.ts** - Page data fetching with 30s TTL cache, property value cleanup
+- **src/lib/dom.ts** - Viewport-aware positioning, element creation helpers
+- **src/settings/schema.ts** - Plugin settings schema and `PluginSettings` interface
 - **src/styles/content.scss** - Content styling (page properties, headers)
 - **docs/RESEARCH.md** - Background research and API reference
 

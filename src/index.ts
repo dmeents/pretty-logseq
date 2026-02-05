@@ -51,7 +51,13 @@ async function main(): Promise<void> {
   // 6. Listen for settings changes
   onSettingsChanged((newSettings, oldSettings) => {
     // Refresh styles when any style-related setting changes
-    const styleSettings = ['compactSidebarNav', 'hideCreateButton', 'graphSelectorBottom', 'hideHomeButton', 'hideSyncIndicator'] as const;
+    const styleSettings = [
+      'compactSidebarNav',
+      'hideCreateButton',
+      'graphSelectorBottom',
+      'hideHomeButton',
+      'hideSyncIndicator',
+    ] as const;
 
     const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);
 

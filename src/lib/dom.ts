@@ -52,7 +52,8 @@ export function calculatePosition(anchor: HTMLElement, options: PositionOptions 
 }
 
 /**
- * Adjust position to keep element within viewport
+ * Adjust position to keep element within viewport.
+ * Uses top window dimensions since plugins run in an iframe.
  */
 export function adjustForViewport(
   position: Position,
@@ -60,8 +61,9 @@ export function adjustForViewport(
   elementHeight: number,
   padding = 16,
 ): Position {
-  const { innerWidth, innerHeight } = window;
-  let { top, left } = position;
+  const viewport = top ?? parent;
+  const { innerWidth, innerHeight } = viewport;
+  let { top: posTop, left } = position;
 
   // Adjust horizontal position
   if (left + elementWidth > innerWidth - padding) {
@@ -72,14 +74,14 @@ export function adjustForViewport(
   }
 
   // Adjust vertical position
-  if (top + elementHeight > innerHeight - padding) {
-    top = innerHeight - elementHeight - padding;
+  if (posTop + elementHeight > innerHeight - padding) {
+    posTop = innerHeight - elementHeight - padding;
   }
-  if (top < padding) {
-    top = padding;
+  if (posTop < padding) {
+    posTop = padding;
   }
 
-  return { top, left };
+  return { top: posTop, left };
 }
 
 /**
@@ -123,8 +125,10 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
 }
 
 /**
- * Remove an element by ID if it exists
+ * Remove an element by ID if it exists.
+ * Uses top.document since plugins run in an iframe.
  */
 export function removeElementById(id: string): void {
-  document.getElementById(id)?.remove();
+  const d = top?.document ?? parent.document;
+  d.getElementById(id)?.remove();
 }

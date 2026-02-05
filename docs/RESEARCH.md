@@ -76,13 +76,14 @@ interface Page {
 
 #### Option A: Event Delegation (Current Implementation)
 ```typescript
-document.addEventListener('mouseover', (e) => {
+// Uses mouseenter on capturing phase to intercept before Logseq's handlers
+document.addEventListener('mouseenter', (e) => {
   const pageRef = (e.target as HTMLElement).closest('.page-ref')
   if (pageRef) { /* handle hover */ }
-})
+}, true) // Capture phase
 ```
-**Pros:** Works with dynamically added elements, single listener
-**Cons:** Runs on every mouseover event
+**Pros:** Works with dynamically added elements, single listener, intercepts before Logseq
+**Cons:** Runs on every mouseenter event
 
 #### Option B: MutationObserver + Direct Listeners
 ```typescript
@@ -160,25 +161,26 @@ document.addEventListener('mouseenter', (e) => {
 - [x] Basic positioning (below anchor)
 - [x] CSS styling with Logseq theme variables
 
-### Phase 2: Enhanced Display
-- [ ] Show page icon (handle Tabler icon unicode)
-- [ ] Display properties as styled tags
-- [ ] Handle pages without properties gracefully
-- [ ] Truncate long descriptions with ellipsis
-- [ ] Add subtle entrance/exit animations
+### Phase 2: Enhanced Display ✅
+- [x] Show page icon (handle Tabler icon unicode)
+- [x] Display properties as styled tags (type, status, area)
+- [x] Handle pages without properties gracefully
+- [x] Add subtle entrance animation (fade-in with upward translation)
+- [x] Pluggable renderer system (registry, dispatcher, default renderer)
 
-### Phase 3: Polish & Edge Cases
-- [ ] Smart positioning (flip when near edges)
-- [ ] Handle rapid hover in/out (debouncing)
-- [ ] Theme switching compatibility
-- [ ] Performance optimization for large graphs
-- [ ] Option to suppress native previews
+### Phase 3: Polish & Edge Cases ✅
+- [x] Smart positioning (viewport-aware clamping via `adjustForViewport`)
+- [x] Handle rapid hover in/out (300ms show delay, 150ms hide delay, anchor tracking)
+- [x] Theme switching compatibility (CSS variables + theme observer)
+- [x] Performance optimization (30s page data cache)
+- [x] Suppress native previews (CSS `display:none` on `.ls-preview-popup`, Tippy, and Radix wrappers)
+- [x] Race condition prevention (anchor validation after async fetch)
 
 ### Phase 4: Configuration
-- [ ] Settings UI for customization
-- [ ] Choose which properties to display
+- [x] Settings UI for top bar and sidebar customization
+- [ ] Choose which properties to display in popovers
 - [ ] Customize popover appearance
-- [ ] Enable/disable specific features
+- [ ] Enable/disable specific features per-setting
 
 ---
 
@@ -220,12 +222,12 @@ https://github.com/YU000jp/logseq-plugin-sticky-popup
 
 ## Open Questions
 
-1. **Native preview coexistence:** Should we hide native previews entirely or let them coexist? Hiding requires CSS or event interception.
+1. ~~**Native preview coexistence:** Should we hide native previews entirely or let them coexist?~~ **Resolved:** Native previews are fully suppressed via CSS (`display: none !important`) targeting `.ls-preview-popup`, Radix popper wrappers, and Tippy poppers.
 
-2. **Performance at scale:** How does fetching page data on every hover perform with thousands of pages? May need caching.
+2. ~~**Performance at scale:** How does fetching page data on every hover perform with thousands of pages?~~ **Resolved:** Page data is cached with a 30-second TTL via `pageCache` in `src/lib/api.ts`.
 
-3. **Block references:** Should we also handle `((block-references))` or just `[[page-refs]]`?
+3. **Block references:** Should we also handle `((block-references))` or just `[[page-refs]]`? (Still open — currently page refs only)
 
-4. **Plugin settings persistence:** How to persist user preferences? Explore `logseq.settings` API.
+4. ~~**Plugin settings persistence:** How to persist user preferences?~~ **Resolved:** Using `logseq.useSettingsSchema()` with settings defined in `src/settings/schema.ts`.
 
-5. **Icon rendering:** Logseq stores Tabler icons as Unicode PUA characters. Need to verify they render correctly in our popover or if we need special handling.
+5. ~~**Icon rendering:** Logseq stores Tabler icons as Unicode PUA characters.~~ **Resolved:** Icons render correctly when included as text content in the popover title element.

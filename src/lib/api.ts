@@ -79,8 +79,12 @@ export async function getThemeMode(): Promise<'light' | 'dark'> {
 }
 
 /**
- * Clean property value by removing [[ ]] brackets
+ * Clean property value by removing [[ ]] brackets.
+ * Logseq returns some properties as arrays (e.g. type: ["Resource"]),
+ * so we handle both strings and arrays.
  */
-export function cleanPropertyValue(value: string): string {
-  return value.replace(/^\[\[|\]\]$/g, '').trim();
+export function cleanPropertyValue(value: unknown): string {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (typeof raw !== 'string') return String(raw ?? '');
+  return raw.replace(/^\[\[|\]\]$/g, '').trim();
 }

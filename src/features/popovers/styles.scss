@@ -2,6 +2,21 @@
 // POPOVERS
 // ==========================================================================
 
+// Suppress native Logseq preview popups
+// Modern Logseq uses Radix UI popovers with .ls-preview-popup
+.ls-preview-popup {
+  display: none !important;
+}
+
+[data-radix-popper-content-wrapper]:has(.ls-preview-popup) {
+  display: none !important;
+}
+
+// Logseq versions using Tippy.js for page preview
+.tippy-popper:has(.tippy-wrapper) {
+  display: none !important;
+}
+
 .pretty-popover {
   position: fixed;
   z-index: 9999;
@@ -12,19 +27,28 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-width: 320px;
   min-width: 200px;
-  pointer-events: none;
+  pointer-events: auto;
+  animation: pretty-popover-fade-in 150ms ease-out;
 
   &__title {
+    display: block;
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 8px;
     color: var(--ls-primary-text-color);
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--pl-accent, var(--ls-link-text-color));
+    }
   }
 
   &__description {
     font-size: 13px;
     color: var(--ls-secondary-text-color);
     margin-bottom: 8px;
+    line-height: 1.4;
   }
 
   &__properties {
@@ -39,5 +63,16 @@
     border-radius: 4px;
     background: var(--ls-tertiary-background-color);
     color: var(--ls-secondary-text-color);
+  }
+}
+
+@keyframes pretty-popover-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

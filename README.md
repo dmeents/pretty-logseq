@@ -1,13 +1,17 @@
 # Pretty Logseq
 
-A Logseq plugin for custom page preview popovers with rich property display.
+A Logseq plugin for frontend customizations. Provides custom page preview popovers, navigation styling, sidebar modifications, and content styling.
 
 ## Features
 
-- Custom hover previews for `[[page references]]`
-- Displays page properties (type, status, description) in a card format
-- Styled to match Logseq themes
-- Lightweight and performant
+- **Custom hover popovers** for `[[page references]]` replacing Logseq's native previews
+  - Page icon and title (clickable to navigate)
+  - Description property
+  - Property tags (type, status, area)
+  - Pluggable renderer system for custom popover layouts
+- **Theme-aware styling** using Logseq CSS variables (light and dark mode)
+- **Top bar and sidebar customizations** via plugin settings
+- **Content styling** for page properties and headers
 
 ## Installation
 
@@ -16,34 +20,32 @@ A Logseq plugin for custom page preview popovers with rich property display.
 1. Clone this repository
 2. Install dependencies:
    ```bash
-   npm install
+   yarn install
    ```
 3. Build the plugin:
    ```bash
-   npm run build
+   yarn build
    ```
 4. In Logseq:
    - Enable Developer Mode: Settings > Advanced > Developer mode
-   - Load plugin: Plugins > Load unpacked plugin > Select this folder
+   - Load plugin: Plugins > Load unpacked plugin > Select this project folder (not dist/)
 
 ### Development Mode
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 This watches for changes and rebuilds automatically. Reload the plugin in Logseq to see updates.
 
 ## Usage
 
-Once installed, hover over any `[[page reference]]` to see the custom preview popover showing:
+Once installed, hover over any `[[page reference]]` to see a custom preview popover showing:
 - Page title with icon (if set)
 - Description property
 - Type, status, and area as tags
 
-## Configuration
-
-(Coming soon) Settings to customize which properties are displayed and styling options.
+Plugin settings are available in Logseq under Settings > Plugin Settings > Pretty Logseq for top bar and sidebar options.
 
 ## License
 

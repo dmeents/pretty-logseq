@@ -78,7 +78,8 @@ export const settingsSchema: SettingSchemaDesc[] = [
   {
     key: 'navArrowsLeft',
     title: 'Navigation Arrows on Left',
-    description: 'Move the back/forward navigation arrows to the left side of the top bar, next to the sidebar toggle.',
+    description:
+      'Move the back/forward navigation arrows to the left side of the top bar, next to the sidebar toggle.',
     type: 'boolean',
     default: false,
   },

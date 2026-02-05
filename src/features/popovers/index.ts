@@ -6,7 +6,7 @@
  */
 
 import type { Feature } from '../../types';
-import { setupHoverListeners } from './handlers';
+import { setupPopovers } from './manager';
 import popoverStyles from './styles.scss?inline';
 
 let cleanup: (() => void) | null = null;
@@ -21,7 +21,7 @@ export const popoversFeature: Feature = {
   },
 
   init() {
-    cleanup = setupHoverListeners();
+    cleanup = setupPopovers();
   },
 
   destroy() {
