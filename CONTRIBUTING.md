@@ -1,0 +1,244 @@
+# Contributing to Pretty Logseq
+
+Thank you for your interest in contributing to Pretty Logseq! This guide will help you get started with development.
+
+## Development Setup
+
+1. Clone this repository
+2. Install dependencies:
+   ```bash
+   yarn install
+   ```
+3. Start the development server:
+   ```bash
+   yarn dev
+   ```
+4. In Logseq:
+   - Enable Developer Mode: Settings > Advanced > Developer mode
+   - Load plugin: Plugins > Load unpacked plugin > Select this project folder (not `dist/`)
+
+Changes will auto-rebuild. Reload the plugin in Logseq to see updates.
+
+## Tech Stack
+
+- **Language:** TypeScript
+- **Build:** Vite with vite-plugin-logseq
+- **Styling:** SCSS (compiled via Vite)
+- **Linting/Formatting:** Biome
+- **Package Manager:** Yarn 4.x
+- **Runtime:** Logseq Plugin API (@logseq/libs)
+
+## Commands
+
+```bash
+yarn install    # Install dependencies
+yarn dev        # Development (watch mode)
+yarn build      # Production build
+yarn check      # Lint and format (fix all issues)
+yarn lint       # Lint only
+yarn format     # Format only
+```
+
+## Architecture
+
+The plugin uses a modular feature system. Each feature implements a `Feature` interface with its own styles, initialization, and cleanup. Features are managed by a central registry that handles lifecycle and style aggregation.
+
+### Project Structure
+
+```
+src/
+├── index.ts              # Bootstrap and feature registration
+├── core/                 # Registry, styles, theme management
+│   ├── registry.ts       # Feature lifecycle management
+│   ├── styles.ts         # Style aggregation and injection
+│   └── theme.ts          # Accent color generation and theme detection
+├── features/
+│   ├── popovers/         # Custom hover previews
+│   │   ├── index.ts      # Feature entry point
+│   │   ├── manager.ts    # Hover lifecycle (show/hide, timers, positioning)
+│   │   ├── styles.scss   # Popover styles
+│   │   └── renderers/    # Pluggable popover content renderers
+│   │       ├── index.ts  # Renderer registry
+│   │       ├── default.ts
+│   │       ├── person.ts
+│   │       └── resource.ts
+│   ├── topbar/           # Top bar customizations
+│   ├── sidebar/          # Left sidebar customizations
+│   └── search/           # Search interface (placeholder)
+├── lib/                  # Shared utilities
+│   ├── api.ts            # Logseq API helpers with caching
+│   └── dom.ts            # Positioning, element creation
+├── settings/             # Plugin settings
+│   └── schema.ts         # Settings UI schema and types
+├── styles/               # Base and content styles (SCSS)
+│   ├── base.scss         # CSS variables, resets
+│   └── content.scss      # Page properties, headers, tables
+└── types/                # TypeScript interfaces
+    ├── feature.ts
+    ├── logseq.ts
+    └── scss.d.ts
+```
+
+### Feature System
+
+Each feature implements the `Feature` interface:
+
+```typescript
+interface Feature {
+  id: string;
+  name: string;
+  description: string;
+  getStyles(): string;
+  init(): void | Promise<void>;
+  destroy(): void;
+}
+```
+
+Features are self-contained with their own styles, initialization, and cleanup logic.
+
+#### Adding a New Feature
+
+1. Create a new directory under `src/features/`
+2. Implement the `Feature` interface in `index.ts`
+3. Add styles in `styles.scss` (imported with `?inline`)
+4. Register the feature in `src/index.ts`
+
+```typescript
+// src/features/myfeature/index.ts
+import type { Feature } from '../../types';
+import styles from './styles.scss?inline';
+
+export const myFeature: Feature = {
+  id: 'myfeature',
+  name: 'My Feature',
+  description: 'Description of what it does',
+  getStyles() { return styles; },
+  init() { /* setup */ },
+  destroy() { /* cleanup */ },
+};
+```
+
+### Popover Renderer System
+
+Popovers use a pluggable renderer pattern. Each renderer decides whether it can handle a given page and builds the DOM content:
+
+```typescript
+interface PopoverRenderer {
+  id: string;
+  match(pageData: PageData): boolean;
+  render(pageData: PageData): HTMLElement;
+}
+```
+
+Renderers are checked in registration order (first match wins) with the default renderer as fallback.
+
+#### Adding a Custom Renderer
+
+1. Implement `PopoverRenderer` in `src/features/popovers/renderers/`
+2. Call `registerRenderer(myRenderer)` during feature init
+3. Register the renderer before the default renderer for priority matching
+
+Example:
+
+```typescript
+import { registerRenderer } from './index';
+import type { PopoverRenderer, PageData } from '../../../types';
+
+export const myRenderer: PopoverRenderer = {
+  id: 'my-renderer',
+  match(pageData: PageData): boolean {
+    return pageData.properties?.type === 'my-type';
+  },
+  render(pageData: PageData): HTMLElement {
+    const container = document.createElement('div');
+    container.className = 'my-popover';
+    // Build your custom DOM structure
+    return container;
+  },
+};
+
+// In feature init:
+registerRenderer(myRenderer);
+```
+
+### Style Management
+
+Styles use SCSS and are imported with Vite's `?inline` suffix to get compiled CSS as strings:
+
+```typescript
+import styles from './styles.scss?inline';
+```
+
+Styles are aggregated from three sources:
+1. **Base styles** (`styles/base.scss`) - CSS variables, resets
+2. **Content styles** (`styles/content.scss`) - Page properties, headers
+3. **Feature styles** - Each feature's `getStyles()` return value
+
+All styles are injected via a single `logseq.provideStyle()` call.
+
+The plugin uses Logseq's CSS variables for theme compatibility:
+- `--ls-primary-background-color`
+- `--ls-border-color`
+- `--ls-primary-text-color`
+- `--ls-secondary-text-color`
+- `--ls-tertiary-background-color`
+
+### Theme System
+
+The theme module automatically generates accent color CSS variables (`--pl-accent-*`) that adapt to light and dark modes. It watches for theme changes via MutationObserver and updates colors dynamically.
+
+## Testing
+
+Manual testing:
+1. Load plugin in Logseq (select project root folder, not dist/)
+2. Verify popovers on `[[page references]]`
+3. Test all settings toggles
+4. Verify content styles (page properties, headers, tables)
+5. Test in both light and dark themes
+6. Test plugin load/unload via developer console
+
+## Build Configuration
+
+The plugin uses Vite with vite-plugin-logseq. Key points:
+
+- **Entry point:** `index.html` in project root loads `src/index.ts`
+- **Output:** `dist/index.html` + `dist/assets/index-*.js`
+- **package.json main:** Must be `"dist/index.html"` (not .js)
+- **@logseq/libs:** Must be bundled (NOT external) - the browser needs the library code
+
+Build output:
+```
+dist/
+├── index.html           # Entry point Logseq loads
+└── assets/
+    └── index-*.js       # ESM bundle with @logseq/libs
+```
+
+## Logseq Plugin API
+
+Key methods used:
+
+```typescript
+// Inject CSS styles
+logseq.provideStyle({ key: 'my-styles', style: cssString });
+
+// Get page data including properties
+const page = await logseq.Editor.getPage(pageName);
+
+// Register settings
+logseq.useSettingsSchema(settingsSchema);
+
+// Cleanup before unload
+logseq.beforeunload(async () => { /* cleanup */ });
+```
+
+## Code Quality
+
+- Run `yarn check` before committing to fix linting and formatting issues
+- Follow the existing code patterns and conventions
+- Keep features self-contained and modular
+- Add JSDoc comments for public APIs
+
+## Questions?
+
+For implementation details and research notes, see `docs/RESEARCH.md` and `CLAUDE.md`.

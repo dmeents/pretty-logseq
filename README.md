@@ -1,62 +1,58 @@
 # Pretty Logseq
 
-A Logseq plugin for frontend customizations. Provides custom page preview popovers with type-specific renderers, navigation and sidebar styling, and content formatting — all theme-aware and configurable through plugin settings.
+A Logseq plugin that enhances your graph's visual experience with beautiful custom popovers, refined styling, and flexible UI customizations — all fully theme-aware and configurable.
+
+## Why Pretty Logseq?
+
+Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhancements:
+
+- **Richer page previews** — See full context when hovering over page links, with smart type-specific layouts for people, resources, and more
+- **Cleaner interface** — Streamline your workspace with customizable navigation and sidebar layouts
+- **Better readability** — Enjoy polished styling for page properties, headers, tables, and templates
+- **Your theme, enhanced** — Automatically adapts to your current theme (light or dark) while maintaining visual harmony
 
 ## Features
 
-### Custom Popovers
+### Custom Page Popovers
 
-Replaces Logseq's native page preview popups with styled popovers when hovering over `[[page references]]`.
+Replace Logseq's basic page previews with rich, context-aware popovers when you hover over `[[page references]]`.
 
-- **Default renderer** — page icon, clickable title, description, content snippet from page blocks, and property tags (type, status, area)
-- **Person renderer** — contact-card layout with a prominent circular photo, name, role and organization subtitle, detail rows for location/email/phone, and relationship tag
-- **Resource renderer** — compact card with title, description, and property tags
-- **Pluggable renderer system** — add custom renderers for any page type by implementing the `PopoverRenderer` interface
+**Built-in renderers:**
+
+- **Default** — Page icon, title, description, content preview, and property tags
+- **Person** — Contact card layout with photo, name, role, organization, and contact details
+- **Resource** — Compact card optimized for links, articles, and reference materials
+
+The plugin automatically detects page types based on your properties and shows the most relevant layout.
 
 ### Content Styling
 
-- **Page properties** — accent-bordered cards with styled property keys and custom separators
-- **Headers** — clean headers with hierarchy-based spacing (no borders or underlines)
-- **Tables** — query result tables with accent-themed headers, hover rows, and clean borders
-- **Template blocks** — dimmed card styling for template content with hover reveal
+- **Page Properties** — Beautiful accent-bordered cards with styled keys and custom separators
+- **Headers** — Clean hierarchy with smart spacing, no distracting borders
+- **Tables** — Polished query result tables with themed headers, hover effects, and clean borders
+- **Template Blocks** — Dimmed card styling that reveals on hover to reduce visual clutter
 
-### Top Bar
+### Top Bar Customization
 
-- **Move navigation arrows** — relocate back/forward nav arrows from the right side to the left
-- **Hide home button** — remove the Home button from the top bar
-- **Hide sync indicator** — remove the file sync indicator
+- Move navigation arrows from right to left
+- Hide the Home button
+- Hide the sync indicator
 
-### Left Sidebar
+### Left Sidebar Customization
 
-- **Compact navigation** — converts sidebar nav items into a compact inline icon bar
-- **Hide create button** — remove the Create button
-- **Graph selector at bottom** — move the graph selector to a fixed position at the bottom of the sidebar
-
-### Theme Support
-
-Automatically detects Logseq's theme and generates a set of accent color CSS variables (`--pl-accent-*`) that adapt to light and dark modes. Watches for theme changes via MutationObserver.
-
-## Settings
-
-All features are configurable through Logseq's plugin settings (Settings > Plugin Settings > Pretty Logseq):
-
-| Setting | Default | Description |
-|---|---|---|
-| Enable Popovers | On | Custom hover popovers for page references |
-| Pretty Tables | On | Styled query result tables |
-| Pretty Templates | On | Dimmed card styling for template blocks |
-| Compact Sidebar Nav | On | Inline icon bar for sidebar navigation |
-| Hide Create Button | Off | Hide the Create button in the sidebar |
-| Graph Selector Bottom | Off | Move graph selector to sidebar bottom |
-| Hide Home Button | Off | Hide the Home button in the top bar |
-| Hide Sync Indicator | Off | Hide the file sync indicator |
-| Nav Arrows Left | Off | Move back/forward arrows to the left side of the top bar |
+- **Compact Navigation** — Transform sidebar links into a space-saving icon bar
+- Hide the Create button
+- Move the graph selector to a fixed position at the bottom
 
 ## Installation
 
+### From Logseq Marketplace
+
+_(Coming soon — this plugin will be submitted to the Logseq marketplace)_
+
 ### From Source
 
-1. Clone this repository
+1. Download or clone this repository
 2. Install dependencies:
    ```bash
    yarn install
@@ -66,56 +62,50 @@ All features are configurable through Logseq's plugin settings (Settings > Plugi
    yarn build
    ```
 4. In Logseq:
-   - Enable Developer Mode: Settings > Advanced > Developer mode
-   - Load plugin: Plugins > Load unpacked plugin > Select this project folder (not `dist/`)
+   - Go to **Settings → Advanced** and enable **Developer mode**
+   - Go to **Plugins → Load unpacked plugin**
+   - Select this project folder (the root folder, not `dist/`)
 
-### Development
+## Configuration
 
-```bash
-yarn dev
-```
+All features can be toggled on or off through Logseq's plugin settings:
 
-Watches for changes and rebuilds automatically. Reload the plugin in Logseq to see updates.
+**Settings → Plugin Settings → Pretty Logseq**
 
-## Tech Stack
+| Setting               | Default | Description                                               |
+| --------------------- | ------- | --------------------------------------------------------- |
+| Enable Popovers       | ✓       | Show custom hover popovers for page references            |
+| Pretty Tables         | ✓       | Enhanced styling for query result tables                  |
+| Pretty Templates      | ✓       | Dimmed card styling for template blocks with hover reveal |
+| Compact Sidebar Nav   | ✓       | Convert sidebar navigation to inline icon bar             |
+| Hide Create Button    | ✓       | Remove the Create button from the sidebar                 |
+| Graph Selector Bottom | ✓       | Move graph selector to the bottom of the sidebar          |
+| Hide Home Button      | ✓       | Remove the Home button from the top bar                   |
+| Hide Sync Indicator   | ✓       | Remove the file sync indicator                            |
+| Nav Arrows Left       | ✓       | Move back/forward arrows to the left side of the top bar  |
 
-- TypeScript, SCSS, Vite with vite-plugin-logseq
-- Biome for linting and formatting
-- Yarn 4.x
+Changes take effect immediately — just toggle the setting you want to adjust.
 
-## Commands
+## Usage Tips
 
-```bash
-yarn install    # Install dependencies
-yarn dev        # Development (watch mode)
-yarn build      # Production build
-yarn check      # Lint and format (fix all issues)
-yarn lint       # Lint only
-yarn format     # Format only
-```
+- **Hover slowly** over page links to see the custom popovers (200ms delay prevents accidental triggers)
+- **Use page properties** like `type:: person` or `type:: resource` to automatically get specialized popover layouts
+- **Customize to taste** — all features are optional and can be mixed and matched through settings
 
-## Architecture
+## Support
 
-The plugin uses a modular feature system. Each feature implements a `Feature` interface with its own styles, initialization, and cleanup. Features are managed by a central registry that handles lifecycle and style aggregation.
+- **Issues & Bug Reports:** [GitHub Issues](https://github.com/dmeents/pretty-logseq/issues)
+- **Feature Requests:** Open an issue with your idea
+- **Discussions:** [GitHub Discussions](https://github.com/dmeents/pretty-logseq/discussions)
 
-Popovers use a pluggable renderer pattern — renderers are checked in registration order (first match wins) with the default renderer as fallback. To add a renderer for a new page type, implement the `PopoverRenderer` interface and register it during feature init.
+## Contributing
 
-```
-src/
-├── index.ts              # Bootstrap and feature registration
-├── core/                 # Registry, styles, theme management
-├── features/
-│   ├── popovers/         # Custom hover previews
-│   │   ├── manager.ts    # Hover lifecycle (show/hide, timers, positioning)
-│   │   └── renderers/    # Default, Person, Resource renderers
-│   ├── topbar/           # Navigation arrow repositioning
-│   └── sidebar/          # Sidebar customizations
-├── lib/                  # API helpers (caching), DOM utilities
-├── settings/             # Plugin settings schema
-├── styles/               # Base and component SCSS
-└── types/                # TypeScript interfaces
-```
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, architecture details, and guidelines.
 
 ## License
 
-MIT
+MIT — See [LICENSE](LICENSE) for details.
+
+---
+
+Made with ❤️ for the Logseq community
