@@ -6,439 +6,438 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPageRef } from '../../../test/utils/dom';
 import * as apiModule from '../../lib/api';
 import * as domModule from '../../lib/dom';
-import * as renderersModule from './renderers';
 import { setupPopovers } from './manager';
+import * as renderersModule from './renderers';
 
 describe('Popover Manager', () => {
-	let cleanup: (() => void) | null = null;
-
-	beforeEach(() => {
-		vi.useFakeTimers();
-
-		// Mock API responses
-		vi.spyOn(apiModule, 'getPage').mockResolvedValue({
-			name: 'Test Page',
-			properties: {},
-		});
-		vi.spyOn(apiModule, 'getPageBlocks').mockResolvedValue([]);
-
-		// Mock DOM positioning
-		vi.spyOn(domModule, 'positionElement').mockImplementation(() => {});
-		vi.spyOn(domModule, 'removeElementById').mockImplementation((id: string) => {
-			document.getElementById(id)?.remove();
-		});
-
-		// Mock renderer
-		vi.spyOn(renderersModule, 'getRenderer').mockReturnValue({
-			id: 'test',
-			match: () => true,
-			render: () => {
-				const div = document.createElement('div');
-				div.className = 'pretty-popover__content';
-				const title = document.createElement('div');
-				title.className = 'pretty-popover__title';
-				title.dataset.pageName = 'Test Page';
-				title.textContent = 'Test Page';
-				div.appendChild(title);
-				return div;
-			},
-		});
-	});
-
-	afterEach(() => {
-		cleanup?.();
-		cleanup = null;
-		vi.clearAllTimers();
-		vi.useRealTimers();
-		vi.restoreAllMocks();
-		document.body.innerHTML = '';
-	});
-
-	describe('setupPopovers', () => {
-		it('returns cleanup function', () => {
-			cleanup = setupPopovers();
-
-			expect(cleanup).toBeTypeOf('function');
-		});
-
-		it('sets up event listeners on document', () => {
-			const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
-
-			cleanup = setupPopovers();
-
-			expect(addEventListenerSpy).toHaveBeenCalledWith('mouseenter', expect.any(Function), true);
-			expect(addEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), true);
-		});
-
-		it('removes event listeners on cleanup', () => {
-			const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
-
-			cleanup = setupPopovers();
-			cleanup();
-
-			expect(removeEventListenerSpy).toHaveBeenCalledWith('mouseenter', expect.any(Function), true);
-			expect(removeEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), true);
-		});
-	});
-
-	describe('Hover Behavior', () => {
-		beforeEach(() => {
-			cleanup = setupPopovers();
-		});
-
-		it('shows popover after hover delay', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
-
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-
-			// Before delay
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-
-			// Advance timers and flush promises
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
-
-			// After delay
-			expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
-		});
-
-		it('cancels popover on quick hover out', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
-
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(100);
-			ref.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
-
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
-
-		it('does not show popover for non-page-ref elements', async () => {
-			const div = document.createElement('div');
-			document.body.appendChild(div);
-
-			div.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
-
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
-
-		it('fetches page data and blocks', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+  let cleanup: (() => void) | null = null;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+
+    // Mock API responses
+    vi.spyOn(apiModule, 'getPage').mockResolvedValue({
+      name: 'Test Page',
+      properties: {},
+    });
+    vi.spyOn(apiModule, 'getPageBlocks').mockResolvedValue([]);
+
+    // Mock DOM positioning
+    vi.spyOn(domModule, 'positionElement').mockImplementation(() => {});
+    vi.spyOn(domModule, 'removeElementById').mockImplementation((id: string) => {
+      document.getElementById(id)?.remove();
+    });
+
+    // Mock renderer
+    vi.spyOn(renderersModule, 'getRenderer').mockReturnValue({
+      id: 'test',
+      match: () => true,
+      render: () => {
+        const div = document.createElement('div');
+        div.className = 'pretty-popover__content';
+        const title = document.createElement('div');
+        title.className = 'pretty-popover__title';
+        title.dataset.pageName = 'Test Page';
+        title.textContent = 'Test Page';
+        div.appendChild(title);
+        return div;
+      },
+    });
+  });
+
+  afterEach(() => {
+    cleanup?.();
+    cleanup = null;
+    vi.clearAllTimers();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    document.body.innerHTML = '';
+  });
+
+  describe('setupPopovers', () => {
+    it('returns cleanup function', () => {
+      cleanup = setupPopovers();
+
+      expect(cleanup).toBeTypeOf('function');
+    });
+
+    it('sets up event listeners on document', () => {
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+
+      cleanup = setupPopovers();
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith('mouseenter', expect.any(Function), true);
+      expect(addEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), true);
+    });
+
+    it('removes event listeners on cleanup', () => {
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+
+      cleanup = setupPopovers();
+      cleanup();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('mouseenter', expect.any(Function), true);
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), true);
+    });
+  });
+
+  describe('Hover Behavior', () => {
+    beforeEach(() => {
+      cleanup = setupPopovers();
+    });
+
+    it('shows popover after hover delay', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
+
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+
+      // Before delay
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+
+      // Advance timers and flush promises
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
+
+      // After delay
+      expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
+    });
+
+    it('cancels popover on quick hover out', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
+
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(100);
+      ref.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
+
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
+
+    it('does not show popover for non-page-ref elements', async () => {
+      const div = document.createElement('div');
+      document.body.appendChild(div);
+
+      div.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
+
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
 
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+    it('fetches page data and blocks', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			expect(apiModule.getPage).toHaveBeenCalledWith('Test Page');
-			expect(apiModule.getPageBlocks).toHaveBeenCalledWith('Test Page');
-		});
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-		it('uses renderer to build popover content', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      expect(apiModule.getPage).toHaveBeenCalledWith('Test Page');
+      expect(apiModule.getPageBlocks).toHaveBeenCalledWith('Test Page');
+    });
 
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+    it('uses renderer to build popover content', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			expect(renderersModule.getRenderer).toHaveBeenCalled();
-		});
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-		it('positions popover relative to anchor', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      expect(renderersModule.getRenderer).toHaveBeenCalled();
+    });
 
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+    it('positions popover relative to anchor', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			expect(domModule.positionElement).toHaveBeenCalledWith(
-				expect.any(HTMLElement),
-				ref,
-				{ placement: 'bottom', offset: 8 },
-			);
-		});
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-		it('extracts page name from data-ref attribute', async () => {
-			const ref = createPageRef('Page From Attribute');
-			document.body.appendChild(ref);
+      expect(domModule.positionElement).toHaveBeenCalledWith(expect.any(HTMLElement), ref, {
+        placement: 'bottom',
+        offset: 8,
+      });
+    });
 
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
-
-			expect(apiModule.getPage).toHaveBeenCalledWith('Page From Attribute');
-		});
+    it('extracts page name from data-ref attribute', async () => {
+      const ref = createPageRef('Page From Attribute');
+      document.body.appendChild(ref);
 
-		it('falls back to textContent if no data-ref', async () => {
-			const ref = document.createElement('a');
-			ref.className = 'page-ref';
-			ref.textContent = 'Page From Text';
-			document.body.appendChild(ref);
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
+
+      expect(apiModule.getPage).toHaveBeenCalledWith('Page From Attribute');
+    });
 
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+    it('falls back to textContent if no data-ref', async () => {
+      const ref = document.createElement('a');
+      ref.className = 'page-ref';
+      ref.textContent = 'Page From Text';
+      document.body.appendChild(ref);
 
-			expect(apiModule.getPage).toHaveBeenCalledWith('Page From Text');
-		});
-	});
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-	describe('Interactive Popover', () => {
-		beforeEach(() => {
-			cleanup = setupPopovers();
-		});
+      expect(apiModule.getPage).toHaveBeenCalledWith('Page From Text');
+    });
+  });
 
-		it('keeps popover open when hovering over it', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+  describe('Interactive Popover', () => {
+    beforeEach(() => {
+      cleanup = setupPopovers();
+    });
 
-			// Show popover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
-
-			const popover = document.getElementById('pretty-logseq-popover');
-			expect(popover).toBeTruthy();
+    it('keeps popover open when hovering over it', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			// Leave anchor
-			ref.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-
-			// Enter popover before hide delay
-			popover?.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(150);
-
-			// Popover should still be there
-			expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
-		});
-
-		it('hides popover when leaving both anchor and popover', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      // Show popover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			// Show popover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      const popover = document.getElementById('pretty-logseq-popover');
+      expect(popover).toBeTruthy();
 
-			const popover = document.getElementById('pretty-logseq-popover');
+      // Leave anchor
+      ref.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+
+      // Enter popover before hide delay
+      popover?.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(150);
+
+      // Popover should still be there
+      expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
+    });
+
+    it('hides popover when leaving both anchor and popover', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			// Leave anchor
-			ref.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+      // Show popover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			// Leave popover
-			popover?.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-			vi.advanceTimersByTime(150);
+      const popover = document.getElementById('pretty-logseq-popover');
 
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
+      // Leave anchor
+      ref.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
 
-		it('navigates to page when clicking title', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      // Leave popover
+      popover?.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+      vi.advanceTimersByTime(150);
 
-			// Show popover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
 
-			const title = document.querySelector('.pretty-popover__title');
-			expect(title).toBeTruthy();
+    it('navigates to page when clicking title', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			// Click title
-			title?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      // Show popover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			expect(logseq.App.pushState).toHaveBeenCalledWith('page', { name: 'Test Page' });
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
-	});
+      const title = document.querySelector('.pretty-popover__title');
+      expect(title).toBeTruthy();
 
-	describe('Click Dismissal', () => {
-		beforeEach(() => {
-			cleanup = setupPopovers();
-		});
+      // Click title
+      title?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-		it('hides popover when clicking on page ref', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      expect(logseq.App.pushState).toHaveBeenCalledWith('page', { name: 'Test Page' });
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
+  });
 
-			// Show popover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+  describe('Click Dismissal', () => {
+    beforeEach(() => {
+      cleanup = setupPopovers();
+    });
 
-			expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
+    it('hides popover when clicking on page ref', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			// Click ref
-			ref.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      // Show popover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
+      expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
 
-		it('does not hide popover when clicking elsewhere', async () => {
-			const ref = createPageRef('Test Page');
-			const otherDiv = document.createElement('div');
-			document.body.appendChild(ref);
-			document.body.appendChild(otherDiv);
+      // Click ref
+      ref.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-			// Show popover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
 
-			// Click elsewhere
-			otherDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    it('does not hide popover when clicking elsewhere', async () => {
+      const ref = createPageRef('Test Page');
+      const otherDiv = document.createElement('div');
+      document.body.appendChild(ref);
+      document.body.appendChild(otherDiv);
 
-			expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
-		});
-	});
+      // Show popover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-	describe('Race Conditions', () => {
-		beforeEach(() => {
-			cleanup = setupPopovers();
-		});
+      // Click elsewhere
+      otherDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-		it('aborts if anchor changes during fetch', async () => {
-			const ref1 = createPageRef('Page 1');
-			const ref2 = createPageRef('Page 2');
-			document.body.appendChild(ref1);
-			document.body.appendChild(ref2);
+      expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
+    });
+  });
 
-			// Hover first ref
-			ref1.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
+  describe('Race Conditions', () => {
+    beforeEach(() => {
+      cleanup = setupPopovers();
+    });
 
-			// Immediately hover second ref before first completes
-			ref2.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
+    it('aborts if anchor changes during fetch', async () => {
+      const ref1 = createPageRef('Page 1');
+      const ref2 = createPageRef('Page 2');
+      document.body.appendChild(ref1);
+      document.body.appendChild(ref2);
 
-			await vi.runAllTimersAsync();
+      // Hover first ref
+      ref1.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
 
-			// Should only call for the second page
-			expect(apiModule.getPage).toHaveBeenCalledWith('Page 2');
-		});
+      // Immediately hover second ref before first completes
+      ref2.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
 
-		it('does not show popover if page fetch returns null', async () => {
-			vi.mocked(apiModule.getPage).mockResolvedValue(null);
+      await vi.runAllTimersAsync();
 
-			const ref = createPageRef('Non Existent');
-			document.body.appendChild(ref);
+      // Should only call for the second page
+      expect(apiModule.getPage).toHaveBeenCalledWith('Page 2');
+    });
 
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+    it('does not show popover if page fetch returns null', async () => {
+      vi.mocked(apiModule.getPage).mockResolvedValue(null);
 
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
+      const ref = createPageRef('Non Existent');
+      document.body.appendChild(ref);
 
-		it('cancels pending show timer when hovering same anchor with popover', async () => {
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			// Show popover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
 
-			const initialCallCount = apiModule.getPage.mock.calls.length;
+    it('cancels pending show timer when hovering same anchor with popover', async () => {
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			// Hover same anchor again
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      // Show popover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			// Should not fetch again
-			expect(apiModule.getPage.mock.calls.length).toBe(initialCallCount);
-		});
-	});
+      const initialCallCount = apiModule.getPage.mock.calls.length;
 
-	describe('Cleanup', () => {
-		it('removes popover on cleanup', async () => {
-			cleanup = setupPopovers();
+      // Hover same anchor again
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      // Should not fetch again
+      expect(apiModule.getPage.mock.calls.length).toBe(initialCallCount);
+    });
+  });
 
-			// Show popover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+  describe('Cleanup', () => {
+    it('removes popover on cleanup', async () => {
+      cleanup = setupPopovers();
 
-			expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			// Cleanup
-			cleanup();
+      // Show popover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
+      expect(document.getElementById('pretty-logseq-popover')).toBeTruthy();
 
-		it('clears pending timers on cleanup', async () => {
-			cleanup = setupPopovers();
+      // Cleanup
+      cleanup();
 
-			const ref = createPageRef('Test Page');
-			document.body.appendChild(ref);
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
 
-			// Start hover
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    it('clears pending timers on cleanup', async () => {
+      cleanup = setupPopovers();
 
-			// Cleanup before timer fires
-			cleanup();
+      const ref = createPageRef('Test Page');
+      document.body.appendChild(ref);
 
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      // Start hover
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
 
-			// Should not show popover
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
-	});
+      // Cleanup before timer fires
+      cleanup();
 
-	describe('Edge Cases', () => {
-		beforeEach(() => {
-			cleanup = setupPopovers();
-		});
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-		it('handles page ref without page name', async () => {
-			const ref = document.createElement('a');
-			ref.className = 'page-ref';
-			// No data-ref and no textContent
-			document.body.appendChild(ref);
+      // Should not show popover
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
+  });
 
-			ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+  describe('Edge Cases', () => {
+    beforeEach(() => {
+      cleanup = setupPopovers();
+    });
 
-			expect(apiModule.getPage).not.toHaveBeenCalled();
-			expect(document.getElementById('pretty-logseq-popover')).toBeNull();
-		});
+    it('handles page ref without page name', async () => {
+      const ref = document.createElement('a');
+      ref.className = 'page-ref';
+      // No data-ref and no textContent
+      document.body.appendChild(ref);
 
-		it('removes existing popover before showing new one', async () => {
-			const ref1 = createPageRef('Page 1');
-			const ref2 = createPageRef('Page 2');
-			document.body.appendChild(ref1);
-			document.body.appendChild(ref2);
+      ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			// Show first popover
-			ref1.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      expect(apiModule.getPage).not.toHaveBeenCalled();
+      expect(document.getElementById('pretty-logseq-popover')).toBeNull();
+    });
 
-			const popover1 = document.getElementById('pretty-logseq-popover');
-			expect(popover1).toBeTruthy();
+    it('removes existing popover before showing new one', async () => {
+      const ref1 = createPageRef('Page 1');
+      const ref2 = createPageRef('Page 2');
+      document.body.appendChild(ref1);
+      document.body.appendChild(ref2);
 
-			// Show second popover
-			ref2.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-			vi.advanceTimersByTime(300);
-			await vi.runAllTimersAsync();
+      // Show first popover
+      ref1.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
 
-			// Should only have one popover
-			const popovers = document.querySelectorAll('#pretty-logseq-popover');
-			expect(popovers.length).toBe(1);
-		});
-	});
+      const popover1 = document.getElementById('pretty-logseq-popover');
+      expect(popover1).toBeTruthy();
+
+      // Show second popover
+      ref2.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      vi.advanceTimersByTime(300);
+      await vi.runAllTimersAsync();
+
+      // Should only have one popover
+      const popovers = document.querySelectorAll('#pretty-logseq-popover');
+      expect(popovers.length).toBe(1);
+    });
+  });
 });
