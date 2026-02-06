@@ -7,8 +7,10 @@ A Logseq plugin that enhances your graph's visual experience with beautiful cust
 Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhancements:
 
 - **Richer page previews** — See full context when hovering over page links, with smart type-specific layouts for people, resources, and more
+- **Enhanced typography** — Refined font styling, spacing, and visual hierarchy that makes your content easier to scan and more pleasant to read
 - **Cleaner interface** — Streamline your workspace with customizable navigation and sidebar layouts
-- **Better readability** — Enjoy polished styling for page properties, headers, tables, and templates
+- **Smarter visual design** — Polished styling for page properties, headers, tables, todos, and templates that brings clarity to every element
+- **Better link styling** — Page references and external links stand out with subtle, theme-aware styling that improves navigation
 - **Your theme, enhanced** — Automatically adapts to your current theme (light or dark) while maintaining visual harmony
 
 ## Features
