@@ -13,6 +13,9 @@ export function mockLogseqAPI() {
     beforeunload: vi.fn(),
     provideStyle: vi.fn(),
     provideUI: vi.fn(),
+    useSettingsSchema: vi.fn(),
+    onSettingsChanged: vi.fn(),
+    settings: {} as Record<string, unknown>,
 
     Editor: {
       getPage: vi.fn(),
