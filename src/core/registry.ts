@@ -13,7 +13,7 @@ interface RegisteredFeature {
   initialized: boolean;
 }
 
-class FeatureRegistry {
+export class FeatureRegistry {
   private features = new Map<string, RegisteredFeature>();
   private initOrder: string[] = [];
 

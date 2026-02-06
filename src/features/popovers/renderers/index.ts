@@ -41,4 +41,11 @@ export function getRenderer(pageData: PageData): PopoverRenderer {
   return defaultRenderer;
 }
 
+/**
+ * Clear all registered renderers (for testing)
+ */
+export function clearRenderers(): void {
+  renderers.length = 0;
+}
+
 export type { PopoverRenderer } from './types';
