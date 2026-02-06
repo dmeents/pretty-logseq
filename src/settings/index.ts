@@ -13,10 +13,16 @@ export { defaultSettings, settingsSchema };
  * Get current plugin settings with defaults applied
  */
 export function getSettings(): PluginSettings {
-  const settings = logseq.settings as Partial<PluginSettings> | undefined;
+  const settings = logseq.settings as
+    | (Partial<PluginSettings> & { disabled?: boolean })
+    | undefined;
+
+  // Filter out Logseq internal properties (like 'disabled')
+  const { disabled, ...userSettings } = settings || {};
+
   return {
     ...defaultSettings,
-    ...settings,
+    ...userSettings,
   };
 }
 
@@ -34,9 +40,15 @@ export function onSettingsChanged(
   callback: (newSettings: PluginSettings, oldSettings: PluginSettings) => void,
 ): void {
   logseq.onSettingsChanged((newSettings, oldSettings) => {
+    // Filter out Logseq internal properties (like 'disabled')
+    const { disabled: _newDisabled, ...newUserSettings } =
+      (newSettings as Partial<PluginSettings> & { disabled?: boolean }) || {};
+    const { disabled: _oldDisabled, ...oldUserSettings } =
+      (oldSettings as Partial<PluginSettings> & { disabled?: boolean }) || {};
+
     callback(
-      { ...defaultSettings, ...newSettings } as PluginSettings,
-      { ...defaultSettings, ...oldSettings } as PluginSettings,
+      { ...defaultSettings, ...newUserSettings } as PluginSettings,
+      { ...defaultSettings, ...oldUserSettings } as PluginSettings,
     );
   });
 }

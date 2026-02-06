@@ -20,7 +20,7 @@ describe('Settings Management', () => {
     });
 
     it('returns default settings when logseq.settings is empty', () => {
-      logseq.settings = {};
+      logseq.settings = { disabled: false };
 
       const settings = getSettings();
 
@@ -29,6 +29,7 @@ describe('Settings Management', () => {
 
     it('merges user settings with defaults', () => {
       logseq.settings = {
+        disabled: false,
         enablePopovers: false,
         enablePrettyTypography: false,
       };
@@ -44,6 +45,7 @@ describe('Settings Management', () => {
 
     it('user settings override defaults', () => {
       logseq.settings = {
+        disabled: false,
         compactSidebarNav: false,
         hideCreateButton: false,
       };
@@ -76,6 +78,7 @@ describe('Settings Management', () => {
 
     it('handles partial settings objects', () => {
       logseq.settings = {
+        disabled: false,
         enablePopovers: false,
       };
 

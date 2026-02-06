@@ -15,7 +15,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["vitest/globals"]
   },
-  "include": ["src"]
+  "include": ["src", "test"],
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
 }

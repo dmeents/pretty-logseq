@@ -15,7 +15,7 @@ export function mockLogseqAPI() {
     provideUI: vi.fn(),
     useSettingsSchema: vi.fn(),
     onSettingsChanged: vi.fn(),
-    settings: {} as Record<string, unknown>,
+    settings: { disabled: false } as { disabled: boolean } & Record<string, unknown>,
 
     Editor: {
       getPage: vi.fn(),

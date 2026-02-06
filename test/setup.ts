@@ -15,11 +15,12 @@ vi.mock('*.scss?inline', () => ({
 // Setup global mocks
 beforeEach(() => {
   // Mock Logseq API
-  global.logseq = mockLogseqAPI();
+  // biome-ignore lint/suspicious/noExplicitAny: Test mock requires any type
+  globalThis.logseq = mockLogseqAPI() as any;
 
   // Mock top/parent for iframe context
-  global.top = window as unknown as Window & typeof globalThis;
-  global.parent = window;
+  globalThis.top = window as unknown as Window & typeof globalThis;
+  globalThis.parent = window;
 
   // Reset DOM
   document.body.innerHTML = '';
