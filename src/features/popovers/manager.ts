@@ -61,7 +61,7 @@ function scheduleHide(): void {
 
 function attachPopoverListeners(popover: HTMLElement): void {
   const onEnter = () => clearHideTimer();
-  // const onLeave = () => scheduleHide(); // TEMP: disabled auto-hide
+  const onLeave = () => scheduleHide();
 
   const onClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -74,12 +74,12 @@ function attachPopoverListeners(popover: HTMLElement): void {
   };
 
   popover.addEventListener('mouseenter', onEnter);
-  // popover.addEventListener('mouseleave', onLeave); // TEMP: disabled auto-hide
+  popover.addEventListener('mouseleave', onLeave);
   popover.addEventListener('click', onClick);
 
   popoverListenersCleanup = () => {
     popover.removeEventListener('mouseenter', onEnter);
-    // popover.removeEventListener('mouseleave', onLeave); // TEMP: disabled auto-hide
+    popover.removeEventListener('mouseleave', onLeave);
     popover.removeEventListener('click', onClick);
   };
 }
@@ -148,7 +148,7 @@ export function setupPopovers(): () => void {
     const onAnchorLeave = () => {
       clearShowTimer();
       if (getPopover()) {
-        // scheduleHide(); // TEMP: disabled auto-hide
+        scheduleHide();
       } else {
         currentAnchor = null;
       }
