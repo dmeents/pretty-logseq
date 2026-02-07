@@ -108,13 +108,16 @@ export async function getPageBlocks(pageName: string): Promise<BlockData[]> {
  */
 async function resolveAlias(aliasName: string): Promise<PageData | null> {
   try {
-    const results = await logseq.DB.datascriptQuery(`
+    const results = await logseq.DB.datascriptQuery(
+      `
       [:find (pull ?p [*])
        :in $ ?name
        :where
        [?a :block/name ?name]
        [?p :block/alias ?a]]
-    `, `"${aliasName.toLowerCase()}"`);
+    `,
+      `"${aliasName.toLowerCase()}"`,
+    );
 
     if (!results?.length) return null;
 
