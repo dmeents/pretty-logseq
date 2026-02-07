@@ -1,4 +1,4 @@
-![Pretty Logseq Banner](assets/logos/pretty-logseq-banner.png)
+![Pretty Logseq Banner](assets/logos/pretty-logseq-banner-narrow.png)
 
 # Pretty Logseq
 
