@@ -36,11 +36,20 @@ export async function getPage(
     const page = await logseq.Editor.getPage(pageName);
     if (!page) return null;
 
-    const pageData: PageData = {
+    let pageData: PageData = {
       name: page.originalName || page.name,
       originalName: page.originalName,
       properties: (page.properties || {}) as PageProperties,
     };
+
+    // If the page has no properties, it may be an alias stub.
+    // Try to resolve to the root page via Datascript.
+    if (Object.keys(pageData.properties).length === 0) {
+      const resolved = await resolveAlias(pageName);
+      if (resolved) {
+        pageData = resolved;
+      }
+    }
 
     // Update cache
     pageCache.set(cacheKey, {
@@ -90,6 +99,36 @@ export async function getPageBlocks(pageName: string): Promise<BlockData[]> {
   } catch (err) {
     console.error(`[Pretty Logseq] Failed to fetch blocks for "${pageName}":`, err);
     return [];
+  }
+}
+
+/**
+ * Resolve an alias name to its root page using a Datascript query.
+ * Returns the root page data if found, null otherwise.
+ */
+async function resolveAlias(aliasName: string): Promise<PageData | null> {
+  try {
+    const results = await logseq.DB.datascriptQuery(`
+      [:find (pull ?p [*])
+       :in $ ?name
+       :where
+       [?a :block/name ?name]
+       [?p :block/alias ?a]]
+    `, `"${aliasName.toLowerCase()}"`);
+
+    if (!results?.length) return null;
+
+    const page = results[0][0];
+    if (!page) return null;
+
+    return {
+      name: page.originalName || page.name,
+      originalName: page.originalName,
+      properties: (page.properties || {}) as PageProperties,
+    };
+  } catch (err) {
+    console.error(`[Pretty Logseq] Failed to resolve alias "${aliasName}":`, err);
+    return null;
   }
 }
 
