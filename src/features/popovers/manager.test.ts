@@ -29,19 +29,15 @@ describe('Popover Manager', () => {
     });
 
     // Mock renderer
-    vi.spyOn(renderersModule, 'getRenderer').mockReturnValue({
-      id: 'test',
-      match: () => true,
-      render: () => {
-        const div = document.createElement('div');
-        div.className = 'pretty-popover__content';
-        const title = document.createElement('div');
-        title.className = 'pretty-popover__title';
-        title.dataset.pageName = 'Test Page';
-        title.textContent = 'Test Page';
-        div.appendChild(title);
-        return div;
-      },
+    vi.spyOn(renderersModule, 'renderPopover').mockImplementation(() => {
+      const div = document.createElement('div');
+      div.className = 'pretty-popover__content';
+      const title = document.createElement('div');
+      title.className = 'pretty-popover__title';
+      title.dataset.pageName = 'Test Page';
+      title.textContent = 'Test Page';
+      div.appendChild(title);
+      return div;
     });
   });
 
@@ -147,7 +143,7 @@ describe('Popover Manager', () => {
       vi.advanceTimersByTime(300);
       await vi.runAllTimersAsync();
 
-      expect(renderersModule.getRenderer).toHaveBeenCalled();
+      expect(renderersModule.renderPopover).toHaveBeenCalled();
     });
 
     it('positions popover relative to anchor', async () => {

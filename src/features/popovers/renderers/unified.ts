@@ -1,10 +1,9 @@
 /**
  * Unified Popover Renderer
  *
- * A single renderer that intelligently formats popovers for all page types
- * based on a per-type configuration map. Replaces the individual person,
- * resource, and codebase renderers while preserving the PopoverRenderer
- * interface for future specialized renderers.
+ * Intelligently formats popovers for all page types based on a per-type
+ * configuration map. Uses available page properties to build contextual
+ * layouts with sections for header, description, details, links, and tags.
  */
 
 import { cleanPropertyValue } from '../../../lib/api';
@@ -21,63 +20,58 @@ import {
   renderPropertyValue,
 } from './helpers';
 import { getTypeConfig, resolveSubtitle, type TypeConfig } from './type-config';
-import type { PopoverRenderer } from './types';
 
-export const unifiedRenderer: PopoverRenderer = {
-  id: 'unified',
+/**
+ * Render popover content for a page.
+ * Selects the appropriate layout based on the page's type property.
+ */
+export function renderPopover(pageData: PageData): HTMLElement {
+  const config = getTypeConfig(pageData);
+  const content = document.createElement('div');
+  content.className = 'pretty-popover__content';
 
-  match(): boolean {
-    return true;
-  },
+  // 1. Header (photo card or simple title + subtitle)
+  content.appendChild(buildHeader(pageData, config));
 
-  render(pageData: PageData): HTMLElement {
-    const config = getTypeConfig(pageData);
-    const content = document.createElement('div');
-    content.className = 'pretty-popover__content';
+  // 2. Description
+  if (pageData.properties.description) {
+    content.appendChild(createDescription(cleanPropertyValue(pageData.properties.description)));
+  }
 
-    // 1. Header (photo card or simple title + subtitle)
-    content.appendChild(buildHeader(pageData, config));
-
-    // 2. Description
-    if (pageData.properties.description) {
-      content.appendChild(createDescription(cleanPropertyValue(pageData.properties.description)));
+  // 3. Content snippet (for types without rich properties)
+  if (config.showSnippet) {
+    const snippet = extractSnippet(pageData);
+    if (snippet) {
+      const el = document.createElement('div');
+      el.className = 'pretty-popover__snippet';
+      el.textContent = snippet;
+      content.appendChild(el);
     }
+  }
 
-    // 3. Content snippet (for types without rich properties)
-    if (config.showSnippet) {
-      const snippet = extractSnippet(pageData);
-      if (snippet) {
-        const el = document.createElement('div');
-        el.className = 'pretty-popover__snippet';
-        el.textContent = snippet;
-        content.appendChild(el);
-      }
+  // 4. Detail rows (key-value pairs)
+  const details = buildDetails(pageData, config);
+  if (details) content.appendChild(details);
+
+  // 5. Array properties (pill groups like stack)
+  for (const prop of config.arrayProperties) {
+    const items = cleanAllValues(pageData.properties[prop]);
+    if (items.length > 0) {
+      const group = createTagPills(items, 'pretty-popover__array-tags');
+      if (group) content.appendChild(group);
     }
+  }
 
-    // 4. Detail rows (key-value pairs)
-    const details = buildDetails(pageData, config);
-    if (details) content.appendChild(details);
+  // 6. Link section (prominent url if not already in details)
+  const linkSection = buildLinkSection(pageData, config);
+  if (linkSection) content.appendChild(linkSection);
 
-    // 5. Array properties (pill groups like stack)
-    for (const prop of config.arrayProperties) {
-      const items = cleanAllValues(pageData.properties[prop]);
-      if (items.length > 0) {
-        const group = createTagPills(items, 'pretty-popover__array-tags');
-        if (group) content.appendChild(group);
-      }
-    }
+  // 7. Tags (type, status, area + extras)
+  const tags = buildTags(pageData, config);
+  if (tags) content.appendChild(tags);
 
-    // 6. Link section (prominent url if not already in details)
-    const linkSection = buildLinkSection(pageData, config);
-    if (linkSection) content.appendChild(linkSection);
-
-    // 7. Tags (type, status, area + extras)
-    const tags = buildTags(pageData, config);
-    if (tags) content.appendChild(tags);
-
-    return content;
-  },
-};
+  return content;
+}
 
 function buildHeader(pageData: PageData, config: TypeConfig): HTMLElement {
   const photoUrl = config.photoProperty

@@ -206,22 +206,6 @@
     }
   }
 
-  // === Deprecated: Old renderer-specific styles ===
-  // Kept for backward compatibility if old renderers are re-enabled.
-  // Can be removed once old renderer files are deleted.
-
-  // &__person-card { ... }
-  // &__person-photo { ... }
-  // &__person-info { ... }
-  // &__person-subtitle { ... }
-  // &__person-details { ... }
-  // &__person-detail { ... }
-  // &__person-label { ... }
-  // &__person-value { ... }
-  // &__codebase-repo { ... }
-  // &__codebase-link { ... }
-  // &__codebase-stack { ... }
-  // &__codebase-stack-tag { ... }
 }
 
 @keyframes pretty-popover-fade-in {

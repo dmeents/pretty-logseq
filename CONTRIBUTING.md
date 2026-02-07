@@ -57,11 +57,11 @@ src/
 │   │   ├── index.ts      # Feature entry point
 │   │   ├── manager.ts    # Hover lifecycle (show/hide, timers, positioning)
 │   │   ├── styles.scss   # Popover styles
-│   │   └── renderers/    # Pluggable popover content renderers
-│   │       ├── index.ts  # Renderer registry
-│   │       ├── default.ts
-│   │       ├── person.ts
-│   │       └── resource.ts
+│   │   └── renderers/    # Popover content rendering
+│   │       ├── index.ts  # Re-exports renderPopover
+│   │       ├── unified.ts    # Config-driven renderer for all page types
+│   │       ├── type-config.ts # Per-type configuration map (16 types)
+│   │       └── helpers.ts    # Shared DOM helpers (title, tags, details)
 │   ├── topbar/           # Top bar customizations
 │   ├── sidebar/          # Left sidebar customizations
 │   └── search/           # Search interface (placeholder)
@@ -120,46 +120,27 @@ export const myFeature: Feature = {
 
 ### Popover Renderer System
 
-Popovers use a pluggable renderer pattern. Each renderer decides whether it can handle a given page and builds the DOM content:
+Popovers use a unified, config-driven renderer that adapts to any page type. The system has three layers:
+
+- **`type-config.ts`** — Defines per-type behavior: subtitle strategy, detail properties, extra tags, photo support, array properties, and snippet display. Supports 16 page types with a default fallback for unknown types.
+- **`helpers.ts`** — Shared DOM construction: title, description, tag pills, detail rows, smart property rendering (emails → links, URLs → formatted labels, ratings → stars).
+- **`unified.ts`** — The renderer, which builds popovers through a section pipeline: header → description → snippet → details → array tags → link section → property tags.
+
+#### Adding a New Page Type
+
+Add an entry to the `TYPE_CONFIGS` map in `type-config.ts`:
 
 ```typescript
-interface PopoverRenderer {
-  id: string;
-  match(pageData: PageData): boolean;
-  render(pageData: PageData): HTMLElement;
-}
+'podcast': {
+  subtitle: [{ kind: 'property', name: 'host' }],
+  detailProperties: ['platform', 'rating'],
+  extraTags: [],
+  arrayProperties: [],
+  showSnippet: false,
+},
 ```
 
-Renderers are checked in registration order (first match wins) with the default renderer as fallback.
-
-#### Adding a Custom Renderer
-
-1. Implement `PopoverRenderer` in `src/features/popovers/renderers/`
-2. Call `registerRenderer(myRenderer)` during feature init
-3. Register the renderer before the default renderer for priority matching
-
-Example:
-
-```typescript
-import { registerRenderer } from './index';
-import type { PopoverRenderer, PageData } from '../../../types';
-
-export const myRenderer: PopoverRenderer = {
-  id: 'my-renderer',
-  match(pageData: PageData): boolean {
-    return pageData.properties?.type === 'my-type';
-  },
-  render(pageData: PageData): HTMLElement {
-    const container = document.createElement('div');
-    container.className = 'my-popover';
-    // Build your custom DOM structure
-    return container;
-  },
-};
-
-// In feature init:
-registerRenderer(myRenderer);
-```
+No other code changes are needed — the unified renderer will automatically use the new config.
 
 ### Style Management
 

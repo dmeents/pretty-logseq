@@ -10,7 +10,7 @@
 
 import { getPage, getPageBlocks } from '../../lib/api';
 import { positionElement, removeElementById } from '../../lib/dom';
-import { getRenderer } from './renderers';
+import { renderPopover } from './renderers';
 
 const doc = top?.document ?? parent.document;
 
@@ -100,8 +100,7 @@ async function showPopover(anchor: HTMLElement, pageName: string): Promise<void>
   cleanupPopoverListeners();
   removeElementById(POPOVER_ID);
 
-  const renderer = getRenderer(pageData);
-  const content = renderer.render(pageData);
+  const content = renderPopover(pageData);
 
   const popover = doc.createElement('div');
   popover.id = POPOVER_ID;

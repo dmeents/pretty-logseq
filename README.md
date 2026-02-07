@@ -21,12 +21,24 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 
 Stop scrolling through cluttered page link previews. Get **rich, context-aware popovers** that show you what's important on the page before you click. The plugin intelligently detects page types and adapts the layout to show exactly what matters. **Requires specific page properties to be set.**
 
-| Layout        | Description                                                                                                                                                                                                                                                                                                                 | Preview                                                             |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Default**   | The fallback layout that works for any page. Displays page icon, title, description, content preview, and key properties at a glance.<br><br>**Trigger:** Automatic for all pages without a specific `type::` property.                                                                                                     | ![Default Popover](assets/screenshots/pretty-popover-default.png)   |
-| **Person**    | Contact card layout with photo, name, role, organization, and contact details. Perfect for your personal CRM in Logseq.<br><br>**Trigger:** Add `type:: person` to your page properties.<br><br>**Optional properties:** `photo::`, `role::`, `organization::`, `location::`, `email::`, `phone::`, `relationship::`        | ![Person Popover](assets/screenshots/pretty-popover-person.png)     |
-| **Resource**  | Compact card design optimized for links, articles, documentation, and reference materials. Shows what matters without the clutter.<br><br>**Trigger:** Add `type:: resource` to your page properties.<br><br>**Optional properties:** `description::`, `status::`, `area::`                                                 | ![Resource Popover](assets/screenshots/pretty-popover-resource.png) |
-| **Code Base** | Technical layout built for repository documentation. Displays the repo URL as a clickable link, tech stack tags, and project status.<br><br>**Trigger:** Add `type:: code base` to your page properties.<br><br>**Optional properties:** `description::`, `url::`, `stack::` (can be multiple values), `status::`, `area::` | ![Codebase Popover](assets/screenshots/pretty-popover-codebase.png) |
+A single unified renderer automatically adapts to your page's `type::` property and displays the most relevant information:
+
+- **Header** — Page icon and title (clickable), with a contextual subtitle derived from the page type (e.g., role at organization for Person, cuisine for Restaurant, author for Book)
+- **Photo card** — If the page has a `photo::` property and is of `type:: Person`, the header displays a circular photo alongside the title and subtitle
+- **Description** — The `description::` property, displayed with line clamping
+- **Content snippet** — For pages without rich properties, a preview of the page's block content
+- **Detail rows** — Key-value pairs for type-relevant properties (e.g., location, email, phone for Person; rating, genre for Game) with smart formatting: emails become `mailto:` links, URLs get formatted labels, ratings display as stars
+- **Array tags** — Properties like `stack::` render as pill groups
+- **Link section** — The `url::` property displayed as a clickable external link
+- **Tags** — `type::`, `status::`, `area::`, and type-specific extras as pill badges
+
+Supports 16 page types out of the box: Person, Code Base, Book, Game, Restaurant, Recipe, Event, Company, Documentation, Project, Software, Website, Meeting, Resource, System, and Technology. Untyped pages get the default layout with title, description, content snippet, and tags.
+
+| Example       | Preview                                                             |
+| ------------- | ------------------------------------------------------------------- |
+| **Person**    | ![Person Popover](assets/screenshots/pretty-popover-person.png)     |
+| **Code Base** | ![Codebase Popover](assets/screenshots/pretty-popover-codebase.png) |
+| **And more!** | ![Default Popover](assets/screenshots/pretty-popover-resource.png)  |
 
 ### Pretty Links
 
@@ -93,7 +105,7 @@ All features can be toggled on or off through Logseq's plugin settings. Changes 
 ## Usage Tips
 
 - **Hover** over page links to see the custom popovers (200ms delay prevents accidental triggers)
-- **Use page properties** like `type:: Person` or `type:: Resource` to automatically get specialized popover layouts
+- **Use page properties** like `type:: Person` or `type:: Code Base` to automatically get contextual popover layouts
 - **Customize to taste** — all features are optional and can be mixed and matched through settings
 
 ## Support
