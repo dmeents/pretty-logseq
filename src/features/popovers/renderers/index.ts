@@ -6,18 +6,22 @@
  */
 
 import type { PageData } from '../../../types';
-import { codebaseRenderer } from './codebase';
+// import { codebaseRenderer } from './codebase';
 import { defaultRenderer } from './default';
-import { personRenderer } from './person';
-import { resourceRenderer } from './resource';
 import type { PopoverRenderer } from './types';
+// import { personRenderer } from './person';
+// import { resourceRenderer } from './resource';
+import { unifiedRenderer } from './unified';
 
 const renderers: PopoverRenderer[] = [];
 
-// Register built-in renderers (checked before default fallback)
-registerRenderer(personRenderer);
-registerRenderer(resourceRenderer);
-registerRenderer(codebaseRenderer);
+// Register the unified renderer (handles all types)
+registerRenderer(unifiedRenderer);
+
+// Previous specialized renderers (disabled in favor of unified):
+// registerRenderer(personRenderer);
+// registerRenderer(resourceRenderer);
+// registerRenderer(codebaseRenderer);
 
 /**
  * Register a renderer. Registered renderers are checked

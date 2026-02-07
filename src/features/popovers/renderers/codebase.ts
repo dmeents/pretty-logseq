@@ -1,6 +1,10 @@
 /**
  * Code Base Popover Renderer
  *
+ * @deprecated Replaced by unified renderer (unified.ts).
+ * Kept for reference and as a fallback escape hatch.
+ * To re-enable: import and register in renderers/index.ts
+ *
  * Renders a repository-focused popover for pages with type: Code Base.
  * Prominently displays the repository URL as a clickable link alongside
  * the title, description, and property tags.

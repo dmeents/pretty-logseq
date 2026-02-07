@@ -1,6 +1,10 @@
 /**
  * Resource Popover Renderer
  *
+ * @deprecated Replaced by unified renderer (unified.ts).
+ * Kept for reference and as a fallback escape hatch.
+ * To re-enable: import and register in renderers/index.ts
+ *
  * Renders a compact card-style popover for pages with type: Resource.
  * Shows icon, title, description, and property tags.
  */

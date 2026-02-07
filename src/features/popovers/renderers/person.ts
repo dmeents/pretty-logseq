@@ -1,6 +1,10 @@
 /**
  * Person Popover Renderer
  *
+ * @deprecated Replaced by unified renderer (unified.ts).
+ * Kept for reference and as a fallback escape hatch.
+ * To re-enable: import and register in renderers/index.ts
+ *
  * Renders a contact-card style popover for pages with type: Person.
  * Prominently displays the person's photo alongside their name,
  * role, organization, and contact details.
