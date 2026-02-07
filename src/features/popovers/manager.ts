@@ -1,7 +1,7 @@
 /**
  * Popover Manager
  *
- * Handles the popover lifecycle: hover detection on .page-ref elements,
+ * Handles the popover lifecycle: hover detection on .page-ref and .tag elements,
  * interactive hover behavior (popover stays open when hovered), positioning,
  * and renderer dispatch.
  *
@@ -15,6 +15,7 @@ import { getRenderer } from './renderers';
 const doc = top?.document ?? parent.document;
 
 const POPOVER_ID = 'pretty-logseq-popover';
+const REF_SELECTOR = '.page-ref, .tag';
 const SHOW_DELAY = 300;
 const HIDE_DELAY = 150;
 
@@ -85,9 +86,11 @@ function attachPopoverListeners(popover: HTMLElement): void {
 }
 
 async function showPopover(anchor: HTMLElement, pageName: string): Promise<void> {
-  const [pageData, blocks] = await Promise.all([getPage(pageName), getPageBlocks(pageName)]);
+  const pageData = await getPage(pageName);
   if (!pageData) return;
 
+  // Use the resolved page name for blocks (handles aliases)
+  const blocks = await getPageBlocks(pageData.name);
   pageData.blocks = blocks;
 
   // If anchor changed while we were fetching, abort
@@ -111,7 +114,10 @@ async function showPopover(anchor: HTMLElement, pageName: string): Promise<void>
 }
 
 function getPageNameFromRef(element: HTMLElement): string | null {
-  return element.getAttribute('data-ref') || element.textContent?.trim() || null;
+  const ref = element.getAttribute('data-ref');
+  if (ref) return ref;
+  const text = element.textContent?.trim();
+  return text ? text.replace(/^#/, '') : null;
 }
 
 /**
@@ -130,7 +136,7 @@ export function setupPopovers(): () => void {
 
   const handleEnter = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    const pageRef = target.closest?.('.page-ref') as HTMLElement | null;
+    const pageRef = target.closest?.(REF_SELECTOR) as HTMLElement | null;
     if (!pageRef) return;
 
     // If already showing for this anchor, just cancel any pending hide
@@ -167,7 +173,7 @@ export function setupPopovers(): () => void {
 
   const handleClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (target.closest?.('.page-ref')) {
+    if (target.closest?.(REF_SELECTOR)) {
       hidePopover();
     }
   };
