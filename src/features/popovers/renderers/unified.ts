@@ -1,9 +1,9 @@
 /**
  * Unified Popover Renderer
  *
- * Intelligently formats popovers for all page types based on a per-type
- * configuration map. Uses available page properties to build contextual
- * layouts with sections for header, description, details, links, and tags.
+ * Intelligently formats popovers for all page types by inferring the
+ * layout from available page properties. Uses a section pipeline:
+ * header → description → snippet → details → arrays → link → tags.
  */
 
 import { cleanPropertyValue } from '../../../lib/api';
@@ -19,14 +19,14 @@ import {
   formatUrlLabel,
   renderPropertyValue,
 } from './helpers';
-import { getTypeConfig, resolveSubtitle, type TypeConfig } from './type-config';
+import { type PopoverConfig, resolveConfig } from './type-config';
 
 /**
  * Render popover content for a page.
- * Selects the appropriate layout based on the page's type property.
+ * Layout is inferred from the page's available properties.
  */
 export function renderPopover(pageData: PageData): HTMLElement {
-  const config = getTypeConfig(pageData);
+  const config = resolveConfig(pageData);
   const content = document.createElement('div');
   content.className = 'pretty-popover__content';
 
@@ -38,7 +38,7 @@ export function renderPopover(pageData: PageData): HTMLElement {
     content.appendChild(createDescription(cleanPropertyValue(pageData.properties.description)));
   }
 
-  // 3. Content snippet (for types without rich properties)
+  // 3. Content snippet (for pages without rich properties)
   if (config.showSnippet) {
     const snippet = extractSnippet(pageData);
     if (snippet) {
@@ -62,8 +62,8 @@ export function renderPopover(pageData: PageData): HTMLElement {
     }
   }
 
-  // 6. Link section (prominent url if not already in details)
-  const linkSection = buildLinkSection(pageData, config);
+  // 6. Link section (url property as prominent link)
+  const linkSection = buildLinkSection(pageData);
   if (linkSection) content.appendChild(linkSection);
 
   // 7. Tags (type, status, area + extras)
@@ -73,7 +73,7 @@ export function renderPopover(pageData: PageData): HTMLElement {
   return content;
 }
 
-function buildHeader(pageData: PageData, config: TypeConfig): HTMLElement {
+function buildHeader(pageData: PageData, config: PopoverConfig): HTMLElement {
   const photoUrl = config.photoProperty
     ? extractUrl(pageData.properties[config.photoProperty])
     : null;
@@ -95,7 +95,7 @@ function buildHeader(pageData: PageData, config: TypeConfig): HTMLElement {
     const info = document.createElement('div');
     info.className = 'pretty-popover__header-info';
     info.appendChild(createTitle(pageData));
-    appendSubtitle(info, pageData, config);
+    appendSubtitle(info, config.subtitleText);
     card.appendChild(info);
 
     return card;
@@ -105,22 +105,21 @@ function buildHeader(pageData: PageData, config: TypeConfig): HTMLElement {
   const header = document.createElement('div');
   header.className = 'pretty-popover__header';
   header.appendChild(createTitle(pageData));
-  appendSubtitle(header, pageData, config);
+  appendSubtitle(header, config.subtitleText);
 
   return header;
 }
 
-function appendSubtitle(parent: HTMLElement, pageData: PageData, config: TypeConfig): void {
-  const subtitle = resolveSubtitle(pageData, config.subtitle);
-  if (!subtitle) return;
+function appendSubtitle(parent: HTMLElement, subtitleText: string | null): void {
+  if (!subtitleText) return;
 
   const el = document.createElement('div');
   el.className = 'pretty-popover__subtitle';
-  el.textContent = subtitle;
+  el.textContent = subtitleText;
   parent.appendChild(el);
 }
 
-function buildDetails(pageData: PageData, config: TypeConfig): HTMLElement | null {
+function buildDetails(pageData: PageData, config: PopoverConfig): HTMLElement | null {
   const rows: HTMLElement[] = [];
 
   for (const prop of config.detailProperties) {
@@ -142,10 +141,7 @@ function buildDetails(pageData: PageData, config: TypeConfig): HTMLElement | nul
   return container;
 }
 
-function buildLinkSection(pageData: PageData, config: TypeConfig): HTMLElement | null {
-  // Skip if url is already shown as a detail row
-  if (config.detailProperties.includes('url')) return null;
-
+function buildLinkSection(pageData: PageData): HTMLElement | null {
   const url = extractUrl(pageData.properties.url);
   if (!url) return null;
 
@@ -163,7 +159,7 @@ function buildLinkSection(pageData: PageData, config: TypeConfig): HTMLElement |
   return container;
 }
 
-function buildTags(pageData: PageData, config: TypeConfig): HTMLElement | null {
+function buildTags(pageData: PageData, config: PopoverConfig): HTMLElement | null {
   const values: string[] = [];
   const { type, status, area } = pageData.properties;
 

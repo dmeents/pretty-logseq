@@ -60,7 +60,7 @@ src/
 │   │   └── renderers/    # Popover content rendering
 │   │       ├── index.ts  # Re-exports renderPopover
 │   │       ├── unified.ts    # Config-driven renderer for all page types
-│   │       ├── type-config.ts # Per-type configuration map (16 types)
+│   │       ├── type-config.ts # Property-driven popover config inference
 │   │       └── helpers.ts    # Shared DOM helpers (title, tags, details)
 │   ├── topbar/           # Top bar customizations
 │   ├── sidebar/          # Left sidebar customizations
@@ -122,25 +122,20 @@ export const myFeature: Feature = {
 
 Popovers use a unified, config-driven renderer that adapts to any page type. The system has three layers:
 
-- **`type-config.ts`** — Defines per-type behavior: subtitle strategy, detail properties, extra tags, photo support, array properties, and snippet display. Supports 16 page types with a default fallback for unknown types.
+- **`type-config.ts`** — Property-driven inference engine. Classifies property names into roles (subtitle, detail row, tag pill) using priority-ordered lists. `resolveConfig(pageData)` analyzes available properties and returns a `PopoverConfig`. No per-type configuration needed.
 - **`helpers.ts`** — Shared DOM construction: title, description, tag pills, detail rows, smart property rendering (emails → links, URLs → formatted labels, ratings → stars).
 - **`unified.ts`** — The renderer, which builds popovers through a section pipeline: header → description → snippet → details → array tags → link section → property tags.
 
-#### Adding a New Page Type
+#### Adding Support for New Properties
 
-Add an entry to the `TYPE_CONFIGS` map in `type-config.ts`:
+Properties are classified by name in `type-config.ts`:
 
-```typescript
-'podcast': {
-  subtitle: [{ kind: 'property', name: 'host' }],
-  detailProperties: ['platform', 'rating'],
-  extraTags: [],
-  arrayProperties: [],
-  showSnippet: false,
-},
-```
+- **`SUBTITLE_PRIORITY`** — First matching property becomes the subtitle (e.g., `role`, `cuisine`, `author`)
+- **`DETAIL_PRIORITY`** — Properties shown as key-value rows (e.g., `rating`, `location`, `email`)
+- **`TAG_PROPERTIES`** — Properties rendered as extra tag pills (e.g., `relationship`, `initiative`)
+- **`MANAGED_PROPERTIES`** — Properties handled by dedicated sections (e.g., `type`, `url`, `photo`)
 
-No other code changes are needed — the unified renderer will automatically use the new config.
+Array-valued properties are auto-detected and rendered as pill groups. Photos are auto-detected from the `photo` property. New page types work automatically — no config changes needed.
 
 ### Style Management
 

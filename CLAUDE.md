@@ -93,7 +93,7 @@ pretty-logseq/
 │       │   └── renderers/      # Popover content rendering
 │       │       ├── index.ts    # Re-exports renderPopover
 │       │       ├── unified.ts  # Config-driven renderer for all page types
-│       │       ├── type-config.ts  # Per-type configuration map (16 types)
+│       │       ├── type-config.ts  # Property-driven popover config inference
 │       │       └── helpers.ts  # Shared DOM helpers (title, tags, details, etc.)
 │       ├── topbar/       # Top navigation
 │       ├── sidebar/      # Left sidebar
@@ -126,7 +126,7 @@ Features are self-contained with their own styles, initialization, and cleanup.
 
 Popovers use a unified, config-driven renderer that intelligently adapts to any page type. The system has three layers:
 
-1. **`type-config.ts`** — A configuration map defining per-type behavior (subtitle strategy, detail properties, extra tags, photo support, array properties, snippet display) for all 16 page types. Unknown types fall back to a default config that shows a content snippet.
+1. **`type-config.ts`** — Property-driven inference engine. Instead of a per-type config map, classifies property names into roles (subtitle, detail row, tag pill) using priority-ordered lists. `resolveConfig(pageData)` analyzes available properties and returns a `PopoverConfig`. Adding a new page type or property requires zero config changes.
 
 2. **`helpers.ts`** — Shared DOM construction utilities: title, description, tag pills, detail rows, smart property rendering (emails → mailto links, URLs → formatted external links, ratings → star display), content snippet extraction.
 
@@ -177,7 +177,7 @@ All styles are injected via a single `logseq.provideStyle()` call.
 - **src/core/registry.ts** - Feature lifecycle management
 - **src/features/popovers/manager.ts** - Popover hover lifecycle (show/hide, timers, positioning)
 - **src/features/popovers/renderers/unified.ts** - Config-driven popover renderer for all page types
-- **src/features/popovers/renderers/type-config.ts** - Per-type configuration map (subtitle, details, tags)
+- **src/features/popovers/renderers/type-config.ts** - Property-driven inference (subtitle, details, tags from property names)
 - **src/features/popovers/renderers/helpers.ts** - Shared DOM helpers (title, tags, detail rows, smart property rendering)
 - **src/lib/api.ts** - Page data fetching with 30s TTL cache, property value cleanup
 - **src/lib/dom.ts** - Viewport-aware positioning, element creation helpers

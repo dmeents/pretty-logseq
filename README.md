@@ -34,11 +34,9 @@ A single unified renderer automatically adapts to your page's `type::` property 
 
 Supports 16 page types out of the box: Person, Code Base, Book, Game, Restaurant, Recipe, Event, Company, Documentation, Project, Software, Website, Meeting, Resource, System, and Technology. Untyped pages get the default layout with title, description, content snippet, and tags.
 
-| Example       | Preview                                                             |
-| ------------- | ------------------------------------------------------------------- |
-| **Person**    | ![Person Popover](assets/screenshots/pretty-popover-person.png)     |
-| **Code Base** | ![Codebase Popover](assets/screenshots/pretty-popover-codebase.png) |
-| **And more!** | ![Default Popover](assets/screenshots/pretty-popover-resource.png)  |
+| Description                                                                                                                                                                                                                                                                              | Preview                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Supports 16 page types out of the box: Person, Code Base, Book, Game, Restaurant, Recipe, Event, Company, Documentation, Project, Software, Website, Meeting, Resource, System, and Technology. Untyped pages get the default layout with title, description, content snippet, and tags. | ![Person Popover](assets/screenshots/pretty-popover-person.png) |
 
 ### Pretty Links
 

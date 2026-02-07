@@ -1,202 +1,157 @@
 /**
- * Type Configuration Map
+ * Popover Configuration — Property-Driven Inference
  *
- * Defines per-type popover behavior: subtitle derivation, which properties
- * to display as detail rows, extra tags, photo support, array properties,
- * and whether to show a content snippet.
+ * Instead of a per-type config map, the popover layout is inferred from
+ * the page's actual properties. Property names are classified into roles
+ * (subtitle, detail row, tag pill, etc.) using priority-ordered lists.
+ * Adding a new page type or property requires zero config changes —
+ * the renderer automatically surfaces whatever is available.
  */
 
 import { cleanPropertyValue } from '../../../lib/api';
 import type { PageData } from '../../../types';
 
-export type SubtitleStrategy =
-  | { kind: 'template'; parts: { property: string; joinWith?: string }[] }
-  | { kind: 'property'; name: string };
-
-export interface TypeConfig {
-  /** Subtitle strategies tried in order — first non-empty wins */
-  subtitle: SubtitleStrategy[];
+export interface PopoverConfig {
+  /** Pre-resolved subtitle text (e.g. "Engineer at Acme") */
+  subtitleText: string | null;
+  /** Property name containing a photo URL, if present */
+  photoProperty?: string;
   /** Properties to display as key-value detail rows, in display order */
   detailProperties: string[];
-  /** Additional tag pills beyond type/status/area */
+  /** Additional tag pill values beyond type/status/area */
   extraTags: string[];
-  /** Property name containing a photo/image URL */
-  photoProperty?: string;
-  /** Properties whose values render as pill arrays (e.g. stack) */
+  /** Property names whose values are arrays, rendered as pill groups */
   arrayProperties: string[];
   /** Whether to show a content snippet from page blocks */
   showSnippet: boolean;
 }
 
-const DEFAULT_CONFIG: TypeConfig = {
-  subtitle: [],
-  detailProperties: [],
-  extraTags: [],
-  arrayProperties: [],
-  showSnippet: true,
-};
+/**
+ * Subtitle priority — first property found on the page wins.
+ * `role` is special: if `organization` also exists, they combine
+ * as "Role at Organization".
+ */
+const SUBTITLE_PRIORITY = ['role', 'cuisine', 'author', 'platform', 'owner', 'source', 'date'];
 
-const TYPE_CONFIGS: Record<string, TypeConfig> = {
-  person: {
-    subtitle: [
-      {
-        kind: 'template',
-        parts: [{ property: 'role' }, { property: 'organization', joinWith: ' at ' }],
-      },
-    ],
-    detailProperties: ['location', 'email', 'phone'],
-    extraTags: ['relationship'],
-    photoProperty: 'photo',
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  'code base': {
-    subtitle: [{ kind: 'property', name: 'owner' }],
-    detailProperties: [],
-    extraTags: [],
-    arrayProperties: ['stack'],
-    showSnippet: false,
-  },
-  book: {
-    subtitle: [{ kind: 'property', name: 'author' }],
-    detailProperties: ['rating'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  game: {
-    subtitle: [{ kind: 'property', name: 'platform' }],
-    detailProperties: ['rating', 'genre'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  restaurant: {
-    subtitle: [{ kind: 'property', name: 'cuisine' }],
-    detailProperties: ['rating', 'location', 'address'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  recipe: {
-    subtitle: [{ kind: 'property', name: 'cuisine' }],
-    detailProperties: ['rating', 'source', 'author'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  event: {
-    subtitle: [{ kind: 'property', name: 'date' }],
-    detailProperties: ['location', 'address'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  company: {
-    subtitle: [],
-    detailProperties: ['location', 'address'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  documentation: {
-    subtitle: [{ kind: 'property', name: 'author' }],
-    detailProperties: ['repository'],
-    extraTags: ['initiative'],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  project: {
-    subtitle: [],
-    detailProperties: ['repository', 'platform'],
-    extraTags: ['initiative'],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  software: {
-    subtitle: [{ kind: 'property', name: 'platform' }],
-    detailProperties: ['rating', 'repository'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  website: {
-    subtitle: [{ kind: 'property', name: 'source' }],
-    detailProperties: ['rating'],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  meeting: {
-    subtitle: [],
-    detailProperties: [],
-    extraTags: ['initiative'],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  resource: {
-    subtitle: [],
-    detailProperties: [],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  system: {
-    subtitle: [],
-    detailProperties: [],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-  technology: {
-    subtitle: [],
-    detailProperties: [],
-    extraTags: [],
-    arrayProperties: [],
-    showSnippet: false,
-  },
-};
+/**
+ * Detail row priority — properties shown as labeled key-value rows,
+ * in this display order. Only properties that exist on the page are shown.
+ * The subtitle property is automatically excluded to avoid duplication.
+ */
+const DETAIL_PRIORITY = [
+  'rating',
+  'location',
+  'address',
+  'email',
+  'phone',
+  'genre',
+  'cuisine',
+  'repository',
+  'source',
+  'platform',
+  'author',
+  'owner',
+  'date',
+];
 
-/** Look up the config for a page's type. Falls back to DEFAULT_CONFIG. */
-export function getTypeConfig(pageData: PageData): TypeConfig {
-  const { type } = pageData.properties;
-  if (!type) return DEFAULT_CONFIG;
-  const key = cleanPropertyValue(type).toLowerCase();
-  return TYPE_CONFIGS[key] ?? DEFAULT_CONFIG;
+/** Properties rendered as extra tag pills (beyond type/status/area). */
+const TAG_PROPERTIES = ['relationship', 'initiative'];
+
+/**
+ * Properties that are displayed in their own dedicated sections and
+ * should not appear as detail rows or array pills.
+ */
+const MANAGED_PROPERTIES = new Set([
+  'type',
+  'icon',
+  'status',
+  'area',
+  'description',
+  'created',
+  'url',
+  'photo',
+  'role',
+  'organization',
+]);
+
+/**
+ * Analyze a page's properties and return a PopoverConfig that drives
+ * the unified renderer. No per-type lookup — everything is inferred
+ * from what properties actually exist on the page.
+ */
+export function resolveConfig(pageData: PageData): PopoverConfig {
+  const props = pageData.properties;
+
+  // 1. Photo: check if a photo property exists with a URL value
+  const photoProperty = props.photo ? 'photo' : undefined;
+
+  // 2. Subtitle: walk priority list, special-case role+organization
+  const { text: subtitleText, consumed: subtitleConsumed } = resolveSubtitle(props);
+
+  // 3. Detail rows: walk priority list, exclude consumed properties
+  const excluded = new Set([...MANAGED_PROPERTIES, ...subtitleConsumed, ...TAG_PROPERTIES]);
+  const detailProperties = DETAIL_PRIORITY.filter(p => props[p] && !excluded.has(p));
+
+  // 4. Array properties: auto-detect multi-value properties not shown elsewhere
+  const detailSet = new Set(detailProperties);
+  const arrayProperties: string[] = [];
+  for (const [key, value] of Object.entries(props)) {
+    if (excluded.has(key) || detailSet.has(key)) continue;
+    if (Array.isArray(value)) {
+      arrayProperties.push(key);
+    }
+  }
+
+  // 5. Extra tags: tag-worthy properties that exist on the page
+  const extraTags = TAG_PROPERTIES.filter(p => props[p]);
+
+  // 6. Snippet: show when no rich structured content was found
+  const hasRichContent =
+    detailProperties.length > 0 || arrayProperties.length > 0 || Boolean(props.url);
+  const showSnippet = !hasRichContent;
+
+  return {
+    subtitleText,
+    photoProperty,
+    detailProperties,
+    extraTags,
+    arrayProperties,
+    showSnippet,
+  };
 }
 
 /**
- * Resolve the subtitle string from an ordered list of strategies.
- * Returns null if no strategy produces a non-empty result.
+ * Resolve subtitle text from page properties using a priority list.
+ * Special case: `role` and `organization` combine as "Role at Org".
+ * Returns the resolved text and which properties were consumed.
  */
-export function resolveSubtitle(pageData: PageData, strategies: SubtitleStrategy[]): string | null {
-  for (const strategy of strategies) {
-    const result = applyStrategy(pageData, strategy);
-    if (result) return result;
-  }
-  return null;
-}
+function resolveSubtitle(props: Record<string, unknown>): {
+  text: string | null;
+  consumed: string[];
+} {
+  for (const prop of SUBTITLE_PRIORITY) {
+    if (prop === 'role') {
+      // Special template: role + organization
+      const role = props.role ? cleanPropertyValue(props.role) : null;
+      const org = props.organization ? cleanPropertyValue(props.organization) : null;
 
-function applyStrategy(pageData: PageData, strategy: SubtitleStrategy): string | null {
-  switch (strategy.kind) {
-    case 'property': {
-      const val = pageData.properties[strategy.name];
-      return val ? cleanPropertyValue(val) : null;
-    }
-    case 'template': {
-      const parts: string[] = [];
-      for (const part of strategy.parts) {
-        const val = pageData.properties[part.property];
-        if (!val) continue;
-        const cleaned = cleanPropertyValue(val);
-        if (!cleaned) continue;
-        if (part.joinWith && parts.length > 0) {
-          parts.push(part.joinWith + cleaned);
-        } else {
-          parts.push(cleaned);
-        }
+      if (role && org) {
+        return { text: `${role} at ${org}`, consumed: ['role', 'organization'] };
       }
-      return parts.length > 0 ? parts.join('') : null;
+      if (role) {
+        return { text: role, consumed: ['role'] };
+      }
+      if (org) {
+        return { text: org, consumed: ['organization'] };
+      }
+      continue;
+    }
+
+    const val = props[prop];
+    if (val) {
+      return { text: cleanPropertyValue(val), consumed: [prop] };
     }
   }
+
+  return { text: null, consumed: [] };
 }
