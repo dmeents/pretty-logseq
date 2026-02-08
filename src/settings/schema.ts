@@ -1,10 +1,3 @@
-/**
- * Plugin Settings Schema
- *
- * Defines the settings UI shown in Logseq's plugin settings panel.
- * Uses Logseq's useSettingsSchema API.
- */
-
 import type { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
 
 export interface PluginSettings {

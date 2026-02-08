@@ -1,7 +1,3 @@
-/**
- * Tests for Settings Management
- */
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { defaultSettings, getSettings, initSettings, onSettingsChanged } from './index';
 
@@ -145,7 +141,10 @@ describe('Settings Management', () => {
 
       // Check that defaults were merged
       const [receivedNew, receivedOld] = callback.mock.calls[0];
-      expect(receivedNew).toEqual({ ...defaultSettings, enablePopovers: false });
+      expect(receivedNew).toEqual({
+        ...defaultSettings,
+        enablePopovers: false,
+      });
       expect(receivedOld).toEqual({ ...defaultSettings, enablePopovers: true });
     });
 

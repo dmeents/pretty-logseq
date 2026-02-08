@@ -1,9 +1,3 @@
-/**
- * Logseq API Helpers
- *
- * Wrapper functions around Logseq's Plugin API with caching and error handling.
- */
-
 import type { BlockData, PageData, PageProperties } from '../types';
 
 interface CacheEntry<T> {
@@ -14,9 +8,6 @@ interface CacheEntry<T> {
 const pageCache = new Map<string, CacheEntry<PageData>>();
 const CACHE_TTL = 30000; // 30 seconds
 
-/**
- * Get page data with optional caching
- */
 export async function getPage(
   pageName: string,
   options: { useCache?: boolean } = {},
@@ -24,7 +15,6 @@ export async function getPage(
   const { useCache = true } = options;
   const cacheKey = pageName.toLowerCase();
 
-  // Check cache
   if (useCache) {
     const cached = pageCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -51,12 +41,7 @@ export async function getPage(
       }
     }
 
-    // Update cache
-    pageCache.set(cacheKey, {
-      data: pageData,
-      timestamp: Date.now(),
-    });
-
+    pageCache.set(cacheKey, { data: pageData, timestamp: Date.now() });
     return pageData;
   } catch (err) {
     console.error(`[Pretty Logseq] Failed to fetch page "${pageName}":`, err);
@@ -64,9 +49,6 @@ export async function getPage(
   }
 }
 
-/**
- * Clear the page cache
- */
 export function clearPageCache(pageName?: string): void {
   if (pageName) {
     pageCache.delete(pageName.toLowerCase());
@@ -75,9 +57,6 @@ export function clearPageCache(pageName?: string): void {
   }
 }
 
-/**
- * Get the current theme mode
- */
 export async function getThemeMode(): Promise<'light' | 'dark'> {
   try {
     const configs = await logseq.App.getUserConfigs();

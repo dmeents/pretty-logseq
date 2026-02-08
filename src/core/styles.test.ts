@@ -51,9 +51,9 @@ describe('Style Management', () => {
       const call = logseq.provideStyle.mock.calls[0][0];
       const styles = call.style as string;
 
-      // Should always include page properties and headers
-      expect(styles).toContain('Pretty Logseq Plugin Styles');
-      expect(styles).toContain('Component Styles');
+      // Should always include theme and feature styles
+      expect(styles).toContain('/* theme styles */');
+      expect(styles).toContain('/* feature styles */');
     });
 
     it('includes theme CSS', async () => {
@@ -197,16 +197,15 @@ describe('Style Management', () => {
       expect(call.key).toBe('pretty-logseq-styles');
     });
 
-    it('includes header comments in output', () => {
+    it('includes all style sections in output', () => {
       injectStyles();
 
       const call = logseq.provideStyle.mock.calls[0][0];
       const styles = call.style as string;
 
-      expect(styles).toContain('Pretty Logseq Plugin Styles');
-      expect(styles).toContain('Theme Colors');
-      expect(styles).toContain('Component Styles');
-      expect(styles).toContain('Feature Styles');
+      // Aggregated output includes theme CSS and feature styles
+      expect(styles).toContain('/* theme styles */');
+      expect(styles).toContain('/* feature styles */');
     });
   });
 

@@ -22,9 +22,6 @@ import { generateThemeCSS } from './theme';
 
 const STYLE_KEY = 'pretty-logseq-styles';
 
-/**
- * Inject all plugin styles into Logseq
- */
 export function injectStyles(): void {
   const settings = getSettings();
 
@@ -33,42 +30,38 @@ export function injectStyles(): void {
   if (settings.enablePrettyTypography) {
     componentStyles.push(typographyStyles);
   }
+
   if (settings.enablePrettyTables) {
     componentStyles.push(tablesStyles);
   }
+
   if (settings.enablePrettyTemplates) {
     componentStyles.push(templateBlocksStyles);
   }
 
-  // Conditionally include sidebar styles based on settings
   if (settings.compactSidebarNav) {
     componentStyles.push(sidebarNavStyles);
   }
+
   if (settings.hideCreateButton) {
     componentStyles.push(sidebarHideCreateStyles);
   }
+
   if (settings.graphSelectorBottom) {
     componentStyles.push(sidebarGraphBottomStyles);
   }
+
   if (settings.hideHomeButton) {
     componentStyles.push(topbarHideHomeStyles);
   }
+
   if (settings.hideSyncIndicator) {
     componentStyles.push(topbarHideSyncStyles);
   }
 
   const aggregatedStyles = [
-    '/* ========================================',
-    '   Pretty Logseq Plugin Styles',
-    '   ======================================== */',
-    '',
-    '/* Theme Colors (auto-detected from Logseq) */',
     generateThemeCSS(),
-    '',
-    '/* Component Styles */',
     ...componentStyles,
-    '',
-    '/* Feature Styles */',
     registry.getAggregatedStyles(),
   ].join('\n');
 
@@ -78,9 +71,6 @@ export function injectStyles(): void {
   });
 }
 
-/**
- * Re-inject styles (for dynamic updates)
- */
 export function refreshStyles(): void {
   injectStyles();
 }

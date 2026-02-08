@@ -1,7 +1,3 @@
-// ==========================================================================
-// POPOVERS
-// ==========================================================================
-
 // Suppress native Logseq preview popups
 // Modern Logseq uses Radix UI popovers with .ls-preview-popup
 .ls-preview-popup {
@@ -86,14 +82,37 @@
     border: 1px solid var(--pl-accent-light);
   }
 
-  // Person card layout
-  &__person-card {
+  // === Unified Renderer Sections ===
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: var(--ls-secondary-text-color);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  &__aliases {
+    font-size: 11px;
+    font-style: italic;
+    color: var(--ls-secondary-text-color);
+    opacity: 0.65;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  &__photo-card {
     display: flex;
     gap: 14px;
     align-items: flex-start;
   }
 
-  &__person-photo {
+  &__photo {
     flex-shrink: 0;
     width: 72px;
     height: 72px;
@@ -109,7 +128,7 @@
     }
   }
 
-  &__person-info {
+  &__header-info {
     flex: 1;
     min-width: 0;
     display: flex;
@@ -118,49 +137,7 @@
     gap: 2px;
   }
 
-  &__person-subtitle {
-    font-size: 12px;
-    color: var(--ls-secondary-text-color);
-    line-height: 1.4;
-    margin-top: 2px;
-  }
-
-  // Code Base repo link
-  &__codebase-repo {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--pl-accent-light);
-  }
-
-  &__codebase-link {
-    font-size: 12px;
-    color: var(--pl-accent);
-    text-decoration: none;
-    word-break: break-all;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  &__codebase-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 8px;
-  }
-
-  &__codebase-stack-tag {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 1px 7px;
-    border-radius: 3px;
-    background: var(--ls-tertiary-background-color);
-    color: var(--ls-secondary-text-color);
-    border: 1px solid var(--ls-border-color);
-  }
-
-  &__person-details {
+  &__details {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -169,7 +146,7 @@
     border-top: 1px solid var(--pl-accent-light);
   }
 
-  &__person-detail {
+  &__detail-row {
     display: flex;
     align-items: baseline;
     gap: 8px;
@@ -177,15 +154,61 @@
     line-height: 1.4;
   }
 
-  &__person-label {
+  &__detail-label {
     color: var(--ls-secondary-text-color);
     font-weight: 500;
     flex-shrink: 0;
     min-width: 56px;
   }
 
-  &__person-value {
+  &__detail-value {
     color: var(--ls-primary-text-color);
+  }
+
+  &__detail-link {
+    font-size: 12px;
+    color: var(--pl-accent);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__rating {
+    color: var(--pl-accent-text);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  &__array-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+
+    .pretty-popover__tag {
+      background: var(--ls-tertiary-background-color);
+      color: var(--ls-secondary-text-color);
+      border-color: var(--ls-border-color);
+    }
+  }
+
+  &__link-section {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--pl-accent-light);
+  }
+
+  &__external-link {
+    font-size: 12px;
+    color: var(--pl-accent);
+    text-decoration: none;
+    word-break: break-all;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 

@@ -1,12 +1,4 @@
-// ==========================================================================
-// PRETTY TODOS
-// ==========================================================================
-// Task blocks styled as subtle grey gradient cards with colored left borders
-// to indicate status. Matches the gradient style used by template blocks.
-
-// ---------------------------------------------------------------------------
 // Shared card base — grey gradient background for all task blocks
-// ---------------------------------------------------------------------------
 .block-content-wrapper:has(.todo),
 .block-content-wrapper:has(.doing),
 .block-content-wrapper:has(.now),
@@ -20,19 +12,17 @@
   border-left: 3px solid transparent;
   margin: 2px 0;
   background: rgba(128, 128, 128, 0.06);
-  transition: border-color 0.15s ease, opacity 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    opacity 0.15s ease;
 }
 
-// ---------------------------------------------------------------------------
 // TODO — neutral
-// ---------------------------------------------------------------------------
 .block-content-wrapper:has(.todo) {
   border-left-color: white;
 }
 
-// ---------------------------------------------------------------------------
 // DOING / NOW — accent border, active state
-// ---------------------------------------------------------------------------
 .block-content-wrapper:has(.doing),
 .block-content-wrapper:has(.now) {
   border-left-color: var(--pl-accent);
@@ -42,17 +32,13 @@
   }
 }
 
-// ---------------------------------------------------------------------------
 // LATER / WAITING — white border, deferred
-// ---------------------------------------------------------------------------
 .block-content-wrapper:has(.later),
 .block-content-wrapper:has(.waiting) {
   border-left-color: white;
 }
 
-// ---------------------------------------------------------------------------
 // DONE — green border, dimmed
-// ---------------------------------------------------------------------------
 .block-content-wrapper:has(.done) {
   border-left-color: rgba(34, 197, 94, 0.5);
   opacity: 0.75;
@@ -63,9 +49,7 @@
   }
 }
 
-// ---------------------------------------------------------------------------
 // CANCELLED — grey border, dimmed, with injected label
-// ---------------------------------------------------------------------------
 .block-content-wrapper:has(.canceled),
 .block-content-wrapper:has(.cancelled) {
   border-left-color: rgba(148, 163, 184, 0.3);
@@ -87,9 +71,7 @@
   margin-right: 6px;
 }
 
-// ---------------------------------------------------------------------------
 // Priority indicators — colored inline labels
-// ---------------------------------------------------------------------------
 a.priority {
   font-weight: 700;
   font-size: 0.75em;
@@ -114,10 +96,8 @@ a.priority[href="#/page/C" i] {
   color: rgb(96, 165, 250);
 }
 
-// ---------------------------------------------------------------------------
 // Past-due indicator (added by JS observer) — red border override.
 // Doubled class bumps specificity above the status-specific rules.
-// ---------------------------------------------------------------------------
 .ls-block.pl-past-due .block-content-wrapper.block-content-wrapper {
   border-left-color: rgba(245, 158, 11, 0.7);
 }

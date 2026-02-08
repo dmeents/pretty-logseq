@@ -1,6 +1,3 @@
-// ==========================================================================
-// TEMPLATE BLOCKS
-// ==========================================================================
 // Styles the template body (children of the block with template:: property)
 // as a contained, dimmed card so it reads as a "behind the scenes" definition.
 // The template:: definition block itself is left unstyled.
@@ -11,10 +8,11 @@ div.ls-block:has(* > .block-properties a[data-ref="template"]) {
     transition: all 0.15s ease;
     border: 1px dashed;
     border-image: linear-gradient(
-      to right,
-      transparent,
-      rgba(128, 128, 128, 0.75)
-    ) 1;
+        to right,
+        transparent,
+        rgba(128, 128, 128, 0.75)
+      )
+      1;
     background: linear-gradient(
       to right,
       transparent,

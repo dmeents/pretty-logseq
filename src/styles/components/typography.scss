@@ -1,12 +1,7 @@
-// ==========================================================================
-// TYPOGRAPHY
 // Subtle rendering and spacing refinements for modern legibility.
 // Does NOT change the base font family — only enhances how text renders.
-// ==========================================================================
 
-// ---------------------------------------------------------------------------
 // Global text rendering
-// ---------------------------------------------------------------------------
 #app-container {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -18,16 +13,12 @@
   font-kerning: normal;
 }
 
-// ---------------------------------------------------------------------------
 // Body text — gentle tightening, keep Logseq's natural line-height
-// ---------------------------------------------------------------------------
 #main-content-container {
   letter-spacing: -0.005em;
 }
 
-// ---------------------------------------------------------------------------
 // Headings — subtle progressive tightening from h6 → h1
-// ---------------------------------------------------------------------------
 .ls-block {
   h1 {
     letter-spacing: -0.02em;
@@ -58,26 +49,20 @@
   }
 }
 
-// ---------------------------------------------------------------------------
 // Page title
-// ---------------------------------------------------------------------------
 .page-title,
 h1.title {
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
 
-// ---------------------------------------------------------------------------
 // Sidebar
-// ---------------------------------------------------------------------------
 .left-sidebar-inner {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-// ---------------------------------------------------------------------------
 // Code blocks — modern monospace stack with ligatures
-// ---------------------------------------------------------------------------
 .CodeMirror,
 code,
 pre,

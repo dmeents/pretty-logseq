@@ -57,11 +57,11 @@ src/
 │   │   ├── index.ts      # Feature entry point
 │   │   ├── manager.ts    # Hover lifecycle (show/hide, timers, positioning)
 │   │   ├── styles.scss   # Popover styles
-│   │   └── renderers/    # Pluggable popover content renderers
-│   │       ├── index.ts  # Renderer registry
-│   │       ├── default.ts
-│   │       ├── person.ts
-│   │       └── resource.ts
+│   │   └── renderers/    # Popover content rendering
+│   │       ├── index.ts  # Re-exports renderPopover
+│   │       ├── unified.ts    # Config-driven renderer for all page types
+│   │       ├── type-config.ts # Property-driven popover config inference
+│   │       └── helpers.ts    # Shared DOM helpers (title, tags, details)
 │   ├── topbar/           # Top bar customizations
 │   ├── sidebar/          # Left sidebar customizations
 │   └── search/           # Search interface (placeholder)
@@ -120,46 +120,22 @@ export const myFeature: Feature = {
 
 ### Popover Renderer System
 
-Popovers use a pluggable renderer pattern. Each renderer decides whether it can handle a given page and builds the DOM content:
+Popovers use a unified, config-driven renderer that adapts to any page type. The system has three layers:
 
-```typescript
-interface PopoverRenderer {
-  id: string;
-  match(pageData: PageData): boolean;
-  render(pageData: PageData): HTMLElement;
-}
-```
+- **`type-config.ts`** — Property-driven inference engine. Classifies property names into roles (subtitle, detail row, tag pill) using priority-ordered lists. `resolveConfig(pageData)` analyzes available properties and returns a `PopoverConfig`. No per-type configuration needed.
+- **`helpers.ts`** — Shared DOM construction: title, description, tag pills, detail rows, smart property rendering (emails → links, URLs → formatted labels, ratings → stars).
+- **`unified.ts`** — The renderer, which builds popovers through a section pipeline: header → description → snippet → details → array tags → link section → property tags.
 
-Renderers are checked in registration order (first match wins) with the default renderer as fallback.
+#### Adding Support for New Properties
 
-#### Adding a Custom Renderer
+Properties are classified by name in `type-config.ts`:
 
-1. Implement `PopoverRenderer` in `src/features/popovers/renderers/`
-2. Call `registerRenderer(myRenderer)` during feature init
-3. Register the renderer before the default renderer for priority matching
+- **`SUBTITLE_PRIORITY`** — First matching property becomes the subtitle (e.g., `role`, `cuisine`, `author`)
+- **`DETAIL_PRIORITY`** — Properties shown as key-value rows (e.g., `rating`, `location`, `email`)
+- **`TAG_PROPERTIES`** — Properties rendered as extra tag pills (e.g., `relationship`, `initiative`)
+- **`MANAGED_PROPERTIES`** — Properties handled by dedicated sections (e.g., `type`, `url`, `photo`)
 
-Example:
-
-```typescript
-import { registerRenderer } from './index';
-import type { PopoverRenderer, PageData } from '../../../types';
-
-export const myRenderer: PopoverRenderer = {
-  id: 'my-renderer',
-  match(pageData: PageData): boolean {
-    return pageData.properties?.type === 'my-type';
-  },
-  render(pageData: PageData): HTMLElement {
-    const container = document.createElement('div');
-    container.className = 'my-popover';
-    // Build your custom DOM structure
-    return container;
-  },
-};
-
-// In feature init:
-registerRenderer(myRenderer);
-```
+Array-valued properties are auto-detected and rendered as pill groups. Photos are auto-detected from the `photo` property. New page types work automatically — no config changes needed.
 
 ### Style Management
 

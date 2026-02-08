@@ -10,7 +10,6 @@
  */
 
 const doc = parent.document;
-
 const NAV_CLONE_ID = 'pl-nav-arrows';
 
 /**
@@ -21,12 +20,13 @@ const NAV_CLONE_ID = 'pl-nav-arrows';
  */
 export function createNavArrowsInLeft(): (() => void) | null {
   const headLeft = doc.querySelector('#head .l');
+  const originalNavPanel = doc.querySelector('.r .flex.flex-row');
+
   if (!headLeft) {
     console.warn('[Pretty Logseq] Could not find #head .l');
     return null;
   }
 
-  const originalNavPanel = doc.querySelector('.r .flex.flex-row');
   if (!originalNavPanel) {
     console.warn('[Pretty Logseq] Could not find navigation panel');
     return null;
@@ -46,12 +46,14 @@ export function createNavArrowsInLeft(): (() => void) | null {
   if (backBtn) {
     backBtn.addEventListener('click', () => parent.window.history.back());
   }
+
   if (fwdBtn) {
     fwdBtn.addEventListener('click', () => parent.window.history.forward());
   }
 
   // Insert after the sidebar toggler (first child of left section)
   const sidebarToggler = headLeft.firstElementChild;
+
   if (sidebarToggler) {
     sidebarToggler.insertAdjacentElement('afterend', clone);
   } else {

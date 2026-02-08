@@ -1,19 +1,7 @@
-/**
- * Todo Observer
- *
- * Uses a MutationObserver to:
- * 1. Detect task blocks with past-due SCHEDULED/DEADLINE dates
- * 2. Inject a "CANCELLED" label into cancelled task blocks
- */
-
 const doc = top?.document ?? parent.document;
-
 const PAST_DUE_CLASS = 'pl-past-due';
 const CANCELLED_LABEL_CLASS = 'pl-cancelled-label';
 
-/**
- * Get today's date as YYYY-MM-DD string for comparison
- */
 function getTodayString(): string {
   const now = new Date();
   const year = now.getFullYear();
@@ -84,17 +72,10 @@ function processCancelledLabel(block: Element): void {
     // The .canceled/.cancelled span wraps the entire task content,
     // so prepend inside it to place the label before the task text
     const marker = wrapper.querySelector('.canceled, .cancelled');
-    if (marker) {
-      marker.prepend(label);
-    }
-  } else if (!isCancelled && existingLabel) {
-    existingLabel.remove();
-  }
+    if (marker) marker.prepend(label);
+  } else if (!isCancelled && existingLabel) existingLabel.remove();
 }
 
-/**
- * Process a single block element.
- */
 function processBlock(block: Element, today: string): void {
   // Past-due detection
   if (hasActiveTaskMarker(block) && isPastDue(block, today)) {
@@ -107,9 +88,6 @@ function processBlock(block: Element, today: string): void {
   processCancelledLabel(block);
 }
 
-/**
- * Scan all task blocks in the document.
- */
 function scanBlocks(today: string): void {
   const blocks = doc.querySelectorAll('.ls-block');
   for (const block of blocks) {
@@ -132,9 +110,12 @@ function cleanupAll(): void {
 /**
  * Setup the MutationObserver for task block enhancements.
  * Returns a cleanup function.
+ *
+ * Uses a MutationObserver to:
+ * 1. Detect task blocks with past-due SCHEDULED/DEADLINE dates
+ * 2. Inject a "CANCELLED" label into cancelled task blocks
  */
 export function setupTodoObserver(): () => void {
-  // Initial scan
   scanBlocks(getTodayString());
 
   // Batch mutations via requestAnimationFrame
@@ -154,9 +135,7 @@ export function setupTodoObserver(): () => void {
 
   return () => {
     observer.disconnect();
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-    }
+    if (rafId !== null) cancelAnimationFrame(rafId);
     cleanupAll();
   };
 }

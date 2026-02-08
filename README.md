@@ -19,20 +19,15 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 
 ### Pretty Popovers
 
-Stop scrolling through cluttered page link previews. Get **rich, context-aware popovers** that show you what's important on the page before you click. The plugin intelligently detects page types and adapts the layout to show exactly what matters. **Requires specific page properties to be set.**
-
-| Layout        | Description                                                                                                                                                                                                                                                                                                                 | Preview                                                             |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Default**   | The fallback layout that works for any page. Displays page icon, title, description, content preview, and key properties at a glance.<br><br>**Trigger:** Automatic for all pages without a specific `type::` property.                                                                                                     | ![Default Popover](assets/screenshots/pretty-popover-default.png)   |
-| **Person**    | Contact card layout with photo, name, role, organization, and contact details. Perfect for your personal CRM in Logseq.<br><br>**Trigger:** Add `type:: person` to your page properties.<br><br>**Optional properties:** `photo::`, `role::`, `organization::`, `location::`, `email::`, `phone::`, `relationship::`        | ![Person Popover](assets/screenshots/pretty-popover-person.png)     |
-| **Resource**  | Compact card design optimized for links, articles, documentation, and reference materials. Shows what matters without the clutter.<br><br>**Trigger:** Add `type:: resource` to your page properties.<br><br>**Optional properties:** `description::`, `status::`, `area::`                                                 | ![Resource Popover](assets/screenshots/pretty-popover-resource.png) |
-| **Code Base** | Technical layout built for repository documentation. Displays the repo URL as a clickable link, tech stack tags, and project status.<br><br>**Trigger:** Add `type:: code base` to your page properties.<br><br>**Optional properties:** `description::`, `url::`, `stack::` (can be multiple values), `status::`, `area::` | ![Codebase Popover](assets/screenshots/pretty-popover-codebase.png) |
+| Description                                                                                                                                                                                                                                                                                                                            | Preview                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Stop scrolling through cluttered page link previews. Get **rich, context-aware popovers** that show you what matters before you click.<br><br>Popovers automatically adapt to whatever properties your pages have — add a `photo::`, `rating::`, `description::`, or any other property and it just shows up. No configuration needed. | ![Person Popover](assets/screenshots/pretty-popover-person.png) |
 
 ### Pretty Links
 
-| Description                                                                                                                                                                                                                                                                                                                       | Preview                                              |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Transform your page references from plain text into **visually distinct, styled links** that make your graph easier to scan and navigate. Links stand out with subtle styling that respects your theme while improving readability. Makes it effortless to spot references, external links, and internal connections at a glance. | ![Pretty Links](assets/screenshots/pretty-links.png) |
+| Description                                                                                                                                                                                                                                                                                                                     | Preview                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Transform your external urls from plain text into **visually distinct, styled links** that make your graph easier to scan and navigate. Links stand out with subtle styling that respects your theme while improving readability. Makes it effortless to spot references, external links, and internal connections at a glance. | ![Pretty Links](assets/screenshots/pretty-links.png) |
 
 ### Pretty Properties
 
@@ -93,7 +88,7 @@ All features can be toggled on or off through Logseq's plugin settings. Changes 
 ## Usage Tips
 
 - **Hover** over page links to see the custom popovers (200ms delay prevents accidental triggers)
-- **Use page properties** like `type:: Person` or `type:: Resource` to automatically get specialized popover layouts
+- **Use page properties** like `type:: Person` or `type:: Code Base` to automatically get contextual popover layouts
 - **Customize to taste** — all features are optional and can be mixed and matched through settings
 
 ## Support

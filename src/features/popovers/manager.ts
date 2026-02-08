@@ -1,17 +1,8 @@
-/**
- * Popover Manager
- *
- * Handles the popover lifecycle: hover detection on .page-ref and .tag elements,
- * interactive hover behavior (popover stays open when hovered), positioning,
- * and renderer dispatch.
- *
- * Uses top.document since plugins run in an iframe.
- */
-
 import { getPage, getPageBlocks } from '../../lib/api';
 import { positionElement, removeElementById } from '../../lib/dom';
-import { getRenderer } from './renderers';
+import { renderPopover } from './renderers';
 
+// Uses top.document since plugins run in an iframe.
 const doc = top?.document ?? parent.document;
 
 const POPOVER_ID = 'pretty-logseq-popover';
@@ -100,8 +91,7 @@ async function showPopover(anchor: HTMLElement, pageName: string): Promise<void>
   cleanupPopoverListeners();
   removeElementById(POPOVER_ID);
 
-  const renderer = getRenderer(pageData);
-  const content = renderer.render(pageData);
+  const content = renderPopover(pageData);
 
   const popover = doc.createElement('div');
   popover.id = POPOVER_ID;
@@ -153,29 +143,24 @@ export function setupPopovers(): () => void {
     // Attach mouseleave to this specific anchor
     const onAnchorLeave = () => {
       clearShowTimer();
-      if (getPopover()) {
-        scheduleHide();
-      } else {
-        currentAnchor = null;
-      }
+      if (getPopover()) scheduleHide();
+      else currentAnchor = null;
       anchorLeaveCleanup = null;
     };
+
     pageRef.addEventListener('mouseleave', onAnchorLeave, { once: true });
+
     anchorLeaveCleanup = () => pageRef.removeEventListener('mouseleave', onAnchorLeave);
 
     showTimer = setTimeout(() => {
       const pageName = getPageNameFromRef(pageRef);
-      if (pageName && currentAnchor === pageRef) {
-        showPopover(pageRef, pageName);
-      }
+      if (pageName && currentAnchor === pageRef) showPopover(pageRef, pageName);
     }, SHOW_DELAY);
   };
 
   const handleClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (target.closest?.(REF_SELECTOR)) {
-      hidePopover();
-    }
+    if (target.closest?.(REF_SELECTOR)) hidePopover();
   };
 
   // Capturing phase intercepts before Logseq's own handlers

@@ -1,20 +1,5 @@
-/**
- * Theme Color Management
- *
- * Reads Logseq's theme colors and injects them into our CSS variables.
- * This is needed because Logseq's CSS variables aren't directly accessible
- * from plugin-injected styles.
- *
- * Approach based on logseq-awesome-ui: https://github.com/yoyurec/logseq-awesome-ui
- */
-
-// Access parent document directly (plugins run in iframe)
 const doc = parent.document;
 
-/**
- * Get a CSS color by creating a temporary element with the CSS variable
- * This is the same approach used by logseq-awesome-ui
- */
 function getCSSVariableColor(varName: string): string {
   const tempEl = doc.createElement('span');
   tempEl.style.color = `var(${varName})`;
@@ -24,9 +9,6 @@ function getCSSVariableColor(varName: string): string {
   return color;
 }
 
-/**
- * Find the accent color from Logseq's theme
- */
 function getAccentColor(): string | null {
   // Try multiple CSS variables that might contain the accent color
   const cssVars = [
@@ -56,9 +38,6 @@ function getAccentColor(): string | null {
   return null;
 }
 
-/**
- * Parse RGB color string to components
- */
 function parseRGB(color: string): { r: number; g: number; b: number } | null {
   const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
   if (match) {
@@ -71,17 +50,10 @@ function parseRGB(color: string): { r: number; g: number; b: number } | null {
   return null;
 }
 
-/**
- * Create RGBA color string with alpha
- */
 function rgba(r: number, g: number, b: number, a: number): string {
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
-/**
- * Generate CSS with theme color variables baked in
- * Returns CSS string with actual color values (not CSS variable references)
- */
 export function generateThemeCSS(): string {
   const accentColor = getAccentColor();
 
