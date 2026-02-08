@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: node
+
+  build-and-upload:
+    name: Build & Upload Release Artifact
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build plugin
+        run: yarn build
+
+      - name: Package release zip
+        run: |
+          mkdir -p pretty-logseq/assets/logos
+          cp package.json README.md manifest.json LICENSE.md pretty-logseq/
+          cp assets/logos/pretty-logseq-logo.png pretty-logseq/assets/logos/
+          mv dist pretty-logseq/
+          zip -r pretty-logseq.zip pretty-logseq
+
+      - name: Upload release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ needs.release-please.outputs.tag_name }} pretty-logseq.zip
+          gh release upload ${{ needs.release-please.outputs.tag_name }} package.json
