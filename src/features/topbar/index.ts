@@ -1,14 +1,7 @@
-/**
- * Topbar Feature
- *
- * Customizations for Logseq's top navigation bar.
- * Handles DOM manipulation for nav arrow repositioning.
- */
-
-import { getSettings } from '../../settings';
-import type { Feature } from '../../types';
-import { createNavArrowsInLeft } from './handlers';
-import navArrowsStyles from './styles.scss?inline';
+import { getSettings } from "../../settings";
+import type { Feature } from "../../types";
+import { createNavArrowsInLeft } from "./handlers";
+import navArrowsStyles from "./styles.scss?inline";
 
 let navArrowsCleanup: (() => void) | null = null;
 
@@ -20,9 +13,7 @@ export function applyNavArrowsSetting(): void {
   const settings = getSettings();
 
   if (settings.navArrowsLeft) {
-    if (!navArrowsCleanup) {
-      navArrowsCleanup = createNavArrowsInLeft();
-    }
+    if (!navArrowsCleanup) navArrowsCleanup = createNavArrowsInLeft();
   } else {
     if (navArrowsCleanup) {
       navArrowsCleanup();
@@ -32,13 +23,13 @@ export function applyNavArrowsSetting(): void {
 }
 
 export const topbarFeature: Feature = {
-  id: 'topbar',
-  name: 'Top Navigation',
-  description: 'Customizations for the top navigation bar',
+  id: "topbar",
+  name: "Top Navigation",
+  description: "Customizations for the top navigation bar",
 
   getStyles() {
     const settings = getSettings();
-    return settings.navArrowsLeft ? navArrowsStyles : '';
+    return settings.navArrowsLeft ? navArrowsStyles : "";
   },
 
   init() {

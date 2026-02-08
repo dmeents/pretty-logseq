@@ -1,45 +1,39 @@
-/**
- * DOM Utilities
- *
- * Helper functions for DOM manipulation, positioning, and element creation.
- */
-
 export interface Position {
   top: number;
   left: number;
 }
 
-export type Placement = 'top' | 'bottom' | 'left' | 'right';
+export type Placement = "top" | "bottom" | "left" | "right";
 
 export interface PositionOptions {
   placement?: Placement;
   offset?: number;
 }
 
-/**
- * Calculate position for an element relative to an anchor
- */
-export function calculatePosition(anchor: HTMLElement, options: PositionOptions = {}): Position {
-  const { placement = 'bottom', offset = 8 } = options;
+export function calculatePosition(
+  anchor: HTMLElement,
+  options: PositionOptions = {},
+): Position {
+  const { placement = "bottom", offset = 8 } = options;
   const rect = anchor.getBoundingClientRect();
 
   let top: number;
   let left: number;
 
   switch (placement) {
-    case 'top':
+    case "top":
       top = rect.top - offset;
       left = rect.left;
       break;
-    case 'bottom':
+    case "bottom":
       top = rect.bottom + offset;
       left = rect.left;
       break;
-    case 'left':
+    case "left":
       top = rect.top;
       left = rect.left - offset;
       break;
-    case 'right':
+    case "right":
       top = rect.top;
       left = rect.right + offset;
       break;
@@ -69,6 +63,7 @@ export function adjustForViewport(
   if (left + elementWidth > innerWidth - padding) {
     left = innerWidth - elementWidth - padding;
   }
+
   if (left < padding) {
     left = padding;
   }
@@ -77,6 +72,7 @@ export function adjustForViewport(
   if (posTop + elementHeight > innerHeight - padding) {
     posTop = innerHeight - elementHeight - padding;
   }
+
   if (posTop < padding) {
     posTop = padding;
   }
@@ -101,9 +97,6 @@ export function positionElement(
   element.style.top = `${adjusted.top}px`;
 }
 
-/**
- * Create an HTML element with attributes
- */
 export function createElement<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   attrs?: Record<string, string>,

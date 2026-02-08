@@ -1,24 +1,12 @@
-/**
- * Todo Observer
- *
- * Uses a MutationObserver to:
- * 1. Detect task blocks with past-due SCHEDULED/DEADLINE dates
- * 2. Inject a "CANCELLED" label into cancelled task blocks
- */
-
 const doc = top?.document ?? parent.document;
+const PAST_DUE_CLASS = "pl-past-due";
+const CANCELLED_LABEL_CLASS = "pl-cancelled-label";
 
-const PAST_DUE_CLASS = 'pl-past-due';
-const CANCELLED_LABEL_CLASS = 'pl-cancelled-label';
-
-/**
- * Get today's date as YYYY-MM-DD string for comparison
- */
 function getTodayString(): string {
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -27,7 +15,7 @@ function getTodayString(): string {
  * (not from a nested child block).
  */
 function getOwnContentWrapper(block: Element): Element | null {
-  return block.querySelector('.block-content-wrapper');
+  return block.querySelector(".block-content-wrapper");
 }
 
 /**
@@ -37,10 +25,12 @@ function isPastDue(block: Element, today: string): boolean {
   const wrapper = getOwnContentWrapper(block);
   if (!wrapper) return false;
 
-  const text = wrapper.textContent ?? '';
-  if (!text.includes('SCHEDULED') && !text.includes('DEADLINE')) return false;
+  const text = wrapper.textContent ?? "";
+  if (!text.includes("SCHEDULED") && !text.includes("DEADLINE")) return false;
 
-  const matches = text.matchAll(/(?:SCHEDULED|DEADLINE)\S*\s*<?(\d{4}-\d{2}-\d{2})/g);
+  const matches = text.matchAll(
+    /(?:SCHEDULED|DEADLINE)\S*\s*<?(\d{4}-\d{2}-\d{2})/g,
+  );
   for (const match of matches) {
     if (match[1] < today) return true;
   }
@@ -55,12 +45,12 @@ function hasActiveTaskMarker(block: Element): boolean {
   const content = getOwnContentWrapper(block);
   if (!content) return false;
   return (
-    (content.querySelector('.todo') !== null ||
-      content.querySelector('.doing') !== null ||
-      content.querySelector('.now') !== null) &&
-    content.querySelector('.done') === null &&
-    content.querySelector('.canceled') === null &&
-    content.querySelector('.cancelled') === null
+    (content.querySelector(".todo") !== null ||
+      content.querySelector(".doing") !== null ||
+      content.querySelector(".now") !== null) &&
+    content.querySelector(".done") === null &&
+    content.querySelector(".canceled") === null &&
+    content.querySelector(".cancelled") === null
   );
 }
 
@@ -72,29 +62,23 @@ function processCancelledLabel(block: Element): void {
   if (!wrapper) return;
 
   const isCancelled =
-    wrapper.querySelector('.canceled') !== null || wrapper.querySelector('.cancelled') !== null;
+    wrapper.querySelector(".canceled") !== null ||
+    wrapper.querySelector(".cancelled") !== null;
 
   const existingLabel = wrapper.querySelector(`.${CANCELLED_LABEL_CLASS}`);
 
   if (isCancelled && !existingLabel) {
-    const label = doc.createElement('span');
+    const label = doc.createElement("span");
     label.className = CANCELLED_LABEL_CLASS;
-    label.textContent = 'CANCELLED ';
+    label.textContent = "CANCELLED ";
 
     // The .canceled/.cancelled span wraps the entire task content,
     // so prepend inside it to place the label before the task text
-    const marker = wrapper.querySelector('.canceled, .cancelled');
-    if (marker) {
-      marker.prepend(label);
-    }
-  } else if (!isCancelled && existingLabel) {
-    existingLabel.remove();
-  }
+    const marker = wrapper.querySelector(".canceled, .cancelled");
+    if (marker) marker.prepend(label);
+  } else if (!isCancelled && existingLabel) existingLabel.remove();
 }
 
-/**
- * Process a single block element.
- */
 function processBlock(block: Element, today: string): void {
   // Past-due detection
   if (hasActiveTaskMarker(block) && isPastDue(block, today)) {
@@ -107,11 +91,8 @@ function processBlock(block: Element, today: string): void {
   processCancelledLabel(block);
 }
 
-/**
- * Scan all task blocks in the document.
- */
 function scanBlocks(today: string): void {
-  const blocks = doc.querySelectorAll('.ls-block');
+  const blocks = doc.querySelectorAll(".ls-block");
   for (const block of blocks) {
     processBlock(block, today);
   }
@@ -132,9 +113,12 @@ function cleanupAll(): void {
 /**
  * Setup the MutationObserver for task block enhancements.
  * Returns a cleanup function.
+ *
+ * Uses a MutationObserver to:
+ * 1. Detect task blocks with past-due SCHEDULED/DEADLINE dates
+ * 2. Inject a "CANCELLED" label into cancelled task blocks
  */
 export function setupTodoObserver(): () => void {
-  // Initial scan
   scanBlocks(getTodayString());
 
   // Batch mutations via requestAnimationFrame
@@ -149,14 +133,12 @@ export function setupTodoObserver(): () => void {
     }
   });
 
-  const root = doc.getElementById('main-content-container') ?? doc.body;
+  const root = doc.getElementById("main-content-container") ?? doc.body;
   observer.observe(root, { childList: true, subtree: true });
 
   return () => {
     observer.disconnect();
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-    }
+    if (rafId !== null) cancelAnimationFrame(rafId);
     cleanupAll();
   };
 }

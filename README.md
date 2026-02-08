@@ -19,30 +19,15 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 
 ### Pretty Popovers
 
-Stop scrolling through cluttered page link previews. Get **rich, context-aware popovers** that show you what's important on the page before you click. The plugin intelligently detects page types and adapts the layout to show exactly what matters. **Requires specific page properties to be set.**
-
-A single unified renderer automatically adapts to your page's `type::` property and displays the most relevant information:
-
-- **Header** — Page icon and title (clickable), with a contextual subtitle derived from the page type (e.g., role at organization for Person, cuisine for Restaurant, author for Book)
-- **Photo card** — If the page has a `photo::` property and is of `type:: Person`, the header displays a circular photo alongside the title and subtitle
-- **Description** — The `description::` property, displayed with line clamping
-- **Content snippet** — For pages without rich properties, a preview of the page's block content
-- **Detail rows** — Key-value pairs for type-relevant properties (e.g., location, email, phone for Person; rating, genre for Game) with smart formatting: emails become `mailto:` links, URLs get formatted labels, ratings display as stars
-- **Array tags** — Properties like `stack::` render as pill groups
-- **Link section** — The `url::` property displayed as a clickable external link
-- **Tags** — `type::`, `status::`, `area::`, and type-specific extras as pill badges
-
-Supports 16 page types out of the box: Person, Code Base, Book, Game, Restaurant, Recipe, Event, Company, Documentation, Project, Software, Website, Meeting, Resource, System, and Technology. Untyped pages get the default layout with title, description, content snippet, and tags.
-
-| Description                                                                                                                                                                                                                                                                              | Preview                                                         |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Supports 16 page types out of the box: Person, Code Base, Book, Game, Restaurant, Recipe, Event, Company, Documentation, Project, Software, Website, Meeting, Resource, System, and Technology. Untyped pages get the default layout with title, description, content snippet, and tags. | ![Person Popover](assets/screenshots/pretty-popover-person.png) |
+| Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Preview                                                         |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Stop scrolling through cluttered page link previews. Get **rich, context-aware popovers** that show you what matters before you click.<br><br>Popovers automatically adapt to whatever properties your pages have — add a `photo::`, `rating::`, `description::`, or any other property and it just shows up. No configuration needed.<br><br>Highlights:<br>• **Smart layouts** — photos, subtitles, detail rows, tags, and links arranged automatically<br>• **Works with any page type** — Person, Book, Restaurant, Code Base, or your own custom types<br>• **Clickable titles** for quick navigation to the referenced page | ![Person Popover](assets/screenshots/pretty-popover-person.png) |
 
 ### Pretty Links
 
-| Description                                                                                                                                                                                                                                                                                                                       | Preview                                              |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Transform your page references from plain text into **visually distinct, styled links** that make your graph easier to scan and navigate. Links stand out with subtle styling that respects your theme while improving readability. Makes it effortless to spot references, external links, and internal connections at a glance. | ![Pretty Links](assets/screenshots/pretty-links.png) |
+| Description                                                                                                                                                                                                                                                                                                                     | Preview                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Transform your external urls from plain text into **visually distinct, styled links** that make your graph easier to scan and navigate. Links stand out with subtle styling that respects your theme while improving readability. Makes it effortless to spot references, external links, and internal connections at a glance. | ![Pretty Links](assets/screenshots/pretty-links.png) |
 
 ### Pretty Properties
 

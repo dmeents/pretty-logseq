@@ -1,17 +1,18 @@
-/**
- * Tests for Settings Management
- */
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  defaultSettings,
+  getSettings,
+  initSettings,
+  onSettingsChanged,
+} from "./index";
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { defaultSettings, getSettings, initSettings, onSettingsChanged } from './index';
-
-describe('Settings Management', () => {
+describe("Settings Management", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('getSettings', () => {
-    it('returns default settings when logseq.settings is undefined', () => {
+  describe("getSettings", () => {
+    it("returns default settings when logseq.settings is undefined", () => {
       logseq.settings = undefined;
 
       const settings = getSettings();
@@ -19,7 +20,7 @@ describe('Settings Management', () => {
       expect(settings).toEqual(defaultSettings);
     });
 
-    it('returns default settings when logseq.settings is empty', () => {
+    it("returns default settings when logseq.settings is empty", () => {
       logseq.settings = { disabled: false };
 
       const settings = getSettings();
@@ -27,7 +28,7 @@ describe('Settings Management', () => {
       expect(settings).toEqual(defaultSettings);
     });
 
-    it('merges user settings with defaults', () => {
+    it("merges user settings with defaults", () => {
       logseq.settings = {
         disabled: false,
         enablePopovers: false,
@@ -43,7 +44,7 @@ describe('Settings Management', () => {
       });
     });
 
-    it('user settings override defaults', () => {
+    it("user settings override defaults", () => {
       logseq.settings = {
         disabled: false,
         compactSidebarNav: false,
@@ -59,24 +60,24 @@ describe('Settings Management', () => {
       expect(settings.enablePrettyTypography).toBe(true);
     });
 
-    it('includes all expected properties', () => {
+    it("includes all expected properties", () => {
       const settings = getSettings();
 
-      expect(settings).toHaveProperty('enablePopovers');
-      expect(settings).toHaveProperty('enablePrettyTypography');
-      expect(settings).toHaveProperty('enablePrettyTables');
-      expect(settings).toHaveProperty('enablePrettyTemplates');
-      expect(settings).toHaveProperty('enablePrettyLinks');
-      expect(settings).toHaveProperty('enablePrettyTodos');
-      expect(settings).toHaveProperty('compactSidebarNav');
-      expect(settings).toHaveProperty('hideCreateButton');
-      expect(settings).toHaveProperty('graphSelectorBottom');
-      expect(settings).toHaveProperty('hideHomeButton');
-      expect(settings).toHaveProperty('hideSyncIndicator');
-      expect(settings).toHaveProperty('navArrowsLeft');
+      expect(settings).toHaveProperty("enablePopovers");
+      expect(settings).toHaveProperty("enablePrettyTypography");
+      expect(settings).toHaveProperty("enablePrettyTables");
+      expect(settings).toHaveProperty("enablePrettyTemplates");
+      expect(settings).toHaveProperty("enablePrettyLinks");
+      expect(settings).toHaveProperty("enablePrettyTodos");
+      expect(settings).toHaveProperty("compactSidebarNav");
+      expect(settings).toHaveProperty("hideCreateButton");
+      expect(settings).toHaveProperty("graphSelectorBottom");
+      expect(settings).toHaveProperty("hideHomeButton");
+      expect(settings).toHaveProperty("hideSyncIndicator");
+      expect(settings).toHaveProperty("navArrowsLeft");
     });
 
-    it('handles partial settings objects', () => {
+    it("handles partial settings objects", () => {
       logseq.settings = {
         disabled: false,
         enablePopovers: false,
@@ -87,19 +88,21 @@ describe('Settings Management', () => {
       // Should have the override
       expect(settings.enablePopovers).toBe(false);
       // Should have all other defaults
-      expect(Object.keys(settings)).toHaveLength(Object.keys(defaultSettings).length);
+      expect(Object.keys(settings)).toHaveLength(
+        Object.keys(defaultSettings).length,
+      );
     });
   });
 
-  describe('initSettings', () => {
-    it('calls logseq.useSettingsSchema with schema', () => {
+  describe("initSettings", () => {
+    it("calls logseq.useSettingsSchema with schema", () => {
       initSettings();
 
       expect(logseq.useSettingsSchema).toHaveBeenCalledTimes(1);
       expect(logseq.useSettingsSchema).toHaveBeenCalledWith(expect.any(Array));
     });
 
-    it('passes schema with correct structure', () => {
+    it("passes schema with correct structure", () => {
       initSettings();
 
       const schema = logseq.useSettingsSchema.mock.calls[0][0];
@@ -107,29 +110,33 @@ describe('Settings Management', () => {
       expect(schema.length).toBeGreaterThan(0);
 
       // Check first setting (after heading)
-      const firstSetting = schema.find(item => item.key === 'enablePopovers');
+      const firstSetting = schema.find((item) => item.key === "enablePopovers");
       expect(firstSetting).toBeDefined();
-      expect(firstSetting?.type).toBe('boolean');
+      expect(firstSetting?.type).toBe("boolean");
       expect(firstSetting?.default).toBe(true);
     });
   });
 
-  describe('onSettingsChanged', () => {
-    it('registers callback with logseq.onSettingsChanged', () => {
+  describe("onSettingsChanged", () => {
+    it("registers callback with logseq.onSettingsChanged", () => {
       const callback = vi.fn();
 
       onSettingsChanged(callback);
 
       expect(logseq.onSettingsChanged).toHaveBeenCalledTimes(1);
-      expect(logseq.onSettingsChanged).toHaveBeenCalledWith(expect.any(Function));
+      expect(logseq.onSettingsChanged).toHaveBeenCalledWith(
+        expect.any(Function),
+      );
     });
 
-    it('callback receives merged settings with defaults', () => {
+    it("callback receives merged settings with defaults", () => {
       const callback = vi.fn();
-      let registeredCallback: ((newSettings: unknown, oldSettings: unknown) => void) | null = null;
+      let registeredCallback:
+        | ((newSettings: unknown, oldSettings: unknown) => void)
+        | null = null;
 
       // Capture the callback
-      logseq.onSettingsChanged.mockImplementation(cb => {
+      logseq.onSettingsChanged.mockImplementation((cb) => {
         registeredCallback = cb;
       });
 
@@ -145,15 +152,20 @@ describe('Settings Management', () => {
 
       // Check that defaults were merged
       const [receivedNew, receivedOld] = callback.mock.calls[0];
-      expect(receivedNew).toEqual({ ...defaultSettings, enablePopovers: false });
+      expect(receivedNew).toEqual({
+        ...defaultSettings,
+        enablePopovers: false,
+      });
       expect(receivedOld).toEqual({ ...defaultSettings, enablePopovers: true });
     });
 
-    it('merges both new and old settings with defaults', () => {
+    it("merges both new and old settings with defaults", () => {
       const callback = vi.fn();
-      let registeredCallback: ((newSettings: unknown, oldSettings: unknown) => void) | null = null;
+      let registeredCallback:
+        | ((newSettings: unknown, oldSettings: unknown) => void)
+        | null = null;
 
-      logseq.onSettingsChanged.mockImplementation(cb => {
+      logseq.onSettingsChanged.mockImplementation((cb) => {
         registeredCallback = cb;
       });
 
@@ -175,19 +187,25 @@ describe('Settings Management', () => {
       // New settings should have overrides plus defaults
       expect(receivedNew.enablePopovers).toBe(false);
       expect(receivedNew.compactSidebarNav).toBe(false);
-      expect(receivedNew.enablePrettyTypography).toBe(defaultSettings.enablePrettyTypography);
+      expect(receivedNew.enablePrettyTypography).toBe(
+        defaultSettings.enablePrettyTypography,
+      );
 
       // Old settings should have overrides plus defaults
       expect(receivedOld.enablePopovers).toBe(true);
       expect(receivedOld.compactSidebarNav).toBe(true);
-      expect(receivedOld.enablePrettyTypography).toBe(defaultSettings.enablePrettyTypography);
+      expect(receivedOld.enablePrettyTypography).toBe(
+        defaultSettings.enablePrettyTypography,
+      );
     });
 
-    it('handles empty settings objects', () => {
+    it("handles empty settings objects", () => {
       const callback = vi.fn();
-      let registeredCallback: ((newSettings: unknown, oldSettings: unknown) => void) | null = null;
+      let registeredCallback:
+        | ((newSettings: unknown, oldSettings: unknown) => void)
+        | null = null;
 
-      logseq.onSettingsChanged.mockImplementation(cb => {
+      logseq.onSettingsChanged.mockImplementation((cb) => {
         registeredCallback = cb;
       });
 

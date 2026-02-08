@@ -1,10 +1,4 @@
-/**
- * Logseq API Helpers
- *
- * Wrapper functions around Logseq's Plugin API with caching and error handling.
- */
-
-import type { BlockData, PageData, PageProperties } from '../types';
+import type { BlockData, PageData, PageProperties } from "../types";
 
 interface CacheEntry<T> {
   data: T;
@@ -14,9 +8,6 @@ interface CacheEntry<T> {
 const pageCache = new Map<string, CacheEntry<PageData>>();
 const CACHE_TTL = 30000; // 30 seconds
 
-/**
- * Get page data with optional caching
- */
 export async function getPage(
   pageName: string,
   options: { useCache?: boolean } = {},
@@ -24,7 +15,6 @@ export async function getPage(
   const { useCache = true } = options;
   const cacheKey = pageName.toLowerCase();
 
-  // Check cache
   if (useCache) {
     const cached = pageCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -51,12 +41,7 @@ export async function getPage(
       }
     }
 
-    // Update cache
-    pageCache.set(cacheKey, {
-      data: pageData,
-      timestamp: Date.now(),
-    });
-
+    pageCache.set(cacheKey, { data: pageData, timestamp: Date.now() });
     return pageData;
   } catch (err) {
     console.error(`[Pretty Logseq] Failed to fetch page "${pageName}":`, err);
@@ -64,9 +49,6 @@ export async function getPage(
   }
 }
 
-/**
- * Clear the page cache
- */
 export function clearPageCache(pageName?: string): void {
   if (pageName) {
     pageCache.delete(pageName.toLowerCase());
@@ -75,15 +57,12 @@ export function clearPageCache(pageName?: string): void {
   }
 }
 
-/**
- * Get the current theme mode
- */
-export async function getThemeMode(): Promise<'light' | 'dark'> {
+export async function getThemeMode(): Promise<"light" | "dark"> {
   try {
     const configs = await logseq.App.getUserConfigs();
-    return configs.preferredThemeMode === 'dark' ? 'dark' : 'light';
+    return configs.preferredThemeMode === "dark" ? "dark" : "light";
   } catch {
-    return 'light';
+    return "light";
   }
 }
 
@@ -97,7 +76,10 @@ export async function getPageBlocks(pageName: string): Promise<BlockData[]> {
     if (!blocks) return [];
     return blocks.map(mapBlock);
   } catch (err) {
-    console.error(`[Pretty Logseq] Failed to fetch blocks for "${pageName}":`, err);
+    console.error(
+      `[Pretty Logseq] Failed to fetch blocks for "${pageName}":`,
+      err,
+    );
     return [];
   }
 }
@@ -130,7 +112,10 @@ async function resolveAlias(aliasName: string): Promise<PageData | null> {
       properties: (page.properties || {}) as PageProperties,
     };
   } catch (err) {
-    console.error(`[Pretty Logseq] Failed to resolve alias "${aliasName}":`, err);
+    console.error(
+      `[Pretty Logseq] Failed to resolve alias "${aliasName}":`,
+      err,
+    );
     return null;
   }
 }
@@ -138,7 +123,7 @@ async function resolveAlias(aliasName: string): Promise<PageData | null> {
 function mapBlock(block: Record<string, unknown>): BlockData {
   const children = block.children as Record<string, unknown>[] | undefined;
   return {
-    content: (block.content as string) || '',
+    content: (block.content as string) || "",
     children: children?.map(mapBlock),
   };
 }
@@ -149,14 +134,14 @@ function mapBlock(block: Record<string, unknown>): BlockData {
  */
 export function cleanBlockContent(content: string): string {
   return content
-    .replace(/^[a-zA-Z-]+::.*$/gm, '') // Remove property lines
-    .replace(/\(\([a-f0-9-]+\)\)/g, '') // Remove block references
-    .replace(/\[\[([^\]]+)\]\]/g, '$1') // [[Page]] -> Page
-    .replace(/[*_~`]+/g, '') // Remove markdown emphasis
-    .replace(/^#+\s*/gm, '') // Remove heading markers
-    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
-    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // [text](url) -> text
-    .replace(/\n{2,}/g, '\n') // Collapse multiple newlines
+    .replace(/^[a-zA-Z-]+::.*$/gm, "") // Remove property lines
+    .replace(/\(\([a-f0-9-]+\)\)/g, "") // Remove block references
+    .replace(/\[\[([^\]]+)\]\]/g, "$1") // [[Page]] -> Page
+    .replace(/[*_~`]+/g, "") // Remove markdown emphasis
+    .replace(/^#+\s*/gm, "") // Remove heading markers
+    .replace(/!\[.*?\]\(.*?\)/g, "") // Remove images
+    .replace(/\[([^\]]+)\]\(.*?\)/g, "$1") // [text](url) -> text
+    .replace(/\n{2,}/g, "\n") // Collapse multiple newlines
     .trim();
 }
 
@@ -167,6 +152,6 @@ export function cleanBlockContent(content: string): string {
  */
 export function cleanPropertyValue(value: unknown): string {
   const raw = Array.isArray(value) ? value[0] : value;
-  if (typeof raw !== 'string') return String(raw ?? '');
-  return raw.replace(/^\[\[|\]\]$/g, '').trim();
+  if (typeof raw !== "string") return String(raw ?? "");
+  return raw.replace(/^\[\[|\]\]$/g, "").trim();
 }
