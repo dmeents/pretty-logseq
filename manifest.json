@@ -3,7 +3,7 @@
   "description": "Enhance your graph with beautiful popovers, refined typography, styled properties, streamlined sidebar, and polished tables — all theme-aware and configurable.",
   "author": "dmeents",
   "repo": "dmeents/pretty-logseq",
-  "icon": "./assets/logos/pretty-logseq-logo.png",
+  "icon": "pretty-logseq-logo.png",
   "theme": false,
   "effect": false
 }
