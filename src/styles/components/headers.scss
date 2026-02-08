@@ -11,23 +11,43 @@
     margin: 0;
   }
 
+  h1 {
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
   h2 {
     margin-top: 24px;
+    letter-spacing: -0.017em;
+    line-height: 1.28;
   }
 
   h3 {
     margin-top: 20px;
+    letter-spacing: -0.014em;
+    line-height: 1.32;
   }
 
   h4 {
     margin-top: 16px;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
   }
 
   h5 {
     margin-top: 12px;
+    letter-spacing: -0.008em;
   }
 
   h6 {
     margin-top: 8px;
+    letter-spacing: -0.005em;
   }
+}
+
+// Page title
+.page-title,
+h1.title {
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
