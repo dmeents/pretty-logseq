@@ -1,4 +1,4 @@
-import type { Feature } from "../types";
+import type { Feature } from '../types';
 
 interface RegisteredFeature {
   feature: Feature;
@@ -11,9 +11,7 @@ export class FeatureRegistry {
 
   register(feature: Feature): void {
     if (this.features.has(feature.id)) {
-      console.warn(
-        `[Pretty Logseq] Feature "${feature.id}" already registered`,
-      );
+      console.warn(`[Pretty Logseq] Feature "${feature.id}" already registered`);
       return;
     }
 
@@ -28,7 +26,7 @@ export class FeatureRegistry {
   }
 
   getAll(): Feature[] {
-    return Array.from(this.features.values()).map((r) => r.feature);
+    return Array.from(this.features.values()).map(r => r.feature);
   }
 
   async initializeAll(): Promise<void> {
@@ -40,10 +38,7 @@ export class FeatureRegistry {
           this.initOrder.push(id);
           console.log(`[Pretty Logseq] Feature "${id}" initialized`);
         } catch (err) {
-          console.error(
-            `[Pretty Logseq] Failed to initialize feature "${id}":`,
-            err,
-          );
+          console.error(`[Pretty Logseq] Failed to initialize feature "${id}":`, err);
         }
       }
     }
@@ -63,10 +58,7 @@ export class FeatureRegistry {
       this.initOrder.push(id);
       console.log(`[Pretty Logseq] Feature "${id}" initialized`);
     } catch (err) {
-      console.error(
-        `[Pretty Logseq] Failed to initialize feature "${id}":`,
-        err,
-      );
+      console.error(`[Pretty Logseq] Failed to initialize feature "${id}":`, err);
     }
   }
 
@@ -77,7 +69,7 @@ export class FeatureRegistry {
     try {
       registered.feature.destroy();
       registered.initialized = false;
-      this.initOrder = this.initOrder.filter((i) => i !== id);
+      this.initOrder = this.initOrder.filter(i => i !== id);
       console.log(`[Pretty Logseq] Feature "${id}" destroyed`);
     } catch (err) {
       console.error(`[Pretty Logseq] Failed to destroy feature "${id}":`, err);
@@ -97,10 +89,7 @@ export class FeatureRegistry {
           registered.initialized = false;
           console.log(`[Pretty Logseq] Feature "${id}" destroyed`);
         } catch (err) {
-          console.error(
-            `[Pretty Logseq] Failed to destroy feature "${id}":`,
-            err,
-          );
+          console.error(`[Pretty Logseq] Failed to destroy feature "${id}":`, err);
         }
       }
     }
@@ -118,7 +107,7 @@ export class FeatureRegistry {
       }
     }
 
-    return styles.join("\n\n");
+    return styles.join('\n\n');
   }
 }
 

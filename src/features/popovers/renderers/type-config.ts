@@ -1,5 +1,5 @@
-import { cleanPropertyValue } from "../../../lib/api";
-import type { PageData } from "../../../types";
+import { cleanPropertyValue } from '../../../lib/api';
+import type { PageData } from '../../../types';
 
 export interface PopoverConfig {
   subtitleText: string | null;
@@ -15,15 +15,7 @@ export interface PopoverConfig {
  * `role` is special: if `organization` also exists, they combine
  * as "Role at Organization".
  */
-const SUBTITLE_PRIORITY = [
-  "role",
-  "cuisine",
-  "author",
-  "platform",
-  "owner",
-  "source",
-  "date",
-];
+const SUBTITLE_PRIORITY = ['role', 'cuisine', 'author', 'platform', 'owner', 'source', 'date'];
 
 /**
  * Detail row priority — properties shown as labeled key-value rows,
@@ -31,39 +23,40 @@ const SUBTITLE_PRIORITY = [
  * The subtitle property is automatically excluded to avoid duplication.
  */
 const DETAIL_PRIORITY = [
-  "rating",
-  "location",
-  "address",
-  "email",
-  "phone",
-  "genre",
-  "cuisine",
-  "repository",
-  "source",
-  "platform",
-  "author",
-  "owner",
-  "date",
+  'rating',
+  'location',
+  'address',
+  'email',
+  'phone',
+  'genre',
+  'cuisine',
+  'repository',
+  'source',
+  'platform',
+  'author',
+  'owner',
+  'date',
 ];
 
 /** Properties rendered as extra tag pills (beyond type/status/area). */
-const TAG_PROPERTIES = ["relationship", "initiative"];
+const TAG_PROPERTIES = ['relationship', 'initiative'];
 
 /**
  * Properties that are displayed in their own dedicated sections and
  * should not appear as detail rows or array pills.
  */
 const MANAGED_PROPERTIES = new Set([
-  "type",
-  "icon",
-  "status",
-  "area",
-  "description",
-  "created",
-  "url",
-  "photo",
-  "role",
-  "organization",
+  'type',
+  'icon',
+  'status',
+  'area',
+  'description',
+  'created',
+  'url',
+  'photo',
+  'role',
+  'organization',
+  'alias',
 ]);
 
 /**
@@ -74,20 +67,13 @@ const MANAGED_PROPERTIES = new Set([
 export function resolveConfig(pageData: PageData): PopoverConfig {
   const props = pageData.properties;
 
-  const photoProperty = props.photo ? "photo" : undefined;
-  const { text: subtitleText, consumed: subtitleConsumed } =
-    resolveSubtitle(props);
+  const photoProperty = props.photo ? 'photo' : undefined;
+  const { text: subtitleText, consumed: subtitleConsumed } = resolveSubtitle(props);
 
   // Detail rows: walk priority list, exclude consumed properties
-  const excluded = new Set([
-    ...MANAGED_PROPERTIES,
-    ...subtitleConsumed,
-    ...TAG_PROPERTIES,
-  ]);
+  const excluded = new Set([...MANAGED_PROPERTIES, ...subtitleConsumed, ...TAG_PROPERTIES]);
 
-  const detailProperties = DETAIL_PRIORITY.filter(
-    (p) => props[p] && !excluded.has(p),
-  );
+  const detailProperties = DETAIL_PRIORITY.filter(p => props[p] && !excluded.has(p));
 
   // Array properties: auto-detect multi-value properties not shown elsewhere
   const detailSet = new Set(detailProperties);
@@ -99,13 +85,11 @@ export function resolveConfig(pageData: PageData): PopoverConfig {
   }
 
   // Extra tags: tag-worthy properties that exist on the page
-  const extraTags = TAG_PROPERTIES.filter((p) => props[p]);
+  const extraTags = TAG_PROPERTIES.filter(p => props[p]);
 
   // Snippet: show when no rich structured content was found
   const hasRichContent =
-    detailProperties.length > 0 ||
-    arrayProperties.length > 0 ||
-    Boolean(props.url);
+    detailProperties.length > 0 || arrayProperties.length > 0 || Boolean(props.url);
 
   const showSnippet = !hasRichContent;
 
@@ -129,27 +113,25 @@ function resolveSubtitle(props: Record<string, unknown>): {
   consumed: string[];
 } {
   for (const prop of SUBTITLE_PRIORITY) {
-    if (prop === "role") {
+    if (prop === 'role') {
       // Special template: role + organization
       const role = props.role ? cleanPropertyValue(props.role) : null;
 
-      const org = props.organization
-        ? cleanPropertyValue(props.organization)
-        : null;
+      const org = props.organization ? cleanPropertyValue(props.organization) : null;
 
       if (role && org) {
         return {
           text: `${role} at ${org}`,
-          consumed: ["role", "organization"],
+          consumed: ['role', 'organization'],
         };
       }
 
       if (role) {
-        return { text: role, consumed: ["role"] };
+        return { text: role, consumed: ['role'] };
       }
 
       if (org) {
-        return { text: org, consumed: ["organization"] };
+        return { text: org, consumed: ['organization'] };
       }
 
       continue;

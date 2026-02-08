@@ -1,5 +1,5 @@
-import { cleanBlockContent, cleanPropertyValue } from "../../../lib/api";
-import type { PageData } from "../../../types";
+import { cleanBlockContent, cleanPropertyValue } from '../../../lib/api';
+import type { PageData } from '../../../types';
 
 /**
  * Extract a URL from a Logseq property value.
@@ -12,7 +12,7 @@ export function extractUrl(value: unknown): string | null {
   const mdMatch = raw.match(/\[.*?\]\((.*?)\)/);
   if (mdMatch) return mdMatch[1];
 
-  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
 
   return null;
 }
@@ -24,7 +24,7 @@ export function extractUrl(value: unknown): string | null {
 export function formatUrlLabel(url: string): string {
   try {
     const parsed = new URL(url);
-    const path = parsed.pathname.replace(/^\/|\/$/g, "");
+    const path = parsed.pathname.replace(/^\/|\/$/g, '');
     if (path) return path;
     return parsed.hostname;
   } catch {
@@ -41,7 +41,7 @@ export function cleanAllValues(value: unknown): string[] {
     const cleaned = cleanPropertyValue(value);
     return cleaned ? [cleaned] : [];
   }
-  return value.map((v) => cleanPropertyValue(v)).filter((v) => v.length > 0);
+  return value.map(v => cleanPropertyValue(v)).filter(v => v.length > 0);
 }
 
 /**
@@ -50,8 +50,8 @@ export function cleanAllValues(value: unknown): string[] {
 export function createTitle(pageData: PageData): HTMLElement {
   const { name, properties } = pageData;
 
-  const title = document.createElement("a");
-  title.className = "pretty-popover__title";
+  const title = document.createElement('a');
+  title.className = 'pretty-popover__title';
   title.textContent = properties.icon ? `${properties.icon} ${name}` : name;
   title.dataset.pageName = name;
 
@@ -62,8 +62,8 @@ export function createTitle(pageData: PageData): HTMLElement {
  * Create a description element with line clamping via CSS.
  */
 export function createDescription(description: string): HTMLElement {
-  const el = document.createElement("div");
-  el.className = "pretty-popover__description";
+  const el = document.createElement('div');
+  el.className = 'pretty-popover__description';
   el.textContent = description;
   return el;
 }
@@ -74,16 +74,16 @@ export function createDescription(description: string): HTMLElement {
  */
 export function createTagPills(
   values: string[],
-  containerClass = "pretty-popover__properties",
+  containerClass = 'pretty-popover__properties',
 ): HTMLElement | null {
   if (values.length === 0) return null;
 
-  const container = document.createElement("div");
+  const container = document.createElement('div');
   container.className = containerClass;
 
   for (const value of values) {
-    const tag = document.createElement("span");
-    tag.className = "pretty-popover__tag";
+    const tag = document.createElement('span');
+    tag.className = 'pretty-popover__tag';
     tag.textContent = value;
     container.appendChild(tag);
   }
@@ -94,15 +94,12 @@ export function createTagPills(
 /**
  * Create a key-value detail row.
  */
-export function createDetailRow(
-  label: string,
-  valueEl: HTMLElement,
-): HTMLElement {
-  const row = document.createElement("div");
-  row.className = "pretty-popover__detail-row";
+export function createDetailRow(label: string, valueEl: HTMLElement): HTMLElement {
+  const row = document.createElement('div');
+  row.className = 'pretty-popover__detail-row';
 
-  const labelEl = document.createElement("span");
-  labelEl.className = "pretty-popover__detail-label";
+  const labelEl = document.createElement('span');
+  labelEl.className = 'pretty-popover__detail-label';
   labelEl.textContent = label;
 
   row.appendChild(labelEl);
@@ -119,46 +116,46 @@ export function renderPropertyValue(key: string, value: unknown): HTMLElement {
   const cleaned = cleanPropertyValue(value);
 
   switch (key) {
-    case "rating":
+    case 'rating':
       return createRatingDisplay(value);
 
-    case "email": {
-      const link = document.createElement("a");
+    case 'email': {
+      const link = document.createElement('a');
       link.href = `mailto:${cleaned}`;
       link.textContent = cleaned;
-      link.className = "pretty-popover__detail-link";
+      link.className = 'pretty-popover__detail-link';
       return link;
     }
 
-    case "phone": {
-      const link = document.createElement("a");
+    case 'phone': {
+      const link = document.createElement('a');
       link.href = `tel:${cleaned}`;
       link.textContent = cleaned;
-      link.className = "pretty-popover__detail-link";
+      link.className = 'pretty-popover__detail-link';
       return link;
     }
 
-    case "url":
-    case "repository": {
+    case 'url':
+    case 'repository': {
       const url = extractUrl(value);
       if (url) {
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
         link.textContent = formatUrlLabel(url);
-        link.className = "pretty-popover__detail-link";
+        link.className = 'pretty-popover__detail-link';
         return link;
       }
-      const span = document.createElement("span");
-      span.className = "pretty-popover__detail-value";
+      const span = document.createElement('span');
+      span.className = 'pretty-popover__detail-value';
       span.textContent = cleaned;
       return span;
     }
 
     default: {
-      const span = document.createElement("span");
-      span.className = "pretty-popover__detail-value";
+      const span = document.createElement('span');
+      span.className = 'pretty-popover__detail-value';
       span.textContent = cleaned;
       return span;
     }
@@ -170,8 +167,8 @@ export function renderPropertyValue(key: string, value: unknown): HTMLElement {
  * Falls back to plain text for non-numeric values.
  */
 export function createRatingDisplay(value: unknown): HTMLElement {
-  const container = document.createElement("span");
-  container.className = "pretty-popover__rating";
+  const container = document.createElement('span');
+  container.className = 'pretty-popover__rating';
 
   const num = Number.parseFloat(cleanPropertyValue(value));
   if (Number.isNaN(num)) {
@@ -184,7 +181,7 @@ export function createRatingDisplay(value: unknown): HTMLElement {
   const full = Math.floor(clamped);
   const empty = maxStars - full;
 
-  container.textContent = "\u2605".repeat(full) + "\u2606".repeat(empty);
+  container.textContent = '\u2605'.repeat(full) + '\u2606'.repeat(empty);
   container.title = `${num} / ${maxStars}`;
 
   return container;
@@ -195,10 +192,7 @@ export function createRatingDisplay(value: unknown): HTMLElement {
  * Cleans each block's content, skips empty/property-only blocks,
  * and truncates to a character limit at a word boundary.
  */
-export function extractSnippet(
-  pageData: PageData,
-  maxLength = 560,
-): string | null {
+export function extractSnippet(pageData: PageData, maxLength = 560): string | null {
   const { blocks } = pageData;
   if (!blocks || blocks.length === 0) return null;
 
@@ -212,11 +206,11 @@ export function extractSnippet(
 
   if (textParts.length === 0) return null;
 
-  const joined = textParts.join(" ");
+  const joined = textParts.join(' ');
   if (joined.length <= maxLength) return joined;
 
   const truncated = joined.slice(0, maxLength);
-  const lastSpace = truncated.lastIndexOf(" ");
+  const lastSpace = truncated.lastIndexOf(' ');
   const cutoff = lastSpace > maxLength * 0.6 ? lastSpace : maxLength;
   return `${truncated.slice(0, cutoff)}\u2026`;
 }

@@ -1,4 +1,4 @@
-import { defaultSettings, type PluginSettings, settingsSchema } from "./schema";
+import { defaultSettings, type PluginSettings, settingsSchema } from './schema';
 
 export type { PluginSettings };
 export { defaultSettings, settingsSchema };

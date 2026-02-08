@@ -9,7 +9,7 @@ export interface Feature {
 
 export interface FeatureSetting {
   key: string;
-  type: "boolean" | "string" | "number" | "enum";
+  type: 'boolean' | 'string' | 'number' | 'enum';
   default: unknown;
   title: string;
   description: string;

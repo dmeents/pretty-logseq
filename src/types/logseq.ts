@@ -19,4 +19,4 @@ export interface PageData {
   blocks?: BlockData[];
 }
 
-export type ThemeMode = "light" | "dark";
+export type ThemeMode = 'light' | 'dark';

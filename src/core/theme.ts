@@ -1,7 +1,7 @@
 const doc = parent.document;
 
 function getCSSVariableColor(varName: string): string {
-  const tempEl = doc.createElement("span");
+  const tempEl = doc.createElement('span');
   tempEl.style.color = `var(${varName})`;
   doc.body.appendChild(tempEl);
   const color = getComputedStyle(tempEl).color;
@@ -12,33 +12,25 @@ function getCSSVariableColor(varName: string): string {
 function getAccentColor(): string | null {
   // Try multiple CSS variables that might contain the accent color
   const cssVars = [
-    "--ls-link-text-color",
-    "--lx-accent-09",
-    "--ls-active-primary-color",
-    "--ls-link-ref-text-color",
+    '--ls-link-text-color',
+    '--lx-accent-09',
+    '--ls-active-primary-color',
+    '--ls-link-ref-text-color',
   ];
 
   for (const varName of cssVars) {
     const color = getCSSVariableColor(varName);
     // Check it's a valid color (not black/white/gray and not empty)
-    if (
-      color &&
-      color !== "rgb(0, 0, 0)" &&
-      !color.match(/^rgb\((\d+),\s*\1,\s*\1\)$/)
-    ) {
+    if (color && color !== 'rgb(0, 0, 0)' && !color.match(/^rgb\((\d+),\s*\1,\s*\1\)$/)) {
       return color;
     }
   }
 
   // Fallback: try to find a link element with accent color
-  const link = doc.querySelector("a.page-ref, .page-property-value a");
+  const link = doc.querySelector('a.page-ref, .page-property-value a');
   if (link) {
     const color = getComputedStyle(link).color;
-    if (
-      color &&
-      color !== "rgb(0, 0, 0)" &&
-      !color.match(/^rgb\((\d+),\s*\1,\s*\1\)$/)
-    ) {
+    if (color && color !== 'rgb(0, 0, 0)' && !color.match(/^rgb\((\d+),\s*\1,\s*\1\)$/)) {
       return color;
     }
   }
@@ -103,9 +95,9 @@ export function generateThemeCSS(): string {
  */
 export function setupThemeObserver(onThemeChange: () => void): void {
   // Re-inject when theme might change (class changes on html/body)
-  const observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver(mutations => {
     for (const mutation of mutations) {
-      if (mutation.attributeName === "class") {
+      if (mutation.attributeName === 'class') {
         // Debounce to avoid multiple rapid updates
         setTimeout(onThemeChange, 100);
         break;

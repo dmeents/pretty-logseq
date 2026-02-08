@@ -1,12 +1,12 @@
-import { getPage, getPageBlocks } from "../../lib/api";
-import { positionElement, removeElementById } from "../../lib/dom";
-import { renderPopover } from "./renderers";
+import { getPage, getPageBlocks } from '../../lib/api';
+import { positionElement, removeElementById } from '../../lib/dom';
+import { renderPopover } from './renderers';
 
 // Uses top.document since plugins run in an iframe.
 const doc = top?.document ?? parent.document;
 
-const POPOVER_ID = "pretty-logseq-popover";
-const REF_SELECTOR = ".page-ref, .tag";
+const POPOVER_ID = 'pretty-logseq-popover';
+const REF_SELECTOR = '.page-ref, .tag';
 const SHOW_DELAY = 300;
 const HIDE_DELAY = 150;
 
@@ -57,31 +57,26 @@ function attachPopoverListeners(popover: HTMLElement): void {
 
   const onClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    const titleLink = target.closest(
-      ".pretty-popover__title",
-    ) as HTMLElement | null;
+    const titleLink = target.closest('.pretty-popover__title') as HTMLElement | null;
     if (titleLink?.dataset.pageName) {
       e.preventDefault();
       hidePopover();
-      logseq.App.pushState("page", { name: titleLink.dataset.pageName });
+      logseq.App.pushState('page', { name: titleLink.dataset.pageName });
     }
   };
 
-  popover.addEventListener("mouseenter", onEnter);
-  popover.addEventListener("mouseleave", onLeave);
-  popover.addEventListener("click", onClick);
+  popover.addEventListener('mouseenter', onEnter);
+  popover.addEventListener('mouseleave', onLeave);
+  popover.addEventListener('click', onClick);
 
   popoverListenersCleanup = () => {
-    popover.removeEventListener("mouseenter", onEnter);
-    popover.removeEventListener("mouseleave", onLeave);
-    popover.removeEventListener("click", onClick);
+    popover.removeEventListener('mouseenter', onEnter);
+    popover.removeEventListener('mouseleave', onLeave);
+    popover.removeEventListener('click', onClick);
   };
 }
 
-async function showPopover(
-  anchor: HTMLElement,
-  pageName: string,
-): Promise<void> {
+async function showPopover(anchor: HTMLElement, pageName: string): Promise<void> {
   const pageData = await getPage(pageName);
   if (!pageData) return;
 
@@ -98,21 +93,21 @@ async function showPopover(
 
   const content = renderPopover(pageData);
 
-  const popover = doc.createElement("div");
+  const popover = doc.createElement('div');
   popover.id = POPOVER_ID;
-  popover.className = "pretty-popover";
+  popover.className = 'pretty-popover';
   popover.appendChild(content);
 
   doc.body.appendChild(popover);
-  positionElement(popover, anchor, { placement: "bottom", offset: 8 });
+  positionElement(popover, anchor, { placement: 'bottom', offset: 8 });
   attachPopoverListeners(popover);
 }
 
 function getPageNameFromRef(element: HTMLElement): string | null {
-  const ref = element.getAttribute("data-ref");
+  const ref = element.getAttribute('data-ref');
   if (ref) return ref;
   const text = element.textContent?.trim();
-  return text ? text.replace(/^#/, "") : null;
+  return text ? text.replace(/^#/, '') : null;
 }
 
 /**
@@ -153,10 +148,9 @@ export function setupPopovers(): () => void {
       anchorLeaveCleanup = null;
     };
 
-    pageRef.addEventListener("mouseleave", onAnchorLeave, { once: true });
+    pageRef.addEventListener('mouseleave', onAnchorLeave, { once: true });
 
-    anchorLeaveCleanup = () =>
-      pageRef.removeEventListener("mouseleave", onAnchorLeave);
+    anchorLeaveCleanup = () => pageRef.removeEventListener('mouseleave', onAnchorLeave);
 
     showTimer = setTimeout(() => {
       const pageName = getPageNameFromRef(pageRef);
@@ -170,12 +164,12 @@ export function setupPopovers(): () => void {
   };
 
   // Capturing phase intercepts before Logseq's own handlers
-  doc.addEventListener("mouseenter", handleEnter, true);
-  doc.addEventListener("click", handleClick, true);
+  doc.addEventListener('mouseenter', handleEnter, true);
+  doc.addEventListener('click', handleClick, true);
 
   return () => {
-    doc.removeEventListener("mouseenter", handleEnter, true);
-    doc.removeEventListener("click", handleClick, true);
+    doc.removeEventListener('mouseenter', handleEnter, true);
+    doc.removeEventListener('click', handleClick, true);
     cleanupAnchorLeave();
     hidePopover();
   };

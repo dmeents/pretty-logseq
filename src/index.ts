@@ -1,14 +1,14 @@
-import "@logseq/libs";
+import '@logseq/libs';
 
-import { registry } from "./core/registry";
-import { injectStyles, refreshStyles } from "./core/styles";
-import { setupThemeObserver } from "./core/theme";
-import { linksFeature } from "./features/links";
-import { popoversFeature } from "./features/popovers";
-import { sidebarFeature } from "./features/sidebar";
-import { todosFeature } from "./features/todos";
-import { applyNavArrowsSetting, topbarFeature } from "./features/topbar";
-import { initSettings, onSettingsChanged } from "./settings";
+import { registry } from './core/registry';
+import { injectStyles, refreshStyles } from './core/styles';
+import { setupThemeObserver } from './core/theme';
+import { linksFeature } from './features/links';
+import { popoversFeature } from './features/popovers';
+import { sidebarFeature } from './features/sidebar';
+import { todosFeature } from './features/todos';
+import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
+import { initSettings, onSettingsChanged } from './settings';
 
 function registerFeatures(): void {
   registry.register(popoversFeature);
@@ -19,7 +19,7 @@ function registerFeatures(): void {
 }
 
 async function main(): Promise<void> {
-  console.log("[Pretty Logseq] Plugin loading...");
+  console.log('[Pretty Logseq] Plugin loading...');
 
   initSettings();
   registerFeatures();
@@ -30,21 +30,19 @@ async function main(): Promise<void> {
 
   onSettingsChanged((newSettings, oldSettings) => {
     const styleSettings = [
-      "enablePrettyTypography",
-      "enablePrettyTables",
-      "enablePrettyTemplates",
-      "enablePrettyLinks",
-      "enablePrettyTodos",
-      "compactSidebarNav",
-      "hideCreateButton",
-      "graphSelectorBottom",
-      "hideHomeButton",
-      "hideSyncIndicator",
+      'enablePrettyTypography',
+      'enablePrettyTables',
+      'enablePrettyTemplates',
+      'enablePrettyLinks',
+      'enablePrettyTodos',
+      'compactSidebarNav',
+      'hideCreateButton',
+      'graphSelectorBottom',
+      'hideHomeButton',
+      'hideSyncIndicator',
     ] as const;
 
-    const styleSettingChanged = styleSettings.some(
-      (key) => newSettings[key] !== oldSettings[key],
-    );
+    const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);
 
     if (styleSettingChanged) {
       refreshStyles();
@@ -53,9 +51,9 @@ async function main(): Promise<void> {
     // Handle popovers feature toggle
     if (newSettings.enablePopovers !== oldSettings.enablePopovers) {
       if (newSettings.enablePopovers) {
-        registry.initializeFeature("popovers");
+        registry.initializeFeature('popovers');
       } else {
-        registry.destroyFeature("popovers");
+        registry.destroyFeature('popovers');
       }
       refreshStyles();
     }
@@ -63,9 +61,9 @@ async function main(): Promise<void> {
     // Handle pretty links feature toggle
     if (newSettings.enablePrettyLinks !== oldSettings.enablePrettyLinks) {
       if (newSettings.enablePrettyLinks) {
-        registry.initializeFeature("links");
+        registry.initializeFeature('links');
       } else {
-        registry.destroyFeature("links");
+        registry.destroyFeature('links');
       }
       refreshStyles();
     }
@@ -73,9 +71,9 @@ async function main(): Promise<void> {
     // Handle pretty todos feature toggle
     if (newSettings.enablePrettyTodos !== oldSettings.enablePrettyTodos) {
       if (newSettings.enablePrettyTodos) {
-        registry.initializeFeature("todos");
+        registry.initializeFeature('todos');
       } else {
-        registry.destroyFeature("todos");
+        registry.destroyFeature('todos');
       }
       refreshStyles();
     }
@@ -87,11 +85,11 @@ async function main(): Promise<void> {
     }
   });
 
-  console.log("[Pretty Logseq] Plugin loaded");
+  console.log('[Pretty Logseq] Plugin loaded');
 }
 
 logseq.beforeunload(async () => {
-  console.log("[Pretty Logseq] Plugin unloading...");
+  console.log('[Pretty Logseq] Plugin unloading...');
   await registry.destroyAll();
 });
 

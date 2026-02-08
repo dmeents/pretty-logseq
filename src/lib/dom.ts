@@ -3,37 +3,34 @@ export interface Position {
   left: number;
 }
 
-export type Placement = "top" | "bottom" | "left" | "right";
+export type Placement = 'top' | 'bottom' | 'left' | 'right';
 
 export interface PositionOptions {
   placement?: Placement;
   offset?: number;
 }
 
-export function calculatePosition(
-  anchor: HTMLElement,
-  options: PositionOptions = {},
-): Position {
-  const { placement = "bottom", offset = 8 } = options;
+export function calculatePosition(anchor: HTMLElement, options: PositionOptions = {}): Position {
+  const { placement = 'bottom', offset = 8 } = options;
   const rect = anchor.getBoundingClientRect();
 
   let top: number;
   let left: number;
 
   switch (placement) {
-    case "top":
+    case 'top':
       top = rect.top - offset;
       left = rect.left;
       break;
-    case "bottom":
+    case 'bottom':
       top = rect.bottom + offset;
       left = rect.left;
       break;
-    case "left":
+    case 'left':
       top = rect.top;
       left = rect.left - offset;
       break;
-    case "right":
+    case 'right':
       top = rect.top;
       left = rect.right + offset;
       break;
