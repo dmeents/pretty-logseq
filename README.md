@@ -1,5 +1,8 @@
 ![Pretty Logseq Banner](assets/logos/pretty-logseq-banner-narrow.png)
 
+![version](https://img.shields.io/github/package-json/v/dmeents/pretty-logseq)
+[![codecov](https://codecov.io/gh/dmeents/pretty-logseq/graph/badge.svg)](https://codecov.io/gh/dmeents/pretty-logseq)
+
 # Pretty Logseq
 
 A Logseq plugin that enhances your graph's visual experience with beautiful custom popovers, refined styling, and flexible UI customizations — all fully theme-aware and configurable.
