@@ -14,7 +14,8 @@
   },
   "logseq": {
     "id": "pretty-logseq",
-    "title": "Pretty Logseq"
+    "title": "Pretty Logseq",
+    "icon": "./assets/logos/pretty-logseq-logo.png"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
