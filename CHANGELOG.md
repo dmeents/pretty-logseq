@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1](https://github.com/dmeents/pretty-logseq/compare/v1.0.0...v1.0.1) (2026-02-08)
+
+
+### Bug Fixes
+
+* add logo to package.json for logseq ([17d0add](https://github.com/dmeents/pretty-logseq/commit/17d0add798c01d7e0298f6aa0fbc451c2f226056))
+* add logo to package.json for logseq ([f23ccae](https://github.com/dmeents/pretty-logseq/commit/f23ccae869102f1bb626a533a461fa28afcd77d9))
+* format readme ([f0e8ae5](https://github.com/dmeents/pretty-logseq/commit/f0e8ae568e0bd60265668b57094430a939b5ab10))
+* update manifest template ([5b2132f](https://github.com/dmeents/pretty-logseq/commit/5b2132fb58b9488ceda19597e80e4512a0db4980))
+
 ## 1.0.0 (2026-02-08)
 
 
