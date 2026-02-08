@@ -1,6 +1,8 @@
 import { getSettings } from '../../settings';
 import type { Feature } from '../../types';
 import { createNavArrowsInLeft } from './handlers';
+import hideHomeStyles from './hide-home.scss?inline';
+import hideSyncStyles from './hide-sync.scss?inline';
 import navArrowsStyles from './styles.scss?inline';
 
 let navArrowsCleanup: (() => void) | null = null;
@@ -29,7 +31,13 @@ export const topbarFeature: Feature = {
 
   getStyles() {
     const settings = getSettings();
-    return settings.navArrowsLeft ? navArrowsStyles : '';
+    const styles: string[] = [];
+
+    if (settings.navArrowsLeft) styles.push(navArrowsStyles);
+    if (settings.hideHomeButton) styles.push(hideHomeStyles);
+    if (settings.hideSyncIndicator) styles.push(hideSyncStyles);
+
+    return styles.join('\n');
   },
 
   init() {

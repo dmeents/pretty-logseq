@@ -18,44 +18,6 @@
   letter-spacing: -0.005em;
 }
 
-// Headings — subtle progressive tightening from h6 → h1
-.ls-block {
-  h1 {
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-  }
-
-  h2 {
-    letter-spacing: -0.017em;
-    line-height: 1.28;
-  }
-
-  h3 {
-    letter-spacing: -0.014em;
-    line-height: 1.32;
-  }
-
-  h4 {
-    letter-spacing: -0.01em;
-    line-height: 1.35;
-  }
-
-  h5 {
-    letter-spacing: -0.008em;
-  }
-
-  h6 {
-    letter-spacing: -0.005em;
-  }
-}
-
-// Page title
-.page-title,
-h1.title {
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-}
-
 // Sidebar
 .left-sidebar-inner {
   -webkit-font-smoothing: antialiased;
