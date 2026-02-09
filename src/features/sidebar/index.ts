@@ -24,15 +24,13 @@ export const sidebarFeature: Feature = {
     if (settings.graphSelectorBottom) styles.push(graphBottomStyles);
 
     if (settings.graphSelectorBottom && !settings.hideCreateButton) {
-      styles.push(
-        '#left-sidebar > div > div > footer { padding-bottom: 56px; }',
-      );
+      styles.push('#left-sidebar > div > div > footer { padding-bottom: 56px; }');
     }
 
     return styles.join('\n');
   },
 
-  init() { },
+  init() {},
 
-  destroy() { },
+  destroy() {},
 };
