@@ -29,6 +29,10 @@ export function mockLogseqAPI() {
       pushState: vi.fn(),
     },
 
+    DB: {
+      datascriptQuery: vi.fn().mockResolvedValue(null),
+    },
+
     Settings: {
       registerSettings: vi.fn(),
       on: vi.fn(),

@@ -182,6 +182,48 @@ describe('Settings Management', () => {
       expect(receivedOld.enablePrettyTypography).toBe(defaultSettings.enablePrettyTypography);
     });
 
+    it('filters out disabled property from settings', () => {
+      const callback = vi.fn();
+      let registeredCallback: ((newSettings: unknown, oldSettings: unknown) => void) | null = null;
+
+      logseq.onSettingsChanged.mockImplementation(cb => {
+        registeredCallback = cb;
+      });
+
+      onSettingsChanged(callback);
+
+      // Simulate settings that include Logseq internal 'disabled' property
+      const newSettings = { disabled: true, enablePopovers: false };
+      const oldSettings = { disabled: false, enablePopovers: true };
+
+      registeredCallback?.(newSettings, oldSettings);
+
+      const [receivedNew, receivedOld] = callback.mock.calls[0];
+
+      // 'disabled' should not be in the received settings
+      expect(receivedNew).not.toHaveProperty('disabled');
+      expect(receivedOld).not.toHaveProperty('disabled');
+      expect(receivedNew.enablePopovers).toBe(false);
+      expect(receivedOld.enablePopovers).toBe(true);
+    });
+
+    it('handles null/undefined settings gracefully', () => {
+      const callback = vi.fn();
+      let registeredCallback: ((newSettings: unknown, oldSettings: unknown) => void) | null = null;
+
+      logseq.onSettingsChanged.mockImplementation(cb => {
+        registeredCallback = cb;
+      });
+
+      onSettingsChanged(callback);
+
+      registeredCallback?.(null, undefined);
+
+      const [receivedNew, receivedOld] = callback.mock.calls[0];
+      expect(receivedNew).toEqual(defaultSettings);
+      expect(receivedOld).toEqual(defaultSettings);
+    });
+
     it('handles empty settings objects', () => {
       const callback = vi.fn();
       let registeredCallback: ((newSettings: unknown, oldSettings: unknown) => void) | null = null;

@@ -350,8 +350,8 @@ describe('extractSnippet', () => {
     };
     const snippet = extractSnippet(page, 50);
     expect(snippet).not.toBeNull();
-    expect(snippet!.length).toBeLessThanOrEqual(51); // 50 + ellipsis char
-    expect(snippet!.endsWith('\u2026')).toBe(true);
+    expect(snippet?.length).toBeLessThanOrEqual(51); // 50 + ellipsis char
+    expect(snippet?.endsWith('\u2026')).toBe(true);
   });
 
   it('does not truncate when within maxLength', () => {

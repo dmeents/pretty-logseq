@@ -110,6 +110,89 @@ describe('getPage', () => {
     expect(result?.name).toBe('page-name');
     expect(result?.originalName).toBeUndefined();
   });
+
+  it('resolves alias when page has no properties', async () => {
+    // First call returns a page with no properties (alias stub)
+    logseq.Editor.getPage.mockResolvedValue({
+      name: 'alias-page',
+      originalName: 'Alias Page',
+      properties: {},
+    });
+
+    // Datascript query returns the root page
+    logseq.DB.datascriptQuery.mockResolvedValue([
+      [
+        {
+          name: 'root-page',
+          originalName: 'Root Page',
+          properties: { type: 'Resource', status: 'Active' },
+        },
+      ],
+    ]);
+
+    const result = await getPage('alias-page');
+
+    expect(result?.name).toBe('Root Page');
+    expect(result?.properties).toEqual({ type: 'Resource', status: 'Active' });
+  });
+
+  it('returns original page when alias resolution finds nothing', async () => {
+    logseq.Editor.getPage.mockResolvedValue({
+      name: 'no-alias',
+      originalName: 'No Alias',
+      properties: {},
+    });
+
+    logseq.DB.datascriptQuery.mockResolvedValue(null);
+
+    const result = await getPage('no-alias');
+
+    expect(result?.name).toBe('No Alias');
+    expect(result?.properties).toEqual({});
+  });
+
+  it('returns original page when alias resolution returns empty results', async () => {
+    logseq.Editor.getPage.mockResolvedValue({
+      name: 'empty-alias',
+      originalName: 'Empty Alias',
+      properties: {},
+    });
+
+    logseq.DB.datascriptQuery.mockResolvedValue([]);
+
+    const result = await getPage('empty-alias');
+
+    expect(result?.name).toBe('Empty Alias');
+  });
+
+  it('returns original page when alias resolution returns null page', async () => {
+    logseq.Editor.getPage.mockResolvedValue({
+      name: 'null-alias',
+      originalName: 'Null Alias',
+      properties: {},
+    });
+
+    logseq.DB.datascriptQuery.mockResolvedValue([[null]]);
+
+    const result = await getPage('null-alias');
+
+    expect(result?.name).toBe('Null Alias');
+  });
+
+  it('handles alias resolution errors gracefully', async () => {
+    logseq.Editor.getPage.mockResolvedValue({
+      name: 'error-alias',
+      originalName: 'Error Alias',
+      properties: {},
+    });
+
+    logseq.DB.datascriptQuery.mockRejectedValue(new Error('Query failed'));
+
+    const result = await getPage('error-alias');
+
+    // Should still return the original page data
+    expect(result?.name).toBe('Error Alias');
+  });
 });
 
 describe('clearPageCache', () => {
