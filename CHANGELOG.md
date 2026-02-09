@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.2](https://github.com/dmeents/pretty-logseq/compare/v1.0.1...v1.0.2) (2026-02-09)
+
+
+### Bug Fixes
+
+* add release token ([fd63852](https://github.com/dmeents/pretty-logseq/commit/fd638528342d4f39f65c4aa44e3052e27f55c4da))
+* add release token ([9b60cd8](https://github.com/dmeents/pretty-logseq/commit/9b60cd86853f3811df7e44a14effaf70889543a3))
+* branch matching pattern ([1aa1fe9](https://github.com/dmeents/pretty-logseq/commit/1aa1fe919d0a1531c9c89d4919ffc2163e9777fa))
+* branch matching pattern ([b77572a](https://github.com/dmeents/pretty-logseq/commit/b77572a75e0eccbdeaa1e77064be385353dc6432))
+
 ## [1.0.1](https://github.com/dmeents/pretty-logseq/compare/v1.0.0...v1.0.1) (2026-02-08)
 
 
