@@ -12,54 +12,26 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 
 - **Richer page previews** — See full context when hovering over page links, with smart type-specific layouts for people, resources, and more
 - **Enhanced typography** — Refined font styling, spacing, and visual hierarchy that makes your content easier to scan and more pleasant to read
-- **Cleaner interface** — Streamline your workspace with customizable navigation and sidebar layouts
-- **Smarter visual design** — Polished styling for page properties, headers, tables, todos, and templates that brings clarity to every element
-- **Better link styling** — Page references and external links stand out with subtle, theme-aware styling that improves navigation
+- **Cleaner interface** — Streamline your workspace with customizable sidebar, top bar, and navigation layouts
+- **Smarter visual design** — Polished styling for page properties, tables, todos, and templates that brings clarity to every element
+- **Better link styling** — External URLs stand out with favicons and subtle, theme-aware styling that improves scannability
+- **Clearer structure** — Bullet threading lines reveal the hierarchy of nested blocks, making complex outlines easier to follow
 - **Your theme, enhanced** — Automatically adapts to your current theme (light or dark) while maintaining visual harmony
 
 ## Features
 
-### Pretty Popovers
-
-| Description                                                                                                                                                                                                                                                                                                                            | Preview                                                         |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Stop scrolling through cluttered page link previews. Get **rich, context-aware popovers** that show you what matters before you click.<br><br>Popovers automatically adapt to whatever properties your pages have — add a `photo::`, `rating::`, `description::`, or any other property and it just shows up. No configuration needed. | ![Person Popover](assets/screenshots/pretty-popover-person.png) |
-
-### Pretty Links
-
-| Description                                                                                                                                                                                                                                                                                                                     | Preview                                              |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Transform your external urls from plain text into **visually distinct, styled links** that make your graph easier to scan and navigate. Links stand out with subtle styling that respects your theme while improving readability. Makes it effortless to spot references, external links, and internal connections at a glance. | ![Pretty Links](assets/screenshots/pretty-links.png) |
-
-### Pretty Properties
-
-| Description                                                                                                                                                                                                                                                                                                                                            | Preview                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
-| Say goodbye to cluttered property lists. Get **beautifully styled property cards** with accent borders, clean typography, and visual hierarchy that makes metadata actually readable. Properties become a joy to read instead of visual noise. Keys are clearly distinguished from values, and the entire block integrates seamlessly with your theme. | ![Pretty Properties](assets/screenshots/pretty-properties.png) |
-
-### Pretty SideBar
-
-| Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Preview                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Reclaim precious screen space with **compact icon-based navigation** that keeps everything accessible without the clutter. The sidebar transforms from a text-heavy panel into a streamlined command center.<br><br>Features include:<br>• **Icon-only navigation** for maximum space efficiency<br>• **Bottom-pinned graph selector** that stays out of your way<br>• **Hidden Create button** to reduce visual noise<br>• All functionality preserved, zero friction added | ![Pretty Sidebar](assets/screenshots/pretty-sidebar.png) |
-
-### Pretty Todos
-
-| Description                                                                                                                                                                                                                                                                                                                           | Preview                                              |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Keep your task lists clean and actionable with **enhanced TODO styling** that brings visual clarity to your workflow. Priorities, statuses, and deadlines become instantly scannable. Your task management gets an upgrade with color-coded priorities, clear status indicators, and typography that helps you focus on what matters. | ![Pretty Todos](assets/screenshots/pretty-todos.png) |
-
-### Pretty Templates
-
-| Description                                                                                                                                                                                                                                                                                                                                                                          | Preview                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| Stop letting template blocks clutter your view. Get **dimmed, card-styled templates** that fade into the background until you need them — then reveal on hover when you're ready to use them. Templates stay accessible but don't compete for attention with your actual content. Perfect for keeping your pages clean while maintaining quick access to frequently-used structures. | ![Pretty Templates](assets/screenshots/pretty-templates.png) |
-
-### Pretty Tables
-
-| Description                                                                                                                                                                                                                                                                                                                                                                                                             | Preview                                                |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Query results deserve better. Get **polished, professional tables** with themed headers, smooth hover effects, and clean borders that make data actually readable.<br><br>Transform raw query output into presentation-ready tables with:<br>• Styled headers with subtle backgrounds<br>• Row hover effects for better scanning<br>• Clean borders that guide your eye<br>• Consistent theming that matches your graph | ![Pretty Tables](assets/screenshots/pretty-tables.png) |
+| Feature | Description | Preview |
+| --- | --- | --- |
+| **Pretty Popovers** | Stop scrolling through cluttered page link previews. Get **rich, context-aware popovers** that show you what matters before you click. Popovers automatically adapt to whatever properties your pages have — add a `photo::`, `rating::`, `description::`, or any other property and it just shows up. No configuration needed. | ![Person Popover](assets/screenshots/pretty-popover-person.png) |
+| **Pretty Links** | Transform your external urls from plain text into **visually distinct, styled links** that make your graph easier to scan and navigate. Links stand out with subtle styling that respects your theme while improving readability. Makes it effortless to spot references, external links, and internal connections at a glance. | ![Pretty Links](assets/screenshots/pretty-links.png) |
+| **Pretty Properties** | Say goodbye to cluttered property lists. Get **beautifully styled property cards** with accent borders, clean typography, and visual hierarchy that makes metadata actually readable. Keys are clearly distinguished from values, and the entire block integrates seamlessly with your theme. | ![Pretty Properties](assets/screenshots/pretty-properties.png) |
+| **Pretty Sidebar** | Reclaim precious screen space with **compact icon-based navigation** that keeps everything accessible without the clutter. Icon-only navigation, bottom-pinned graph selector, and hidden Create button — all functionality preserved, zero friction added. | ![Pretty Sidebar](assets/screenshots/pretty-sidebar.png) |
+| **Pretty Todos** | Keep your task lists clean and actionable with **enhanced TODO styling** that brings visual clarity to your workflow. Color-coded priorities, clear status indicators, and typography that helps you focus on what matters. | ![Pretty Todos](assets/screenshots/pretty-todos.png) |
+| **Pretty Templates** | Stop letting template blocks clutter your view. Get **dimmed, card-styled templates** that fade into the background until you need them — then reveal on hover when you're ready to use them. Templates stay accessible but don't compete for attention with your actual content. | ![Pretty Templates](assets/screenshots/pretty-templates.png) |
+| **Pretty Tables** | Query results deserve better. Get **polished, professional tables** with themed headers, smooth hover effects, and clean borders that make data actually readable. Styled headers, row hover effects, and consistent theming that matches your graph. | ![Pretty Tables](assets/screenshots/pretty-tables.png) |
+| **Pretty Typography** | Improve text legibility across your entire graph with **refined font styling and visual hierarchy**. Antialiased text rendering, tighter heading spacing, balanced font weights, and a modern monospace code font stack. | |
+| **Bullet Threading** | Show **visual hierarchy lines** connecting parent blocks to their children on hover. Subtle vertical guides trace the indentation structure, helping you keep your place in complex page hierarchies. | |
+| **Pretty Top Bar** | Customize the top navigation bar to reduce visual clutter. **Hide Home Button** if you prefer keyboard navigation, **Hide Sync Indicator** to clean up the status display, and **Navigation Arrows on Left** to reposition back/forward arrows. | |
 
 ## Installation
 
