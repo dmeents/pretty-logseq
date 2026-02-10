@@ -1,5 +1,5 @@
 import { cleanBlockContent, cleanPropertyValue } from '../../../lib/api';
-import type { PageData } from '../../../types';
+import type { BlockData, PageData } from '../../../types';
 
 /**
  * Extract a URL from a Logseq property value.
@@ -25,6 +25,7 @@ export function formatUrlLabel(url: string): string {
   try {
     const parsed = new URL(url);
     const path = parsed.pathname.replace(/^\/|\/$/g, '');
+
     if (path) return path;
     return parsed.hostname;
   } catch {
@@ -192,25 +193,60 @@ export function createRatingDisplay(value: unknown): HTMLElement {
  * Cleans each block's content, skips empty/property-only blocks,
  * and truncates to a character limit at a word boundary.
  */
-export function extractSnippet(pageData: PageData, maxLength = 560): string | null {
+export interface SnippetPart {
+  text: string;
+  heading: boolean;
+}
+
+/**
+ * Extract a content snippet from page blocks.
+ * Returns structured parts with heading metadata.
+ * Skips query blocks and only traverses 2 levels deep.
+ */
+export function extractSnippet(pageData: PageData, maxLength = 560): SnippetPart[] | null {
   const { blocks } = pageData;
   if (!blocks || blocks.length === 0) return null;
 
-  const textParts: string[] = [];
+  const parts: SnippetPart[] = [];
+  collectBlockText(blocks, parts);
 
-  for (const block of blocks) {
-    const cleaned = cleanBlockContent(block.content);
-    if (!cleaned) continue;
-    textParts.push(cleaned);
+  if (parts.length === 0) return null;
+
+  // Truncate to maxLength total characters
+  const result: SnippetPart[] = [];
+  let total = 0;
+
+  for (const part of parts) {
+    if (total >= maxLength) break;
+
+    if (total + part.text.length <= maxLength) {
+      result.push(part);
+      total += part.text.length;
+    } else {
+      const remaining = maxLength - total;
+      const truncated = part.text.slice(0, remaining);
+      const lastSpace = truncated.lastIndexOf(' ');
+      const cutoff = lastSpace > remaining * 0.6 ? lastSpace : remaining;
+      result.push({ text: `${truncated.slice(0, cutoff)}\u2026`, heading: part.heading });
+      break;
+    }
   }
 
-  if (textParts.length === 0) return null;
+  return result.length > 0 ? result : null;
+}
 
-  const joined = textParts.join(' ');
-  if (joined.length <= maxLength) return joined;
+function collectBlockText(blocks: BlockData[], parts: SnippetPart[], depth = 0): void {
+  if (depth >= 2) return;
+  for (const block of blocks) {
+    if (isQueryBlock(block.content)) continue;
 
-  const truncated = joined.slice(0, maxLength);
-  const lastSpace = truncated.lastIndexOf(' ');
-  const cutoff = lastSpace > maxLength * 0.6 ? lastSpace : maxLength;
-  return `${truncated.slice(0, cutoff)}\u2026`;
+    const heading = /^#+\s/.test(block.content);
+    const cleaned = cleanBlockContent(block.content);
+    if (cleaned) parts.push({ text: cleaned, heading });
+    if (block.children) collectBlockText(block.children, parts, depth + 1);
+  }
+}
+
+function isQueryBlock(content: string): boolean {
+  return content.includes('{{query') || content.includes('#+BEGIN_QUERY');
 }

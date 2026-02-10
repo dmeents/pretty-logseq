@@ -9,6 +9,7 @@ export interface PluginSettings {
   showPropertyIcons: boolean;
   enablePrettyLinks: boolean;
   enablePrettyTodos: boolean;
+  enableBulletThreading: boolean;
   compactSidebarNav: boolean;
   hideCreateButton: boolean;
   graphSelectorBottom: boolean;
@@ -26,6 +27,7 @@ export const defaultSettings: PluginSettings = {
   showPropertyIcons: true,
   enablePrettyLinks: true,
   enablePrettyTodos: true,
+  enableBulletThreading: true,
   compactSidebarNav: true,
   hideCreateButton: true,
   graphSelectorBottom: true,
@@ -85,6 +87,20 @@ export const settingsSchema: SettingSchemaDesc[] = [
     title: 'Pretty Todos',
     description:
       'Restyle task blocks with visual indicators for status, priority, and past-due dates.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'contentHeading',
+    title: 'Content',
+    description: '',
+    type: 'heading',
+    default: null,
+  },
+  {
+    key: 'enableBulletThreading',
+    title: 'Bullet Threading',
+    description: 'Show visual hierarchy lines connecting parent blocks to children on hover.',
     type: 'boolean',
     default: true,
   },

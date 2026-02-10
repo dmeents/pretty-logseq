@@ -47,6 +47,7 @@ async function main(): Promise<void> {
       'showPropertyIcons',
       'enablePrettyLinks',
       'enablePrettyTodos',
+      'enableBulletThreading',
       'compactSidebarNav',
       'hideCreateButton',
       'graphSelectorBottom',

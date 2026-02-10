@@ -129,6 +129,9 @@ export function setupPopovers(): () => void {
     const pageRef = target.closest?.(REF_SELECTOR) as HTMLElement | null;
     if (!pageRef) return;
 
+    // Don't trigger popovers for refs inside an existing popover
+    if (pageRef.closest('.pretty-popover')) return;
+
     // If already showing for this anchor, just cancel any pending hide
     if (currentAnchor === pageRef && getPopover()) {
       clearHideTimer();
