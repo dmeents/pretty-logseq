@@ -7,248 +7,248 @@ import * as apiModule from '../../lib/api';
 import { setupPropertyObserver } from './observer';
 
 vi.mock('../../lib/api', () => ({
-	getPage: vi.fn(),
-	cleanPropertyValue: vi.fn((v: unknown) => String(v ?? '')),
+  getPage: vi.fn(),
+  cleanPropertyValue: vi.fn((v: unknown) => String(v ?? '')),
 }));
 
 const ICON_CLASS = 'pl-property-icon';
 const RESOLVED_ATTR = 'data-pl-icon-resolved';
 
 function createPropertyBlock(keys: string[]): HTMLElement {
-	const block = document.createElement('div');
-	block.className = 'page-properties';
+  const block = document.createElement('div');
+  block.className = 'page-properties';
 
-	for (const key of keys) {
-		const keyEl = document.createElement('span');
-		keyEl.className = 'page-property-key';
-		keyEl.textContent = key;
-		block.appendChild(keyEl);
-	}
+  for (const key of keys) {
+    const keyEl = document.createElement('span');
+    keyEl.className = 'page-property-key';
+    keyEl.textContent = key;
+    block.appendChild(keyEl);
+  }
 
-	document.body.appendChild(block);
-	return block;
+  document.body.appendChild(block);
+  return block;
 }
 
 describe('Property Observer', () => {
-	beforeEach(() => {
-		document.body.innerHTML = '';
-		vi.clearAllMocks();
-	});
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    vi.clearAllMocks();
+  });
 
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
-	it('returns a cleanup function', () => {
-		const cleanup = setupPropertyObserver();
-		expect(typeof cleanup).toBe('function');
-		cleanup();
-	});
+  it('returns a cleanup function', () => {
+    const cleanup = setupPropertyObserver();
+    expect(typeof cleanup).toBe('function');
+    cleanup();
+  });
 
-	it('scans existing property keys on setup', async () => {
-		vi.mocked(apiModule.getPage).mockResolvedValue({
-			properties: { icon: '📦' },
-		} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+  it('scans existing property keys on setup', async () => {
+    vi.mocked(apiModule.getPage).mockResolvedValue({
+      properties: { icon: '📦' },
+    } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
 
-		createPropertyBlock(['type']);
+    createPropertyBlock(['type']);
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		// Wait for async getPage to resolve
-		await vi.waitFor(() => {
-			expect(apiModule.getPage).toHaveBeenCalledWith('type');
-		});
+    // Wait for async getPage to resolve
+    await vi.waitFor(() => {
+      expect(apiModule.getPage).toHaveBeenCalledWith('type');
+    });
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	it('prepends icon span when page has icon property', async () => {
-		vi.mocked(apiModule.getPage).mockResolvedValue({
-			properties: { icon: '📦' },
-		} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
-		vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('📦');
+  it('prepends icon span when page has icon property', async () => {
+    vi.mocked(apiModule.getPage).mockResolvedValue({
+      properties: { icon: '📦' },
+    } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+    vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('📦');
 
-		const block = createPropertyBlock(['type']);
+    const block = createPropertyBlock(['type']);
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		await vi.waitFor(() => {
-			const icon = block.querySelector(`.${ICON_CLASS}`);
-			expect(icon).not.toBeNull();
-			expect(icon?.textContent).toBe('📦');
-		});
+    await vi.waitFor(() => {
+      const icon = block.querySelector(`.${ICON_CLASS}`);
+      expect(icon).not.toBeNull();
+      expect(icon?.textContent).toBe('📦');
+    });
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	it('marks processed elements with resolved attribute', async () => {
-		vi.mocked(apiModule.getPage).mockResolvedValue({
-			properties: { icon: '📦' },
-		} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+  it('marks processed elements with resolved attribute', async () => {
+    vi.mocked(apiModule.getPage).mockResolvedValue({
+      properties: { icon: '📦' },
+    } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
 
-		createPropertyBlock(['type']);
+    createPropertyBlock(['type']);
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		await vi.waitFor(() => {
-			const keyEl = document.querySelector('.page-property-key');
-			expect(keyEl?.hasAttribute(RESOLVED_ATTR)).toBe(true);
-		});
+    await vi.waitFor(() => {
+      const keyEl = document.querySelector('.page-property-key');
+      expect(keyEl?.hasAttribute(RESOLVED_ATTR)).toBe(true);
+    });
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	it('skips elements already resolved', async () => {
-		vi.mocked(apiModule.getPage).mockResolvedValue({
-			properties: { icon: '📦' },
-		} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+  it('skips elements already resolved', async () => {
+    vi.mocked(apiModule.getPage).mockResolvedValue({
+      properties: { icon: '📦' },
+    } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
 
-		const block = createPropertyBlock(['type']);
-		const keyEl = block.querySelector('.page-property-key')!;
-		keyEl.setAttribute(RESOLVED_ATTR, '');
+    const block = createPropertyBlock(['type']);
+    const keyEl = block.querySelector('.page-property-key');
+    keyEl?.setAttribute(RESOLVED_ATTR, '');
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		// Give it a tick to process
-		await new Promise((r) => setTimeout(r, 10));
+    // Give it a tick to process
+    await new Promise(r => setTimeout(r, 10));
 
-		expect(apiModule.getPage).not.toHaveBeenCalled();
+    expect(apiModule.getPage).not.toHaveBeenCalled();
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	it('skips when page has no icon property', async () => {
-		vi.mocked(apiModule.getPage).mockResolvedValue({
-			properties: { description: 'something' },
-		} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+  it('skips when page has no icon property', async () => {
+    vi.mocked(apiModule.getPage).mockResolvedValue({
+      properties: { description: 'something' },
+    } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
 
-		const block = createPropertyBlock(['type']);
+    const block = createPropertyBlock(['type']);
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		await vi.waitFor(() => {
-			expect(apiModule.getPage).toHaveBeenCalled();
-		});
+    await vi.waitFor(() => {
+      expect(apiModule.getPage).toHaveBeenCalled();
+    });
 
-		// No icon should be prepended
-		expect(block.querySelector(`.${ICON_CLASS}`)).toBeNull();
+    // No icon should be prepended
+    expect(block.querySelector(`.${ICON_CLASS}`)).toBeNull();
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	it('skips when page is null', async () => {
-		vi.mocked(apiModule.getPage).mockResolvedValue(null as Awaited<
-			ReturnType<typeof apiModule.getPage>
-		>);
+  it('skips when page is null', async () => {
+    vi.mocked(apiModule.getPage).mockResolvedValue(
+      null as Awaited<ReturnType<typeof apiModule.getPage>>,
+    );
 
-		const block = createPropertyBlock(['unknown-key']);
+    const block = createPropertyBlock(['unknown-key']);
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		await vi.waitFor(() => {
-			expect(apiModule.getPage).toHaveBeenCalled();
-		});
+    await vi.waitFor(() => {
+      expect(apiModule.getPage).toHaveBeenCalled();
+    });
 
-		expect(block.querySelector(`.${ICON_CLASS}`)).toBeNull();
+    expect(block.querySelector(`.${ICON_CLASS}`)).toBeNull();
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	it('skips when key text is empty', async () => {
-		const block = document.createElement('div');
-		block.className = 'page-properties';
+  it('skips when key text is empty', async () => {
+    const block = document.createElement('div');
+    block.className = 'page-properties';
 
-		const keyEl = document.createElement('span');
-		keyEl.className = 'page-property-key';
-		keyEl.textContent = '';
-		block.appendChild(keyEl);
-		document.body.appendChild(block);
+    const keyEl = document.createElement('span');
+    keyEl.className = 'page-property-key';
+    keyEl.textContent = '';
+    block.appendChild(keyEl);
+    document.body.appendChild(block);
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		await new Promise((r) => setTimeout(r, 10));
+    await new Promise(r => setTimeout(r, 10));
 
-		expect(apiModule.getPage).not.toHaveBeenCalled();
+    expect(apiModule.getPage).not.toHaveBeenCalled();
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	it('skips when cleanPropertyValue returns empty string', async () => {
-		vi.mocked(apiModule.getPage).mockResolvedValue({
-			properties: { icon: '' },
-		} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
-		vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('');
+  it('skips when cleanPropertyValue returns empty string', async () => {
+    vi.mocked(apiModule.getPage).mockResolvedValue({
+      properties: { icon: '' },
+    } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+    vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('');
 
-		const block = createPropertyBlock(['type']);
+    const block = createPropertyBlock(['type']);
 
-		const cleanup = setupPropertyObserver();
+    const cleanup = setupPropertyObserver();
 
-		await vi.waitFor(() => {
-			expect(apiModule.getPage).toHaveBeenCalled();
-		});
+    await vi.waitFor(() => {
+      expect(apiModule.getPage).toHaveBeenCalled();
+    });
 
-		expect(block.querySelector(`.${ICON_CLASS}`)).toBeNull();
+    expect(block.querySelector(`.${ICON_CLASS}`)).toBeNull();
 
-		cleanup();
-	});
+    cleanup();
+  });
 
-	describe('Cleanup', () => {
-		it('removes all icon spans', async () => {
-			vi.mocked(apiModule.getPage).mockResolvedValue({
-				properties: { icon: '📦' },
-			} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
-			vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('📦');
+  describe('Cleanup', () => {
+    it('removes all icon spans', async () => {
+      vi.mocked(apiModule.getPage).mockResolvedValue({
+        properties: { icon: '📦' },
+      } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+      vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('📦');
 
-			createPropertyBlock(['type', 'status']);
+      createPropertyBlock(['type', 'status']);
 
-			const cleanup = setupPropertyObserver();
+      const cleanup = setupPropertyObserver();
 
-			await vi.waitFor(() => {
-				expect(document.querySelectorAll(`.${ICON_CLASS}`).length).toBe(2);
-			});
+      await vi.waitFor(() => {
+        expect(document.querySelectorAll(`.${ICON_CLASS}`).length).toBe(2);
+      });
 
-			cleanup();
+      cleanup();
 
-			expect(document.querySelectorAll(`.${ICON_CLASS}`).length).toBe(0);
-		});
+      expect(document.querySelectorAll(`.${ICON_CLASS}`).length).toBe(0);
+    });
 
-		it('removes resolved attributes', async () => {
-			vi.mocked(apiModule.getPage).mockResolvedValue({
-				properties: { icon: '📦' },
-			} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+    it('removes resolved attributes', async () => {
+      vi.mocked(apiModule.getPage).mockResolvedValue({
+        properties: { icon: '📦' },
+      } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
 
-			createPropertyBlock(['type']);
+      createPropertyBlock(['type']);
 
-			const cleanup = setupPropertyObserver();
+      const cleanup = setupPropertyObserver();
 
-			await vi.waitFor(() => {
-				expect(document.querySelector(`[${RESOLVED_ATTR}]`)).not.toBeNull();
-			});
+      await vi.waitFor(() => {
+        expect(document.querySelector(`[${RESOLVED_ATTR}]`)).not.toBeNull();
+      });
 
-			cleanup();
+      cleanup();
 
-			expect(document.querySelector(`[${RESOLVED_ATTR}]`)).toBeNull();
-		});
+      expect(document.querySelector(`[${RESOLVED_ATTR}]`)).toBeNull();
+    });
 
-		it('disconnects mutation observer', async () => {
-			vi.mocked(apiModule.getPage).mockResolvedValue({
-				properties: { icon: '🔧' },
-			} as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
-			vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('🔧');
+    it('disconnects mutation observer', async () => {
+      vi.mocked(apiModule.getPage).mockResolvedValue({
+        properties: { icon: '🔧' },
+      } as ReturnType<typeof apiModule.getPage> extends Promise<infer T> ? T : never);
+      vi.mocked(apiModule.cleanPropertyValue).mockReturnValue('🔧');
 
-			const cleanup = setupPropertyObserver();
-			cleanup();
+      const cleanup = setupPropertyObserver();
+      cleanup();
 
-			// Clear call count after cleanup
-			vi.mocked(apiModule.getPage).mockClear();
+      // Clear call count after cleanup
+      vi.mocked(apiModule.getPage).mockClear();
 
-			// Add new property key — observer should be disconnected, so no new calls
-			createPropertyBlock(['area']);
+      // Add new property key — observer should be disconnected, so no new calls
+      createPropertyBlock(['area']);
 
-			await new Promise((r) => setTimeout(r, 50));
-			await new Promise((r) => requestAnimationFrame(r));
+      await new Promise(r => setTimeout(r, 50));
+      await new Promise(r => requestAnimationFrame(r));
 
-			expect(apiModule.getPage).not.toHaveBeenCalled();
-		});
-	});
+      expect(apiModule.getPage).not.toHaveBeenCalled();
+    });
+  });
 });
