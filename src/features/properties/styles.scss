@@ -22,6 +22,7 @@
     margin-right: 12px;
     display: inline-block;
     min-width: 130px;
+    flex-shrink: 0;
 
     .pl-property-icon {
       text-transform: none;
@@ -36,15 +37,20 @@
     color: var(--ls-primary-text-color);
     font-weight: 500;
     margin-left: 8px;
+    flex: 1;
+    min-width: 0;
   }
 
-  // Individual properties
-  .property {
-    padding: 6px 0;
-    border-bottom: 1px solid var(--pl-accent-light);
+  // Individual property rows
+  > div {
+    display: flex;
+    align-items: baseline;
+    padding: 2px 0;
 
-    &:last-child {
-      border-bottom: none;
+    // Key wrapper has inline style="display: inline" — override it
+    > div:first-child {
+      display: inline-flex !important;
+      flex-shrink: 0;
     }
   }
 
@@ -52,6 +58,7 @@
   > div > span {
     font-size: 0;
     visibility: hidden;
+    flex-shrink: 0;
 
     &::after {
       content: "|";
