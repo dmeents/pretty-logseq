@@ -61,6 +61,11 @@
     line-height: 1.5;
     margin-top: 8px;
     opacity: 0.85;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__properties {

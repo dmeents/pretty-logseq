@@ -32,11 +32,23 @@ export function renderPopover(pageData: PageData): HTMLElement {
 
   // 4. Content snippet (for pages without rich properties)
   if (config.showSnippet) {
-    const snippet = extractSnippet(pageData);
-    if (snippet) {
+    const parts = extractSnippet(pageData);
+    if (parts) {
       const el = document.createElement('div');
       el.className = 'pretty-popover__snippet';
-      el.textContent = snippet;
+
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        if (part.heading) {
+          const strong = document.createElement('strong');
+          strong.textContent = part.text;
+          el.appendChild(strong);
+        } else {
+          el.appendChild(document.createTextNode(part.text));
+        }
+        if (i < parts.length - 1) el.appendChild(document.createTextNode('\n'));
+      }
+
       content.appendChild(el);
     }
   }
@@ -48,6 +60,7 @@ export function renderPopover(pageData: PageData): HTMLElement {
   // 6. Array properties (pill groups like stack)
   for (const prop of config.arrayProperties) {
     const items = cleanAllValues(pageData.properties[prop]);
+
     if (items.length > 0) {
       const group = createTagPills(items, 'pretty-popover__array-tags');
       if (group) content.appendChild(group);

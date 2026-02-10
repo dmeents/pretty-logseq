@@ -3,19 +3,29 @@ import '@logseq/libs';
 import { registry } from './core/registry';
 import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
+import { contentFeature } from './features/content';
 import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
+import { propertiesFeature } from './features/properties';
 import { sidebarFeature } from './features/sidebar';
+import { tablesFeature } from './features/tables';
+import { templatesFeature } from './features/templates';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
+import { typographyFeature } from './features/typography';
 import { initSettings, onSettingsChanged } from './settings';
 
 function registerFeatures(): void {
+  registry.register(contentFeature);
   registry.register(popoversFeature);
+  registry.register(propertiesFeature);
   registry.register(linksFeature);
   registry.register(todosFeature);
   registry.register(topbarFeature);
   registry.register(sidebarFeature);
+  registry.register(tablesFeature);
+  registry.register(templatesFeature);
+  registry.register(typographyFeature);
 }
 
 async function main(): Promise<void> {
@@ -33,8 +43,11 @@ async function main(): Promise<void> {
       'enablePrettyTypography',
       'enablePrettyTables',
       'enablePrettyTemplates',
+      'enablePrettyProperties',
+      'showPropertyIcons',
       'enablePrettyLinks',
       'enablePrettyTodos',
+      'enableBulletThreading',
       'compactSidebarNav',
       'hideCreateButton',
       'graphSelectorBottom',
@@ -64,6 +77,18 @@ async function main(): Promise<void> {
         registry.initializeFeature('links');
       } else {
         registry.destroyFeature('links');
+      }
+      refreshStyles();
+    }
+
+    // Handle properties feature toggle
+    if (
+      newSettings.enablePrettyProperties !== oldSettings.enablePrettyProperties ||
+      newSettings.showPropertyIcons !== oldSettings.showPropertyIcons
+    ) {
+      registry.destroyFeature('properties');
+      if (newSettings.enablePrettyProperties) {
+        registry.initializeFeature('properties');
       }
       refreshStyles();
     }

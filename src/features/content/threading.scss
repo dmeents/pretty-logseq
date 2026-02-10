@@ -1,0 +1,16 @@
+// Bullet dot: accent color + subtle glow on hover path
+.ls-block:hover > .block-main-container .bullet {
+  background-color: var(--pl-accent);
+  box-shadow: 0 0 0 1px var(--pl-accent);
+}
+
+// Vertical threading: color the existing indent guide on hover.
+// .block-children-left-border is already positioned by Logseq at each
+// nesting level — we set a visible border on hover.
+.block-children-left-border {
+  transition: border-color 0.15s ease;
+}
+
+.ls-block:hover > .block-children-container > .block-children-left-border {
+  border-left: 1px solid var(--pl-accent);
+}

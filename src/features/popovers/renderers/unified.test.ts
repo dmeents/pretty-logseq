@@ -146,6 +146,53 @@ describe('renderPopover', () => {
       const el = renderPopover(makePage('Page', { type: 'Note' }, []));
       expect(el.querySelector('.pretty-popover__snippet')).toBeNull();
     });
+
+    it('renders heading blocks as strong elements', () => {
+      const el = renderPopover(
+        makePage('Page', { type: 'Note' }, [{ content: '# Section Title' }]),
+      );
+      const snippet = el.querySelector('.pretty-popover__snippet');
+      expect(snippet).not.toBeNull();
+      const strong = snippet?.querySelector('strong');
+      expect(strong).not.toBeNull();
+      expect(strong?.textContent).toBe('Section Title');
+    });
+
+    it('renders non-heading blocks as text nodes', () => {
+      const el = renderPopover(makePage('Page', { type: 'Note' }, [{ content: 'Plain text' }]));
+      const snippet = el.querySelector('.pretty-popover__snippet');
+      expect(snippet).not.toBeNull();
+      expect(snippet?.querySelector('strong')).toBeNull();
+      expect(snippet?.textContent).toBe('Plain text');
+    });
+
+    it('separates multiple snippet parts with newlines', () => {
+      const el = renderPopover(
+        makePage('Page', { type: 'Note' }, [
+          { content: 'First block' },
+          { content: 'Second block' },
+        ]),
+      );
+      const snippet = el.querySelector('.pretty-popover__snippet');
+      expect(snippet).not.toBeNull();
+      expect(snippet?.textContent).toContain('First block');
+      expect(snippet?.textContent).toContain('Second block');
+      // Should have text nodes separating them with newline
+      expect(snippet?.childNodes.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('renders mixed heading and plain blocks in snippet', () => {
+      const el = renderPopover(
+        makePage('Page', { type: 'Note' }, [
+          { content: '# Overview' },
+          { content: 'Some details here' },
+        ]),
+      );
+      const snippet = el.querySelector('.pretty-popover__snippet');
+      expect(snippet).not.toBeNull();
+      expect(snippet?.querySelector('strong')?.textContent).toBe('Overview');
+      expect(snippet?.textContent).toContain('Some details here');
+    });
   });
 
   describe('detail rows', () => {
@@ -257,6 +304,78 @@ describe('renderPopover', () => {
       const el = renderPopover(makePage('Page', { type: '[[Person]]' }));
       const pill = el.querySelector('.pretty-popover__tag');
       expect(pill?.textContent).toBe('Person');
+    });
+  });
+
+  describe('array properties edge cases', () => {
+    it('skips array properties with empty arrays', () => {
+      const el = renderPopover(makePage('Page', { stack: [] }));
+      expect(el.querySelector('.pretty-popover__array-tags')).toBeNull();
+    });
+
+    it('renders multiple array property groups', () => {
+      const el = renderPopover(makePage('Page', { stack: ['React'], tags: ['web'] }));
+      const groups = el.querySelectorAll('.pretty-popover__array-tags');
+      expect(groups.length).toBe(2);
+    });
+  });
+
+  describe('tags edge cases', () => {
+    it('renders only type when status and area are absent', () => {
+      const el = renderPopover(makePage('Page', { type: 'Book' }));
+      const tags = el.querySelector('.pretty-popover__properties');
+      expect(tags).not.toBeNull();
+      const pills = tags?.querySelectorAll('.pretty-popover__tag');
+      expect(pills?.length).toBe(1);
+      expect(pills?.[0].textContent).toBe('Book');
+    });
+
+    it('renders only status when type and area are absent', () => {
+      const el = renderPopover(makePage('Page', { status: 'Active' }));
+      const pills = el.querySelectorAll('.pretty-popover__tag');
+      const texts = Array.from(pills).map(p => p.textContent);
+      expect(texts).toContain('Active');
+    });
+
+    it('renders only area when type and status are absent', () => {
+      const el = renderPopover(makePage('Page', { area: 'Engineering' }));
+      const pills = el.querySelectorAll('.pretty-popover__tag');
+      const texts = Array.from(pills).map(p => p.textContent);
+      expect(texts).toContain('Engineering');
+    });
+  });
+
+  describe('link section edge cases', () => {
+    it('renders formatted label for url with path', () => {
+      const el = renderPopover(makePage('Page', { url: 'https://docs.example.com/guide' }));
+      const link = el.querySelector('.pretty-popover__external-link') as HTMLAnchorElement;
+      expect(link.textContent).toBe('guide');
+    });
+
+    it('renders hostname when url has no path', () => {
+      const el = renderPopover(makePage('Page', { url: 'https://example.com' }));
+      const link = el.querySelector('.pretty-popover__external-link') as HTMLAnchorElement;
+      expect(link.textContent).toBe('example.com');
+    });
+  });
+
+  describe('subtitle edge cases', () => {
+    it('renders organization as subtitle when role is absent', () => {
+      const el = renderPopover(makePage('Person', { organization: 'Acme Corp' }));
+      const subtitle = el.querySelector('.pretty-popover__subtitle');
+      expect(subtitle?.textContent).toBe('Acme Corp');
+    });
+
+    it('renders cuisine as subtitle for restaurant-like pages', () => {
+      const el = renderPopover(makePage('Restaurant', { cuisine: 'Italian' }));
+      const subtitle = el.querySelector('.pretty-popover__subtitle');
+      expect(subtitle?.textContent).toBe('Italian');
+    });
+
+    it('renders author as subtitle when role/cuisine are absent', () => {
+      const el = renderPopover(makePage('Book', { author: 'Jane Doe' }));
+      const subtitle = el.querySelector('.pretty-popover__subtitle');
+      expect(subtitle?.textContent).toBe('Jane Doe');
     });
   });
 

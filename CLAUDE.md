@@ -12,30 +12,30 @@ This file provides guidance to Claude Code when working with this repository.
 - **Build:** Vite with vite-plugin-logseq
 - **Styling:** SCSS (compiled via Vite)
 - **Linting/Formatting:** Biome
-- **Package Manager:** Yarn 4.x
+- **Package Manager:** pnpm 10.x
 - **Runtime:** Logseq Plugin API (@logseq/libs)
 
 ## Commands
 
 ```bash
 # Install dependencies
-yarn install
+pnpm install
 
 # Development (watch mode)
-yarn dev
+pnpm dev
 
 # Production build
-yarn build
+pnpm build
 
 # Lint and format
-yarn check        # Fix all issues
-yarn lint         # Lint only
-yarn format       # Format only
+pnpm check        # Fix all issues
+pnpm lint         # Lint only
+pnpm format       # Format only
 ```
 
 ## Development Workflow
 
-1. Run `yarn dev` to start watching for changes
+1. Run `pnpm dev` to start watching for changes
 2. In Logseq: Settings → Advanced → Developer mode (enable)
 3. In Logseq: Plugins → Load unpacked plugin → Select this project folder (not dist/)
 4. Changes auto-rebuild; reload plugin in Logseq to see updates
@@ -66,7 +66,7 @@ pretty-logseq/
 ├── vite.config.ts        # Vite build configuration
 ├── biome.json            # Linting and formatting config
 ├── tsconfig.json         # TypeScript configuration
-├── .yarnrc.yml           # Yarn 4 configuration
+├── pnpm-workspace.yaml   # pnpm configuration
 ├── src/
 │   ├── index.ts          # Bootstrap, feature registration
 │   ├── types/            # TypeScript interfaces

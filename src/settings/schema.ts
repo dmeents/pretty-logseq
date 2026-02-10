@@ -5,8 +5,11 @@ export interface PluginSettings {
   enablePrettyTypography: boolean;
   enablePrettyTables: boolean;
   enablePrettyTemplates: boolean;
+  enablePrettyProperties: boolean;
+  showPropertyIcons: boolean;
   enablePrettyLinks: boolean;
   enablePrettyTodos: boolean;
+  enableBulletThreading: boolean;
   compactSidebarNav: boolean;
   hideCreateButton: boolean;
   graphSelectorBottom: boolean;
@@ -20,8 +23,11 @@ export const defaultSettings: PluginSettings = {
   enablePrettyTypography: true,
   enablePrettyTables: true,
   enablePrettyTemplates: true,
+  enablePrettyProperties: true,
+  showPropertyIcons: true,
   enablePrettyLinks: true,
   enablePrettyTodos: true,
+  enableBulletThreading: true,
   compactSidebarNav: true,
   hideCreateButton: true,
   graphSelectorBottom: true,
@@ -81,6 +87,42 @@ export const settingsSchema: SettingSchemaDesc[] = [
     title: 'Pretty Todos',
     description:
       'Restyle task blocks with visual indicators for status, priority, and past-due dates.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'contentHeading',
+    title: 'Content',
+    description: '',
+    type: 'heading',
+    default: null,
+  },
+  {
+    key: 'enableBulletThreading',
+    title: 'Bullet Threading',
+    description: 'Show visual hierarchy lines connecting parent blocks to children on hover.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'propertiesHeading',
+    title: 'Properties',
+    description: '',
+    type: 'heading',
+    default: null,
+  },
+  {
+    key: 'enablePrettyProperties',
+    title: 'Pretty Properties',
+    description:
+      'Style page property blocks with accent borders, refined key formatting, and pipe-separated values.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'showPropertyIcons',
+    title: 'Show Property Icons',
+    description: "Display each property key's page icon to the left of the key label.",
     type: 'boolean',
     default: true,
   },

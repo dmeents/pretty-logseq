@@ -7,11 +7,11 @@ Thank you for your interest in contributing to Pretty Logseq! This guide will he
 1. Clone this repository
 2. Install dependencies:
    ```bash
-   yarn install
+   pnpm install
    ```
 3. Start the development server:
    ```bash
-   yarn dev
+   pnpm dev
    ```
 4. In Logseq:
    - Enable Developer Mode: Settings > Advanced > Developer mode
@@ -25,18 +25,18 @@ Changes will auto-rebuild. Reload the plugin in Logseq to see updates.
 - **Build:** Vite with vite-plugin-logseq
 - **Styling:** SCSS (compiled via Vite)
 - **Linting/Formatting:** Biome
-- **Package Manager:** Yarn 4.x
+- **Package Manager:** pnpm 10.x
 - **Runtime:** Logseq Plugin API (@logseq/libs)
 
 ## Commands
 
 ```bash
-yarn install    # Install dependencies
-yarn dev        # Development (watch mode)
-yarn build      # Production build
-yarn check      # Lint and format (fix all issues)
-yarn lint       # Lint only
-yarn format     # Format only
+pnpm install    # Install dependencies
+pnpm dev        # Development (watch mode)
+pnpm build      # Production build
+pnpm check      # Lint and format (fix all issues)
+pnpm lint       # Lint only
+pnpm format     # Format only
 ```
 
 ## Architecture
@@ -210,7 +210,7 @@ logseq.beforeunload(async () => { /* cleanup */ });
 
 ## Code Quality
 
-- Run `yarn check` before committing to fix linting and formatting issues
+- Run `pnpm check` before committing to fix linting and formatting issues
 - Follow the existing code patterns and conventions
 - Keep features self-contained and modular
 - Add JSDoc comments for public APIs
