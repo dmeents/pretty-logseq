@@ -8,7 +8,6 @@
 
 import { getSettings } from '../settings';
 import headersStyles from '../styles/components/headers.scss?inline';
-import pagePropertiesStyles from '../styles/components/page-properties.scss?inline';
 import tablesStyles from '../styles/components/tables.scss?inline';
 import templateBlocksStyles from '../styles/components/template-blocks.scss?inline';
 import typographyStyles from '../styles/components/typography.scss?inline';
@@ -20,7 +19,7 @@ const STYLE_KEY = 'pretty-logseq-styles';
 export function injectStyles(): void {
   const settings = getSettings();
 
-  const componentStyles = [pagePropertiesStyles, headersStyles];
+  const componentStyles = [headersStyles];
 
   if (settings.enablePrettyTypography) {
     componentStyles.push(typographyStyles);

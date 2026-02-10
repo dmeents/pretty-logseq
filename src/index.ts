@@ -5,6 +5,7 @@ import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
 import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
+import { propertiesFeature } from './features/properties';
 import { sidebarFeature } from './features/sidebar';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
@@ -12,6 +13,7 @@ import { initSettings, onSettingsChanged } from './settings';
 
 function registerFeatures(): void {
   registry.register(popoversFeature);
+  registry.register(propertiesFeature);
   registry.register(linksFeature);
   registry.register(todosFeature);
   registry.register(topbarFeature);
@@ -33,6 +35,8 @@ async function main(): Promise<void> {
       'enablePrettyTypography',
       'enablePrettyTables',
       'enablePrettyTemplates',
+      'enablePrettyProperties',
+      'showPropertyIcons',
       'enablePrettyLinks',
       'enablePrettyTodos',
       'compactSidebarNav',
@@ -64,6 +68,18 @@ async function main(): Promise<void> {
         registry.initializeFeature('links');
       } else {
         registry.destroyFeature('links');
+      }
+      refreshStyles();
+    }
+
+    // Handle properties feature toggle
+    if (
+      newSettings.enablePrettyProperties !== oldSettings.enablePrettyProperties ||
+      newSettings.showPropertyIcons !== oldSettings.showPropertyIcons
+    ) {
+      registry.destroyFeature('properties');
+      if (newSettings.enablePrettyProperties) {
+        registry.initializeFeature('properties');
       }
       refreshStyles();
     }

@@ -21,7 +21,15 @@
     letter-spacing: 0.05em;
     margin-right: 12px;
     display: inline-block;
-    min-width: 100px;
+    min-width: 130px;
+
+    .pl-property-icon {
+      text-transform: none;
+      font-weight: normal;
+      font-size: 1.5em;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
   }
 
   .page-property-value {
