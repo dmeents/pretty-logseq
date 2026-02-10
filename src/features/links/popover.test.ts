@@ -249,6 +249,100 @@ describe('setupLinkPopovers', () => {
     expect(document.getElementById(POPOVER_ID)).toBeNull();
   });
 
+  it('re-entering same anchor clears hide timer instead of recreating popover', async () => {
+    vi.mocked(metadataModule.fetchMetadata).mockResolvedValue(makeMeta());
+    cleanup = setupLinkPopovers();
+
+    const link = createExternalLink();
+
+    // Show popover
+    const enterEvent = new MouseEvent('mouseenter', { bubbles: true });
+    Object.defineProperty(enterEvent, 'target', { value: link });
+    document.dispatchEvent(enterEvent);
+    vi.advanceTimersByTime(400);
+    await vi.runAllTimersAsync();
+
+    expect(document.getElementById(POPOVER_ID)).not.toBeNull();
+
+    // Re-enter same anchor while popover is visible — should not call fetchMetadata again
+    const callsBefore = vi.mocked(metadataModule.fetchMetadata).mock.calls.length;
+    const reEnterEvent = new MouseEvent('mouseenter', { bubbles: true });
+    Object.defineProperty(reEnterEvent, 'target', { value: link });
+    document.dispatchEvent(reEnterEvent);
+
+    vi.advanceTimersByTime(400);
+    await vi.runAllTimersAsync();
+
+    expect(vi.mocked(metadataModule.fetchMetadata).mock.calls.length).toBe(callsBefore);
+    expect(document.getElementById(POPOVER_ID)).not.toBeNull();
+  });
+
+  it('mouseleave from anchor schedules hide when popover exists', async () => {
+    vi.mocked(metadataModule.fetchMetadata).mockResolvedValue(makeMeta());
+    cleanup = setupLinkPopovers();
+
+    const link = createExternalLink();
+
+    // Show popover
+    const enterEvent = new MouseEvent('mouseenter', { bubbles: true });
+    Object.defineProperty(enterEvent, 'target', { value: link });
+    document.dispatchEvent(enterEvent);
+    vi.advanceTimersByTime(400);
+    await vi.runAllTimersAsync();
+
+    expect(document.getElementById(POPOVER_ID)).not.toBeNull();
+
+    // Mouseleave from anchor
+    link.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false }));
+
+    // Wait for hide delay (150ms)
+    vi.advanceTimersByTime(150);
+
+    expect(document.getElementById(POPOVER_ID)).toBeNull();
+  });
+
+  it('mouseleave from anchor clears currentAnchor when no popover exists', async () => {
+    vi.mocked(metadataModule.fetchMetadata).mockResolvedValue(null);
+    cleanup = setupLinkPopovers();
+
+    const link = createExternalLink();
+
+    // Trigger enter — will not create popover since metadata is null
+    const enterEvent = new MouseEvent('mouseenter', { bubbles: true });
+    Object.defineProperty(enterEvent, 'target', { value: link });
+    document.dispatchEvent(enterEvent);
+
+    // Leave before show delay fires
+    link.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false }));
+
+    // Show timer was cleared; no popover should appear
+    vi.advanceTimersByTime(400);
+    await vi.runAllTimersAsync();
+
+    expect(document.getElementById(POPOVER_ID)).toBeNull();
+  });
+
+  it('favicon error handler falls back to fallback icon', async () => {
+    vi.mocked(metadataModule.fetchMetadata).mockResolvedValue(makeMeta());
+    cleanup = setupLinkPopovers();
+
+    const link = createExternalLink();
+    const enterEvent = new MouseEvent('mouseenter', { bubbles: true });
+    Object.defineProperty(enterEvent, 'target', { value: link });
+    document.dispatchEvent(enterEvent);
+    vi.advanceTimersByTime(400);
+    await vi.runAllTimersAsync();
+
+    const favicon = document.querySelector('.pretty-link-popover__favicon') as HTMLImageElement;
+    expect(favicon).not.toBeNull();
+
+    // Simulate image error
+    favicon.onerror?.(new Event('error'));
+
+    // Should fall back and clear the error handler
+    expect(favicon.onerror).toBeNull();
+  });
+
   it('does not show popover for non-external-link targets', async () => {
     vi.mocked(metadataModule.fetchMetadata).mockResolvedValue(makeMeta());
     cleanup = setupLinkPopovers();
