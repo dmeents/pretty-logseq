@@ -3,23 +3,9 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { PluginSettings } from '../settings';
 import { injectStyles, refreshStyles } from './styles';
 
 // Mock dependencies
-vi.mock('../settings', () => ({
-  getSettings: vi.fn(() => ({
-    enablePrettyTypography: false,
-    enablePrettyTables: false,
-    enablePrettyTemplates: false,
-    compactSidebarNav: false,
-    hideCreateButton: false,
-    graphSelectorBottom: false,
-    hideHomeButton: false,
-    hideSyncIndicator: false,
-  })),
-}));
-
 vi.mock('./theme', () => ({
   generateThemeCSS: vi.fn(() => '/* theme styles */'),
 }));
@@ -80,114 +66,20 @@ describe('Style Management', () => {
       expect(styles).toContain('/* feature styles */');
     });
 
-    it('includes typography styles when enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        enablePrettyTypography: true,
-      } as PluginSettings);
+    it('calls generateThemeCSS', async () => {
+      const { generateThemeCSS } = await import('./theme');
 
       injectStyles();
 
-      // Verify the setting was checked
-      expect(getSettings).toHaveBeenCalled();
+      expect(generateThemeCSS).toHaveBeenCalled();
     });
 
-    it('includes table styles when enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        enablePrettyTables: true,
-      } as PluginSettings);
+    it('calls registry.getAggregatedStyles', async () => {
+      const { registry } = await import('./registry');
 
       injectStyles();
 
-      expect(getSettings).toHaveBeenCalled();
-    });
-
-    it('includes template styles when enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        enablePrettyTemplates: true,
-      } as PluginSettings);
-
-      injectStyles();
-
-      expect(getSettings).toHaveBeenCalled();
-    });
-
-    it('includes sidebar nav styles when compact mode enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        compactSidebarNav: true,
-      } as PluginSettings);
-
-      injectStyles();
-
-      expect(getSettings).toHaveBeenCalled();
-    });
-
-    it('includes hide create button styles when enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        hideCreateButton: true,
-      } as PluginSettings);
-
-      injectStyles();
-
-      expect(getSettings).toHaveBeenCalled();
-    });
-
-    it('includes graph bottom styles when enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        graphSelectorBottom: true,
-      } as PluginSettings);
-
-      injectStyles();
-
-      expect(getSettings).toHaveBeenCalled();
-    });
-
-    it('includes hide home button styles when enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        hideHomeButton: true,
-      } as PluginSettings);
-
-      injectStyles();
-
-      expect(getSettings).toHaveBeenCalled();
-    });
-
-    it('includes hide sync indicator styles when enabled', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        hideSyncIndicator: true,
-      } as PluginSettings);
-
-      injectStyles();
-
-      expect(getSettings).toHaveBeenCalled();
-    });
-
-    it('aggregates all enabled styles', async () => {
-      const { getSettings } = await import('../settings');
-      vi.mocked(getSettings).mockReturnValue({
-        enablePrettyTypography: true,
-        enablePrettyTables: true,
-        enablePrettyTemplates: true,
-        compactSidebarNav: true,
-        hideCreateButton: true,
-        graphSelectorBottom: true,
-        hideHomeButton: true,
-        hideSyncIndicator: true,
-      } as PluginSettings);
-
-      injectStyles();
-
-      expect(logseq.provideStyle).toHaveBeenCalledWith({
-        key: 'pretty-logseq-styles',
-        style: expect.any(String),
-      });
+      expect(registry.getAggregatedStyles).toHaveBeenCalled();
     });
 
     it('uses consistent style key', () => {

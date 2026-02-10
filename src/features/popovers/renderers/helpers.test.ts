@@ -293,16 +293,19 @@ describe('extractSnippet', () => {
       properties: {},
       blocks: [{ content: 'Hello world' }],
     };
-    expect(extractSnippet(page)).toBe('Hello world');
+    expect(extractSnippet(page)).toEqual([{ text: 'Hello world', heading: false }]);
   });
 
-  it('joins multiple blocks with spaces', () => {
+  it('returns separate parts for multiple blocks', () => {
     const page: PageData = {
       name: 'P',
       properties: {},
       blocks: [{ content: 'First block' }, { content: 'Second block' }],
     };
-    expect(extractSnippet(page)).toBe('First block Second block');
+    expect(extractSnippet(page)).toEqual([
+      { text: 'First block', heading: false },
+      { text: 'Second block', heading: false },
+    ]);
   });
 
   it('strips property lines from blocks', () => {
@@ -311,7 +314,7 @@ describe('extractSnippet', () => {
       properties: {},
       blocks: [{ content: 'type:: Note\nActual content here' }],
     };
-    expect(extractSnippet(page)).toBe('Actual content here');
+    expect(extractSnippet(page)).toEqual([{ text: 'Actual content here', heading: false }]);
   });
 
   it('cleans page references from blocks', () => {
@@ -320,7 +323,7 @@ describe('extractSnippet', () => {
       properties: {},
       blocks: [{ content: 'See [[Other Page]] for details' }],
     };
-    expect(extractSnippet(page)).toBe('See Other Page for details');
+    expect(extractSnippet(page)).toEqual([{ text: 'See Other Page for details', heading: false }]);
   });
 
   it('skips empty blocks', () => {
@@ -329,7 +332,7 @@ describe('extractSnippet', () => {
       properties: {},
       blocks: [{ content: '' }, { content: 'Real content' }],
     };
-    expect(extractSnippet(page)).toBe('Real content');
+    expect(extractSnippet(page)).toEqual([{ text: 'Real content', heading: false }]);
   });
 
   it('returns null when all blocks are empty', () => {
@@ -350,8 +353,10 @@ describe('extractSnippet', () => {
     };
     const snippet = extractSnippet(page, 50);
     expect(snippet).not.toBeNull();
-    expect(snippet?.length).toBeLessThanOrEqual(51); // 50 + ellipsis char
-    expect(snippet?.endsWith('\u2026')).toBe(true);
+    expect(snippet).toHaveLength(1);
+    const text = snippet![0].text;
+    expect(text.length).toBeLessThanOrEqual(51); // 50 + ellipsis char
+    expect(text.endsWith('\u2026')).toBe(true);
   });
 
   it('does not truncate when within maxLength', () => {
@@ -360,6 +365,6 @@ describe('extractSnippet', () => {
       properties: {},
       blocks: [{ content: 'Short text' }],
     };
-    expect(extractSnippet(page, 100)).toBe('Short text');
+    expect(extractSnippet(page, 100)).toEqual([{ text: 'Short text', heading: false }]);
   });
 });
