@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/dmeents/pretty-logseq/compare/v1.0.3...v1.1.0) (2026-02-10)
+
+
+### Features
+
+* add properties icons ([a9aeb5b](https://github.com/dmeents/pretty-logseq/commit/a9aeb5bc55555ae2e06c64792ad0a3fb21825c1b))
+* add threading to content ([6711872](https://github.com/dmeents/pretty-logseq/commit/6711872eb59d84cea5439949011453e994fb98d2))
+* migrate to pnpm ([79a605a](https://github.com/dmeents/pretty-logseq/commit/79a605a82f9651d908b0f44fce762cb828724900))
+
+
+### Bug Fixes
+
+* add test coverage ([f090856](https://github.com/dmeents/pretty-logseq/commit/f090856ef027af96478e6e6ddd67b80189c57659))
+* add test coverage ([5da9159](https://github.com/dmeents/pretty-logseq/commit/5da9159fe5b8b69617fedb2ae329ba934b94fd66))
+* biome checks ([997e1f9](https://github.com/dmeents/pretty-logseq/commit/997e1f997937b3213eeadd4c54ff47e0dbefc93e))
+* lint fixes ([65d5bd3](https://github.com/dmeents/pretty-logseq/commit/65d5bd3523608d40ba3e955f28d8e5138f321fb1))
+* long property values don't wrap to start of row ([9f71776](https://github.com/dmeents/pretty-logseq/commit/9f71776a367da7620b9a18c68b8dcb48233f88dd))
+* refactor loose styles into features ([1c7fd10](https://github.com/dmeents/pretty-logseq/commit/1c7fd10ee2ce35454983ca7c91136eff6087d7ed))
+* tests passing ([42419ef](https://github.com/dmeents/pretty-logseq/commit/42419ef54abfed17283ac2ce7f3cff9bd0753d64))
+
 ## [1.0.3](https://github.com/dmeents/pretty-logseq/compare/v1.0.2...v1.0.3) (2026-02-09)
 
 
