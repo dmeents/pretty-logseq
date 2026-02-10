@@ -3,21 +3,29 @@ import '@logseq/libs';
 import { registry } from './core/registry';
 import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
+import { contentFeature } from './features/content';
 import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
 import { propertiesFeature } from './features/properties';
 import { sidebarFeature } from './features/sidebar';
+import { tablesFeature } from './features/tables';
+import { templatesFeature } from './features/templates';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
+import { typographyFeature } from './features/typography';
 import { initSettings, onSettingsChanged } from './settings';
 
 function registerFeatures(): void {
+  registry.register(contentFeature);
   registry.register(popoversFeature);
   registry.register(propertiesFeature);
   registry.register(linksFeature);
   registry.register(todosFeature);
   registry.register(topbarFeature);
   registry.register(sidebarFeature);
+  registry.register(tablesFeature);
+  registry.register(templatesFeature);
+  registry.register(typographyFeature);
 }
 
 async function main(): Promise<void> {
