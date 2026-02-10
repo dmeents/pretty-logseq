@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.3](https://github.com/dmeents/pretty-logseq/compare/v1.0.2...v1.0.3) (2026-02-09)
+
+
+### Bug Fixes
+
+* add test coverage ([2785d74](https://github.com/dmeents/pretty-logseq/commit/2785d740d28734b3e2844885598757c83a2713bf))
+* add test coverage ([457520b](https://github.com/dmeents/pretty-logseq/commit/457520b6f4302caa1c095e2a28db73fee774b036))
+* create button blocked by bottom graph selector ([41eba0f](https://github.com/dmeents/pretty-logseq/commit/41eba0f29dc289b717a52b0eab1cc7d52cca1fcf))
+* create button blocked by bottom graph selector ([c5ad129](https://github.com/dmeents/pretty-logseq/commit/c5ad1298096a69086a57402c2331a4cd1721a28c))
+* linting ([56b51e0](https://github.com/dmeents/pretty-logseq/commit/56b51e0865a4af8856841cbfc01c834523756abc))
+
 ## [1.0.2](https://github.com/dmeents/pretty-logseq/compare/v1.0.1...v1.0.2) (2026-02-09)
 
 
