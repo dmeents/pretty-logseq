@@ -72,11 +72,11 @@ _(Coming soon — this plugin will be submitted to the Logseq marketplace)_
 1. Download or clone this repository
 2. Install dependencies:
    ```bash
-   yarn install
+   pnpm install
    ```
 3. Build the plugin:
    ```bash
-   yarn build
+   pnpm build
    ```
 4. In Logseq:
    - Go to **Settings → Advanced** and enable **Developer mode**

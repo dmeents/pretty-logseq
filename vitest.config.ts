@@ -22,7 +22,7 @@ export default defineConfig({
       },
     },
     include: ['src/**/*.{test,spec}.ts', 'test/**/*.{test,spec}.ts'],
-    exclude: ['node_modules', 'dist', '.yarn'],
+    exclude: ['node_modules', 'dist'],
   },
   resolve: {
     alias: {

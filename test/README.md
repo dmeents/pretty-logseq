@@ -8,10 +8,10 @@ This project uses [Vitest](https://vitest.dev/) for unit and integration testing
 
 ```bash
 # Run tests in watch mode (development)
-yarn test
+pnpm test
 
 # Run tests with coverage report (CI)
-yarn test:coverage
+pnpm test:coverage
 ```
 
 ## Test Structure
@@ -179,7 +179,7 @@ See `.github/workflows/test.yml` (if configured)
 - Check that global mocks are in `test/setup.ts`
 
 ### Coverage too low
-- Run `yarn test:coverage` to see uncovered lines
+- Run `pnpm test:coverage` to see uncovered lines
 - Focus on testing business logic over UI details
 
 ## Resources
