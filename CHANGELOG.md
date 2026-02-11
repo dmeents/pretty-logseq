@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.2](https://github.com/dmeents/pretty-logseq/compare/v1.2.1...v1.2.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* biome checks ([25e7366](https://github.com/dmeents/pretty-logseq/commit/25e7366fdaa7ea274ef1f506b8aecd46dbdc4e04))
+* formatting ([49955ba](https://github.com/dmeents/pretty-logseq/commit/49955ba5701592ac54543ae8e41f6281fea1e144))
+* readme, and document selector ([030ef64](https://github.com/dmeents/pretty-logseq/commit/030ef64762c045a1e7a0733591652b979819a1ef))
+* readme, and document selector ([1aec1c3](https://github.com/dmeents/pretty-logseq/commit/1aec1c3a27bffad0e96479d4fbc64bfa8e110c6b))
+
 ## [1.2.1](https://github.com/dmeents/pretty-logseq/compare/v1.2.0...v1.2.1) (2026-02-11)
 
 
