@@ -10,15 +10,11 @@ export const contentFeature: Feature = {
 
   getStyles() {
     const parts: string[] = [styles];
-
-    if (getSettings().enableBulletThreading) {
-      parts.push(threadingStyles);
-    }
-
+    if (getSettings().enableBulletThreading) parts.push(threadingStyles);
     return parts.join('\n');
   },
 
-  init() {},
+  init() { },
 
-  destroy() {},
+  destroy() { },
 };

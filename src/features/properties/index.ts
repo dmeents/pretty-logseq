@@ -22,9 +22,7 @@ export const propertiesFeature: Feature = {
   init() {
     const settings = getSettings();
     if (!settings.enablePrettyProperties) return;
-    if (settings.showPropertyIcons) {
-      cleanup = setupPropertyObserver();
-    }
+    if (settings.showPropertyIcons) cleanup = setupPropertyObserver();
   },
 
   destroy() {
