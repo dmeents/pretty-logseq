@@ -3,7 +3,7 @@
   border: 1px solid var(--pl-accent-border);
   border-left: 4px solid var(--pl-accent);
   border-radius: 0;
-  padding: 16px 20px;
+  padding: 10px 20px;
   margin-bottom: 24px;
   margin-left: 32px;
   width: 100%;
@@ -45,7 +45,7 @@
   > div {
     display: flex;
     align-items: baseline;
-    padding: 2px 0;
+    padding: 0;
 
     // Key wrapper has inline style="display: inline" — override it
     > div:first-child {
