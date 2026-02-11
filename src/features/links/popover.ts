@@ -1,9 +1,7 @@
-import { positionElement, removeElementById } from '../../lib/dom';
+import { getParentDoc, positionElement, removeElementById } from '../../lib/dom';
 import { FALLBACK_ICON } from './favicons';
 import { fetchMetadata } from './metadata';
 import type { LinkMetadata } from './types';
-
-const doc = top?.document ?? parent.document;
 
 const LINK_POPOVER_ID = 'pretty-logseq-link-popover';
 const SHOW_DELAY = 400;
@@ -29,7 +27,7 @@ function clearHideTimer(): void {
 }
 
 function getPopover(): HTMLElement | null {
-  return doc.getElementById(LINK_POPOVER_ID);
+  return getParentDoc().getElementById(LINK_POPOVER_ID);
 }
 
 function cleanupPopoverListeners(): void {
@@ -64,7 +62,7 @@ function attachPopoverListeners(popover: HTMLElement): void {
 }
 
 function createFavicon(src: string): HTMLImageElement {
-  const favicon = doc.createElement('img');
+  const favicon = getParentDoc().createElement('img');
   favicon.src = src;
   favicon.className = 'pretty-link-popover__favicon';
   favicon.width = 14;
@@ -78,6 +76,7 @@ function createFavicon(src: string): HTMLImageElement {
 }
 
 function renderLinkPopover(metadata: LinkMetadata): HTMLElement {
+  const doc = getParentDoc();
   const content = doc.createElement('div');
   content.className = 'pretty-link-popover__content';
 
@@ -137,6 +136,7 @@ async function showLinkPopover(anchor: HTMLAnchorElement): Promise<void> {
   cleanupPopoverListeners();
   removeElementById(LINK_POPOVER_ID);
 
+  const doc = getParentDoc();
   const content = renderLinkPopover(metadata);
   const popover = doc.createElement('div');
   popover.id = LINK_POPOVER_ID;
@@ -149,6 +149,7 @@ async function showLinkPopover(anchor: HTMLAnchorElement): Promise<void> {
 }
 
 export function setupLinkPopovers(): () => void {
+  const doc = getParentDoc();
   let anchorLeaveCleanup: (() => void) | null = null;
 
   const cleanupAnchorLeave = () => {

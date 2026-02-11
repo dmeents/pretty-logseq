@@ -5,6 +5,7 @@
  * hover preview cards showing page metadata.
  */
 
+import { getParentDoc } from '../../lib/dom';
 import { getSettings } from '../../settings';
 import type { Feature } from '../../types';
 import { cleanupAllLinks, decorateLink } from './favicons';
@@ -42,7 +43,6 @@ export const linksFeature: Feature = {
     popoverCleanup?.();
     popoverCleanup = null;
 
-    const doc = top?.document ?? parent.document;
-    cleanupAllLinks(doc);
+    cleanupAllLinks(getParentDoc());
   },
 };
