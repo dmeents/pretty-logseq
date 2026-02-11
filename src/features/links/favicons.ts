@@ -1,4 +1,5 @@
-const doc = top?.document ?? parent.document;
+import { getParentDoc } from '../../lib/dom';
+
 const FAVICON_CLASS = 'pretty-link__favicon';
 const PROCESSED_ATTR = 'data-pl-favicon';
 
@@ -27,7 +28,7 @@ export function decorateLink(anchor: HTMLAnchorElement): void {
   const href = anchor.href;
   if (!href || !isValidHttpUrl(href)) return;
 
-  const favicon = doc.createElement('img');
+  const favicon = getParentDoc().createElement('img');
   favicon.className = FAVICON_CLASS;
   favicon.src = FALLBACK_ICON;
   favicon.width = 16;

@@ -15,8 +15,9 @@ const mockDocument = {
   getElementById: vi.fn(() => null),
 };
 
-vi.stubGlobal('top', { document: mockDocument });
-vi.stubGlobal('parent', { document: mockDocument });
+vi.mock('../../lib/dom', () => ({
+  getParentDoc: vi.fn(() => mockDocument),
+}));
 
 vi.mock('../../settings', () => ({
   getSettings: vi.fn(() => ({
