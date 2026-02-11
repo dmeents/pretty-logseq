@@ -1,0 +1,30 @@
+// Inline code and blockquote refinements using the plugin's accent design language.
+
+// Inline code — soft accent-tinted background
+.ls-block :not(pre) > code,
+.block-content :not(pre) > code {
+	background: var(--pl-accent-subtle);
+	border: 1px solid var(--pl-accent-light);
+	border-radius: 4px;
+	padding: 0.15em 0.4em;
+	font-size: 0.875em;
+	font-weight: var(--pl-font-weight-normal);
+}
+
+// Blockquote — accent left border, subtle background
+blockquote,
+.ls-block blockquote {
+	border-left: 3px solid var(--pl-accent);
+	background: var(--pl-accent-subtle);
+	margin: 0.5em 0;
+	padding: 0.5em 1em;
+	border-radius: 0 4px 4px 0;
+	color: var(--ls-secondary-text-color);
+	font-style: normal;
+
+	// Nested blockquote — lighter border
+	blockquote {
+		margin-left: 0;
+		border-left-color: var(--pl-accent-light);
+	}
+}

@@ -1,0 +1,9 @@
+// Topbar gradient: theme background on the left fading to accent on the right
+
+#head {
+	background: linear-gradient(
+		to right,
+		var(--ls-primary-background-color),
+		color-mix(in srgb, var(--ls-link-text-color) 12%, var(--ls-primary-background-color))
+	) !important;
+}

@@ -53,6 +53,9 @@ async function main(): Promise<void> {
       'graphSelectorBottom',
       'hideHomeButton',
       'hideSyncIndicator',
+      'styleTopbarIcons',
+      'topbarGradient',
+      'hideWindowControls',
     ] as const;
 
     const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);
@@ -99,6 +102,16 @@ async function main(): Promise<void> {
         registry.initializeFeature('todos');
       } else {
         registry.destroyFeature('todos');
+      }
+      refreshStyles();
+    }
+
+    // Handle typography feature toggle (font link injection)
+    if (newSettings.enablePrettyTypography !== oldSettings.enablePrettyTypography) {
+      if (newSettings.enablePrettyTypography) {
+        registry.initializeFeature('typography');
+      } else {
+        registry.destroyFeature('typography');
       }
       refreshStyles();
     }

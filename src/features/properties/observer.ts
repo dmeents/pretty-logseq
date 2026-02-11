@@ -1,6 +1,6 @@
 import { cleanPropertyValue, getPage } from '../../lib/api';
+import { getParentDoc } from '../../lib/dom';
 
-const doc = top?.document ?? parent.document;
 const ICON_CLASS = 'pl-property-icon';
 const RESOLVED_ATTR = 'data-pl-icon-resolved';
 
@@ -17,20 +17,22 @@ async function processPropertyKey(keyEl: Element): Promise<void> {
   const icon = cleanPropertyValue(page.properties.icon);
   if (!icon) return;
 
-  const span = doc.createElement('span');
+  const span = getParentDoc().createElement('span');
   span.className = ICON_CLASS;
   span.textContent = icon;
   keyEl.prepend(span);
 }
 
 function scanProperties(): void {
-  const keys = doc.querySelectorAll(`.page-properties .page-property-key`);
+  const doc = getParentDoc();
+  const keys = doc.querySelectorAll('.page-properties .page-property-key');
   for (const key of keys) {
     processPropertyKey(key);
   }
 }
 
 function cleanupAll(): void {
+  const doc = getParentDoc();
   for (const el of doc.querySelectorAll(`.${ICON_CLASS}`)) {
     el.remove();
   }
@@ -40,6 +42,7 @@ function cleanupAll(): void {
 }
 
 export function setupPropertyObserver(): () => void {
+  const doc = getParentDoc();
   scanProperties();
 
   let rafId: number | null = null;

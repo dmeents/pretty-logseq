@@ -1,3 +1,12 @@
+/**
+ * Lazy getter for the parent document.
+ * Avoids cross-frame access at module scope (which runs during ES module
+ * evaluation, before the Logseq SDK handshake completes).
+ */
+export function getParentDoc(): Document {
+  return top?.document ?? parent.document;
+}
+
 export interface Position {
   top: number;
   left: number;
@@ -119,6 +128,5 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
  * Uses top.document since plugins run in an iframe.
  */
 export function removeElementById(id: string): void {
-  const d = top?.document ?? parent.document;
-  d.getElementById(id)?.remove();
+  getParentDoc().getElementById(id)?.remove();
 }

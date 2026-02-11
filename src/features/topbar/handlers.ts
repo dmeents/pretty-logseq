@@ -9,7 +9,8 @@
  * plugins trigger header re-renders (e.g. registerUIItem).
  */
 
-const doc = parent.document;
+import { getParentDoc } from '../../lib/dom';
+
 const NAV_CLONE_ID = 'pl-nav-arrows';
 
 /**
@@ -19,6 +20,7 @@ const NAV_CLONE_ID = 'pl-nav-arrows';
  * Returns a cleanup function that removes the clones, or null if elements weren't found.
  */
 export function createNavArrowsInLeft(): (() => void) | null {
+  const doc = getParentDoc();
   const headLeft = doc.querySelector('#head .l');
   const originalNavPanel = doc.querySelector('.r .flex.flex-row');
 

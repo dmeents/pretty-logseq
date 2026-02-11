@@ -1,6 +1,8 @@
-const doc = top?.document ?? parent.document;
+import { getParentDoc } from '../../lib/dom';
 
 export function setupLinkObserver(onLinksFound: (links: HTMLAnchorElement[]) => void): () => void {
+  const doc = getParentDoc();
+
   // Initial scan
   const initialLinks = Array.from(
     doc.querySelectorAll('a.external-link:not([data-pl-favicon])'),

@@ -1,8 +1,18 @@
-// Subtle rendering and spacing refinements for modern legibility.
-// Does NOT change the base font family — only enhances how text renders.
+// Modern typography with Inter variable font, refined rendering, and prose rhythm.
 
-// Global text rendering
+// Typography weight scale (Inter variable font)
+:root {
+  --pl-font-weight-normal: 400;
+  --pl-font-weight-medium: 450;
+  --pl-font-weight-semibold: 550;
+  --pl-font-weight-bold: 650;
+  --pl-font-weight-heavy: 700;
+}
+
+// Global text rendering + Inter font stack
 #app-container {
+  font-family: "Inter", inherit;
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -13,13 +23,21 @@
   font-kerning: normal;
 }
 
-// Body text — gentle tightening, keep Logseq's natural line-height
+// Body text — prose-optimized rhythm
 #main-content-container {
   letter-spacing: -0.005em;
+  line-height: 1.6;
+  font-weight: var(--pl-font-weight-normal);
+}
+
+// Block content line-height for consistent rhythm
+.block-content {
+  line-height: 1.6;
 }
 
 // Sidebar
 .left-sidebar-inner {
+  font-family: inherit;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

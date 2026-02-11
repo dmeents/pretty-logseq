@@ -1,16 +1,16 @@
-const doc = parent.document;
+import { getParentDoc } from '../lib/dom';
 
-function getCSSVariableColor(varName: string): string {
-  const tempEl = doc.createElement('span');
-  tempEl.style.color = `var(${varName})`;
-  doc.body.appendChild(tempEl);
-  const color = getComputedStyle(tempEl).color;
-  tempEl.remove();
-  return color;
+const GRAY_PATTERN = /^rgb\((\d+),\s*\1,\s*\1\)$/;
+
+function isUsableColor(color: string): boolean {
+  return !!color && color !== 'rgb(0, 0, 0)' && !GRAY_PATTERN.test(color);
 }
 
 function getAccentColor(): string | null {
-  // Try multiple CSS variables that might contain the accent color
+  const doc = getParentDoc();
+  const probe = doc.createElement('span');
+  doc.body.appendChild(probe);
+
   const cssVars = [
     '--ls-link-text-color',
     '--lx-accent-09',
@@ -19,20 +19,21 @@ function getAccentColor(): string | null {
   ];
 
   for (const varName of cssVars) {
-    const color = getCSSVariableColor(varName);
-    // Check it's a valid color (not black/white/gray and not empty)
-    if (color && color !== 'rgb(0, 0, 0)' && !color.match(/^rgb\((\d+),\s*\1,\s*\1\)$/)) {
+    probe.style.color = `var(${varName})`;
+    const color = getComputedStyle(probe).color;
+    if (isUsableColor(color)) {
+      probe.remove();
       return color;
     }
   }
+
+  probe.remove();
 
   // Fallback: try to find a link element with accent color
   const link = doc.querySelector('a.page-ref, .page-property-value a');
   if (link) {
     const color = getComputedStyle(link).color;
-    if (color && color !== 'rgb(0, 0, 0)' && !color.match(/^rgb\((\d+),\s*\1,\s*\1\)$/)) {
-      return color;
-    }
+    if (isUsableColor(color)) return color;
   }
 
   return null;
@@ -42,9 +43,9 @@ function parseRGB(color: string): { r: number; g: number; b: number } | null {
   const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
   if (match) {
     return {
-      r: parseInt(match[1], 10),
-      g: parseInt(match[2], 10),
-      b: parseInt(match[3], 10),
+      r: Number.parseInt(match[1], 10),
+      g: Number.parseInt(match[2], 10),
+      b: Number.parseInt(match[3], 10),
     };
   }
   return null;
@@ -94,6 +95,8 @@ export function generateThemeCSS(): string {
  * @param onThemeChange - callback to invoke when theme changes (should refresh styles)
  */
 export function setupThemeObserver(onThemeChange: () => void): void {
+  const doc = getParentDoc();
+
   // Re-inject when theme might change (class changes on html/body)
   const observer = new MutationObserver(mutations => {
     for (const mutation of mutations) {
