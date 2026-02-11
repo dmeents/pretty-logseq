@@ -21,6 +21,7 @@ function getAccentColor(): string | null {
   for (const varName of cssVars) {
     probe.style.color = `var(${varName})`;
     const color = getComputedStyle(probe).color;
+
     if (isUsableColor(color)) {
       probe.remove();
       return color;
@@ -31,6 +32,7 @@ function getAccentColor(): string | null {
 
   // Fallback: try to find a link element with accent color
   const link = doc.querySelector('a.page-ref, .page-property-value a');
+
   if (link) {
     const color = getComputedStyle(link).color;
     if (isUsableColor(color)) return color;
@@ -41,6 +43,7 @@ function getAccentColor(): string | null {
 
 function parseRGB(color: string): { r: number; g: number; b: number } | null {
   const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+
   if (match) {
     return {
       r: Number.parseInt(match[1], 10),
@@ -48,6 +51,7 @@ function parseRGB(color: string): { r: number; g: number; b: number } | null {
       b: Number.parseInt(match[3], 10),
     };
   }
+
   return null;
 }
 
@@ -66,6 +70,7 @@ export function generateThemeCSS(): string {
 
   if (accentColor) {
     const rgb = parseRGB(accentColor);
+
     if (rgb) {
       r = rgb.r;
       g = rgb.g;

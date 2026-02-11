@@ -52,6 +52,7 @@ export async function fetchMetadata(url: string): Promise<LinkMetadata | null> {
       signal: controller.signal,
       headers: { Accept: 'text/html' },
     });
+
     clearTimeout(timeout);
 
     if (!response.ok) {

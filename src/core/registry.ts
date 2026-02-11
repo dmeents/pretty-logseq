@@ -50,6 +50,7 @@ export class FeatureRegistry {
       console.warn(`[Pretty Logseq] Feature "${id}" not found`);
       return;
     }
+
     if (registered.initialized) return;
 
     try {

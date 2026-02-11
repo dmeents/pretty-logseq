@@ -13,11 +13,7 @@ const STYLE_KEY = 'pretty-logseq-styles';
 
 export function injectStyles(): void {
   const aggregatedStyles = [generateThemeCSS(), registry.getAggregatedStyles()].join('\n');
-
-  logseq.provideStyle({
-    key: STYLE_KEY,
-    style: aggregatedStyles,
-  });
+  logseq.provideStyle({ key: STYLE_KEY, style: aggregatedStyles });
 }
 
 export function refreshStyles(): void {
