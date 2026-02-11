@@ -1,0 +1,20 @@
+// Style topbar icon buttons to match theme variables
+
+#head .l button,
+#head .r button,
+#head .r .button,
+#head .r a.button {
+	color: var(
+		--ls-header-button-color,
+		var(--ls-icon-color, var(--ls-primary-text-color))
+	);
+	border-radius: 6px;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
+
+	&:hover {
+		background-color: var(--pl-accent-medium);
+		color: var(--ls-link-text-color);
+	}
+}

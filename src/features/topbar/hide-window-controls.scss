@@ -1,0 +1,10 @@
+// Hide the Electron window controls (minimize, maximize, close)
+
+.window-controls {
+	display: none !important;
+}
+
+// Reclaim the right margin reserved for window controls
+#head .r {
+	margin-right: 0 !important;
+}

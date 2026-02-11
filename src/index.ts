@@ -53,6 +53,9 @@ async function main(): Promise<void> {
       'graphSelectorBottom',
       'hideHomeButton',
       'hideSyncIndicator',
+      'styleTopbarIcons',
+      'topbarGradient',
+      'hideWindowControls',
     ] as const;
 
     const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);

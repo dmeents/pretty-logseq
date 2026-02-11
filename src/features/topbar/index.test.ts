@@ -13,6 +13,9 @@ vi.mock('../../settings', () => ({
     navArrowsLeft: false,
     hideHomeButton: false,
     hideSyncIndicator: false,
+    styleTopbarIcons: false,
+    topbarGradient: false,
+    hideWindowControls: false,
   })),
 }));
 
@@ -30,6 +33,18 @@ vi.mock('./hide-home.scss?inline', () => ({
 
 vi.mock('./hide-sync.scss?inline', () => ({
   default: '.hide-sync { }',
+}));
+
+vi.mock('./icon-styling.scss?inline', () => ({
+  default: '.icon-styling { }',
+}));
+
+vi.mock('./gradient.scss?inline', () => ({
+  default: '.gradient { }',
+}));
+
+vi.mock('./hide-window-controls.scss?inline', () => ({
+  default: '.hide-window-controls { }',
 }));
 
 describe('Topbar Feature', () => {
@@ -60,6 +75,9 @@ describe('Topbar Feature', () => {
         navArrowsLeft: false,
         hideHomeButton: false,
         hideSyncIndicator: false,
+        styleTopbarIcons: false,
+        topbarGradient: false,
+        hideWindowControls: false,
       } as PluginSettings);
 
       expect(topbarFeature.getStyles()).toBe('');
@@ -70,6 +88,9 @@ describe('Topbar Feature', () => {
         navArrowsLeft: true,
         hideHomeButton: false,
         hideSyncIndicator: false,
+        styleTopbarIcons: false,
+        topbarGradient: false,
+        hideWindowControls: false,
       } as PluginSettings);
 
       expect(topbarFeature.getStyles()).toContain('.nav-arrows');
@@ -80,6 +101,9 @@ describe('Topbar Feature', () => {
         navArrowsLeft: false,
         hideHomeButton: true,
         hideSyncIndicator: false,
+        styleTopbarIcons: false,
+        topbarGradient: false,
+        hideWindowControls: false,
       } as PluginSettings);
 
       expect(topbarFeature.getStyles()).toContain('.hide-home');
@@ -90,9 +114,51 @@ describe('Topbar Feature', () => {
         navArrowsLeft: false,
         hideHomeButton: false,
         hideSyncIndicator: true,
+        styleTopbarIcons: false,
+        topbarGradient: false,
+        hideWindowControls: false,
       } as PluginSettings);
 
       expect(topbarFeature.getStyles()).toContain('.hide-sync');
+    });
+
+    it('includes icon styling when enabled', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        navArrowsLeft: false,
+        hideHomeButton: false,
+        hideSyncIndicator: false,
+        styleTopbarIcons: true,
+        topbarGradient: false,
+        hideWindowControls: false,
+      } as PluginSettings);
+
+      expect(topbarFeature.getStyles()).toContain('.icon-styling');
+    });
+
+    it('includes gradient styles when enabled', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        navArrowsLeft: false,
+        hideHomeButton: false,
+        hideSyncIndicator: false,
+        styleTopbarIcons: false,
+        topbarGradient: true,
+        hideWindowControls: false,
+      } as PluginSettings);
+
+      expect(topbarFeature.getStyles()).toContain('.gradient');
+    });
+
+    it('includes hide window controls styles when enabled', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        navArrowsLeft: false,
+        hideHomeButton: false,
+        hideSyncIndicator: false,
+        styleTopbarIcons: false,
+        topbarGradient: false,
+        hideWindowControls: true,
+      } as PluginSettings);
+
+      expect(topbarFeature.getStyles()).toContain('.hide-window-controls');
     });
 
     it('combines all styles when all enabled', () => {
@@ -100,12 +166,18 @@ describe('Topbar Feature', () => {
         navArrowsLeft: true,
         hideHomeButton: true,
         hideSyncIndicator: true,
+        styleTopbarIcons: true,
+        topbarGradient: true,
+        hideWindowControls: true,
       } as PluginSettings);
 
       const styles = topbarFeature.getStyles();
       expect(styles).toContain('.nav-arrows');
       expect(styles).toContain('.hide-home');
       expect(styles).toContain('.hide-sync');
+      expect(styles).toContain('.icon-styling');
+      expect(styles).toContain('.gradient');
+      expect(styles).toContain('.hide-window-controls');
     });
   });
 

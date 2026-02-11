@@ -16,6 +16,9 @@ export interface PluginSettings {
   hideHomeButton: boolean;
   hideSyncIndicator: boolean;
   navArrowsLeft: boolean;
+  styleTopbarIcons: boolean;
+  topbarGradient: boolean;
+  hideWindowControls: boolean;
 }
 
 export const defaultSettings: PluginSettings = {
@@ -34,6 +37,9 @@ export const defaultSettings: PluginSettings = {
   hideHomeButton: true,
   hideSyncIndicator: true,
   navArrowsLeft: true,
+  styleTopbarIcons: true,
+  topbarGradient: true,
+  hideWindowControls: false,
 };
 
 export const settingsSchema: SettingSchemaDesc[] = [
@@ -160,6 +166,28 @@ export const settingsSchema: SettingSchemaDesc[] = [
     description: '',
     type: 'heading',
     default: null,
+  },
+  {
+    key: 'styleTopbarIcons',
+    title: 'Style Top Bar Icons',
+    description: 'Apply theme-consistent colors and hover effects to top bar icon buttons.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'topbarGradient',
+    title: 'Top Bar Gradient',
+    description:
+      'Apply a subtle gradient from the background color to the accent color across the top bar.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'hideWindowControls',
+    title: 'Hide Window Controls',
+    description: 'Hide the minimize, maximize, and close buttons from the top bar.',
+    type: 'boolean',
+    default: false,
   },
   {
     key: 'hideHomeButton',

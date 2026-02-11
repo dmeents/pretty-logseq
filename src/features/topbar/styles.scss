@@ -4,15 +4,15 @@
 
 // Hide the original nav arrows (keeps React happy)
 #head .r .flex.flex-row:has(.navigation) {
-  display: none !important;
+	display: none !important;
 }
 
 // Spread left section: menu | arrows | search
 #head .l {
-  justify-content: space-between;
+	justify-content: space-between;
 }
 
 // Spacing for the cloned nav arrows in the left section
 #pl-nav-arrows {
-  margin: 0 4px;
+	margin: 0 4px;
 }
