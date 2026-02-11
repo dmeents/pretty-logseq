@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/dmeents/pretty-logseq/compare/v1.2.0...v1.2.1) (2026-02-11)
+
+
+### Bug Fixes
+
+* module-scope cross-frame accesses ([1133a99](https://github.com/dmeents/pretty-logseq/commit/1133a99523a63485e91822ac9cc3c831cac76305))
+* module-scope cross-frame accesses ([196b289](https://github.com/dmeents/pretty-logseq/commit/196b2893f3a1c35b541aaeb883a6276f698f1763))
+
 ## [1.2.0](https://github.com/dmeents/pretty-logseq/compare/v1.1.0...v1.2.0) (2026-02-11)
 
 
