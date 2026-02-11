@@ -1,9 +1,6 @@
 import { getPage, getPageBlocks } from '../../lib/api';
-import { positionElement, removeElementById } from '../../lib/dom';
+import { getParentDoc, positionElement, removeElementById } from '../../lib/dom';
 import { renderPopover } from './renderers';
-
-// Uses top.document since plugins run in an iframe.
-const doc = top?.document ?? parent.document;
 
 const POPOVER_ID = 'pretty-logseq-popover';
 const REF_SELECTOR = '.page-ref, .tag';
@@ -30,7 +27,7 @@ function clearHideTimer(): void {
 }
 
 function getPopover(): HTMLElement | null {
-  return doc.getElementById(POPOVER_ID);
+  return getParentDoc().getElementById(POPOVER_ID);
 }
 
 function cleanupPopoverListeners(): void {
@@ -93,6 +90,7 @@ async function showPopover(anchor: HTMLElement, pageName: string): Promise<void>
 
   const content = renderPopover(pageData);
 
+  const doc = getParentDoc();
   const popover = doc.createElement('div');
   popover.id = POPOVER_ID;
   popover.className = 'pretty-popover';
@@ -117,6 +115,7 @@ function getPageNameFromRef(element: HTMLElement): string | null {
  * Returns a cleanup function that removes all listeners.
  */
 export function setupPopovers(): () => void {
+  const doc = getParentDoc();
   let anchorLeaveCleanup: (() => void) | null = null;
 
   const cleanupAnchorLeave = () => {

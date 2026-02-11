@@ -1,4 +1,5 @@
-const doc = top?.document ?? parent.document;
+import { getParentDoc } from '../../lib/dom';
+
 const PAST_DUE_CLASS = 'pl-past-due';
 const CANCELLED_LABEL_CLASS = 'pl-cancelled-label';
 
@@ -65,7 +66,7 @@ function processCancelledLabel(block: Element): void {
   const existingLabel = wrapper.querySelector(`.${CANCELLED_LABEL_CLASS}`);
 
   if (isCancelled && !existingLabel) {
-    const label = doc.createElement('span');
+    const label = getParentDoc().createElement('span');
     label.className = CANCELLED_LABEL_CLASS;
     label.textContent = 'CANCELLED ';
 
@@ -89,6 +90,7 @@ function processBlock(block: Element, today: string): void {
 }
 
 function scanBlocks(today: string): void {
+  const doc = getParentDoc();
   const blocks = doc.querySelectorAll('.ls-block');
   for (const block of blocks) {
     processBlock(block, today);
@@ -99,6 +101,7 @@ function scanBlocks(today: string): void {
  * Remove all classes and injected elements added by this observer.
  */
 function cleanupAll(): void {
+  const doc = getParentDoc();
   for (const el of doc.querySelectorAll(`.${PAST_DUE_CLASS}`)) {
     el.classList.remove(PAST_DUE_CLASS);
   }
@@ -116,6 +119,7 @@ function cleanupAll(): void {
  * 2. Inject a "CANCELLED" label into cancelled task blocks
  */
 export function setupTodoObserver(): () => void {
+  const doc = getParentDoc();
   scanBlocks(getTodayString());
 
   // Batch mutations via requestAnimationFrame
