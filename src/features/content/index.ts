@@ -14,7 +14,7 @@ export const contentFeature: Feature = {
     return parts.join('\n');
   },
 
-  init() { },
+  init() {},
 
-  destroy() { },
+  destroy() {},
 };

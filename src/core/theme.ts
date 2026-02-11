@@ -63,7 +63,9 @@ export function generateThemeCSS(): string {
   const accentColor = getAccentColor();
 
   // Default purple fallback
-  let r = 139, g = 92, b = 246;
+  let r = 139,
+    g = 92,
+    b = 246;
   let accent = `rgb(${r}, ${g}, ${b})`;
 
   if (accentColor) {
