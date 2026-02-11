@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/dmeents/pretty-logseq/compare/v1.1.0...v1.2.0) (2026-02-11)
+
+
+### Features
+
+* prettier topbar ([8b3e989](https://github.com/dmeents/pretty-logseq/commit/8b3e98923e0ea1138b0e8f6797eaeb6631689a65))
+* prettier typography ([82a99f2](https://github.com/dmeents/pretty-logseq/commit/82a99f2641ff0a5f4d1fef0970769eaf282ff088))
+
+
+### Bug Fixes
+
+* blocking dom getter preventing plugin load ([99f8f34](https://github.com/dmeents/pretty-logseq/commit/99f8f34a2f322972997633b44bba00c3140239ec))
+* don't duplicate ci workflow on release ([5376c22](https://github.com/dmeents/pretty-logseq/commit/5376c228ca9fb5b63aac56e4ae7cf45bdd29dbea))
+* left bar icon spacing ([bffdc03](https://github.com/dmeents/pretty-logseq/commit/bffdc0384a57fabd6ff010aeb11f38a2165418b0))
+* pretty properties row spacing ([1c9db64](https://github.com/dmeents/pretty-logseq/commit/1c9db64190f3df2a8bcd0c1243a5af99b2db06fc))
+* update readme ([c49adb7](https://github.com/dmeents/pretty-logseq/commit/c49adb7ef4ccf9c5871f6e60cbde8abd89f9029a))
+
 ## [1.1.0](https://github.com/dmeents/pretty-logseq/compare/v1.0.3...v1.1.0) (2026-02-10)
 
 
