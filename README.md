@@ -30,7 +30,7 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 | **Pretty Templates** | Stop letting template blocks clutter your view. Get **dimmed, card-styled templates** that fade into the background until you need them — then reveal on hover when you're ready to use them. Templates stay accessible but don't compete for attention with your actual content. | ![Pretty Templates](assets/screenshots/pretty-templates.png) |
 | **Pretty Tables** | Query results deserve better. Get **polished, professional tables** with themed headers, smooth hover effects, and clean borders that make data actually readable. Styled headers, row hover effects, and consistent theming that matches your graph. | ![Pretty Tables](assets/screenshots/pretty-tables.png) |
 | **Pretty Typography** | Improve text legibility across your entire graph with **refined font styling and visual hierarchy**. Antialiased text rendering, tighter heading spacing, balanced font weights, and a modern monospace code font stack. | |
-| **Bullet Threading** | Show **visual hierarchy lines** connecting parent blocks to their children on hover. Subtle vertical guides trace the indentation structure, helping you keep your place in complex page hierarchies. | |
+| **Pretty Content** | Show **visual hierarchy lines** connecting parent blocks to their children on hover. Subtle vertical guides trace the indentation structure, helping you keep your place in complex page hierarchies. | |
 | **Pretty Top Bar** | Customize the top navigation bar to reduce visual clutter. **Hide Home Button** if you prefer keyboard navigation, **Hide Sync Indicator** to clean up the status display, and **Navigation Arrows on Left** to reposition back/forward arrows. | |
 
 ## Installation

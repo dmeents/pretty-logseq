@@ -1,10 +1,11 @@
 /**
  * Lazy getter for the parent document.
- * Avoids cross-frame access at module scope (which runs during ES module
- * evaluation, before the Logseq SDK handshake completes).
+ * Plugins run in an iframe; `parent` is the Logseq main window.
+ * Called lazily (not at module scope) so the access happens after
+ * the SDK handshake, not during ES module evaluation.
  */
 export function getParentDoc(): Document {
-  return top?.document ?? parent.document;
+  return parent.document;
 }
 
 export interface Position {
@@ -61,7 +62,7 @@ export function adjustForViewport(
   elementHeight: number,
   padding = 16,
 ): Position {
-  const viewport = top ?? parent;
+  const viewport = parent;
   const { innerWidth, innerHeight } = viewport;
   let { top: posTop, left } = position;
 
@@ -125,7 +126,7 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
 
 /**
  * Remove an element by ID if it exists.
- * Uses top.document since plugins run in an iframe.
+ * Uses parent.document since plugins run in an iframe.
  */
 export function removeElementById(id: string): void {
   getParentDoc().getElementById(id)?.remove();
