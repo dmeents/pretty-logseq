@@ -106,6 +106,16 @@ async function main(): Promise<void> {
       refreshStyles();
     }
 
+    // Handle typography feature toggle (font link injection)
+    if (newSettings.enablePrettyTypography !== oldSettings.enablePrettyTypography) {
+      if (newSettings.enablePrettyTypography) {
+        registry.initializeFeature('typography');
+      } else {
+        registry.destroyFeature('typography');
+      }
+      refreshStyles();
+    }
+
     // Handle DOM manipulation settings (also refresh styles for layout CSS)
     if (newSettings.navArrowsLeft !== oldSettings.navArrowsLeft) {
       applyNavArrowsSetting();
