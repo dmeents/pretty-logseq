@@ -8,7 +8,6 @@ export function getSettings(): PluginSettings {
     | (Partial<PluginSettings> & { disabled?: boolean })
     | undefined;
 
-  // Filter out Logseq internal properties (like 'disabled')
   const { disabled, ...userSettings } = settings || {};
 
   return {
