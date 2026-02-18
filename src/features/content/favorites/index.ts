@@ -3,8 +3,8 @@
  * Adds a star button next to page titles for one-click favorite toggling
  */
 
-import { getSettings } from '../../settings';
-import type { Feature } from '../../types';
+import { getSettings } from '../../../settings';
+import type { Feature } from '../../../types';
 import { clearFavoritesCache, refreshFavorites } from './api';
 import { cleanupFavoriteObserver, setupFavoriteObserver } from './observer';
 import styles from './styles.scss?inline';

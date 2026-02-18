@@ -20,6 +20,7 @@ export function mockLogseqAPI() {
     Editor: {
       getPage: vi.fn(),
       getPageBlocksTree: vi.fn(),
+      getCurrentPage: vi.fn(),
     },
 
     App: {
@@ -27,6 +28,9 @@ export function mockLogseqAPI() {
         preferredThemeMode: 'light',
       }),
       pushState: vi.fn(),
+      getCurrentGraphFavorites: vi.fn().mockResolvedValue([]),
+      setCurrentGraphConfigs: vi.fn().mockResolvedValue(undefined),
+      onRouteChanged: vi.fn(),
     },
 
     DB: {
