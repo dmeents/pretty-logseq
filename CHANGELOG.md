@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.3.0](https://github.com/dmeents/pretty-logseq/compare/v1.2.3...v1.3.0) (2026-02-18)
+
+
+### Features
+
+* add easy favorites to page titles ([566f248](https://github.com/dmeents/pretty-logseq/commit/566f248d024e507f6649ef18e3d7cc35846aabea))
+* add favorites shortcut to page titles ([f4d1568](https://github.com/dmeents/pretty-logseq/commit/f4d1568c53d42640e5d7d31f1b382ffd1484c1cc))
+
+
+### Bug Fixes
+
+* add unit test coverage ([4dbe872](https://github.com/dmeents/pretty-logseq/commit/4dbe8727dc9eb5c0da3ba87dd51698feff16f042))
+* test coverage, readme, license, and security ([ae253e7](https://github.com/dmeents/pretty-logseq/commit/ae253e7304f515e065823aeff66df51ec3d06e3a))
+* update coverage requirements ([933b337](https://github.com/dmeents/pretty-logseq/commit/933b337d6ade0cfa6ec553ef016ce9390234bbcd))
+* update docs and include new files ([e81ccdd](https://github.com/dmeents/pretty-logseq/commit/e81ccdd74e96692ad08b5a1f8a7d44abe28b5eda))
+
 ## [1.2.3](https://github.com/dmeents/pretty-logseq/compare/v1.2.2...v1.2.3) (2026-02-16)
 
 
