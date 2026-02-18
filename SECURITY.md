@@ -4,10 +4,11 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.x   | :white_check_mark: |
+| 1.x.x   | :white_check_mark: |
+| < 1.0   | :x:                |
 
-Only the latest release is supported with security fixes. As a pre-1.0 project,
-there are no legacy branches to maintain.
+Only the latest release is supported with security fixes. Legacy versions (pre-1.0)
+are no longer maintained.
 
 ## Scope
 

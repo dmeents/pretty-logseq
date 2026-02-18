@@ -31,39 +31,16 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 | **Pretty Tables** | Query results deserve better. Get **polished, professional tables** with themed headers, smooth hover effects, and clean borders that make data actually readable. Styled headers, row hover effects, and consistent theming that matches your graph. | ![Pretty Tables](assets/screenshots/pretty-tables.png) |
 | **Pretty Typography** | Improve text legibility across your entire graph with **refined font styling and visual hierarchy**. Antialiased text rendering, tighter heading spacing, balanced font weights, and a modern monospace code font stack. | |
 | **Pretty Content** | Show **visual hierarchy lines** connecting parent blocks to their children on hover. Subtle vertical guides trace the indentation structure, helping you keep your place in complex page hierarchies. | |
+| **Favorite Star** | **One-click favorite toggling** directly from the page title. Add or remove pages from your favorites list with a single click on the star icon next to any page title — no more navigating through menus. The star syncs with Logseq's native favorites system. | |
 | **Pretty Top Bar** | Customize the top navigation bar to reduce visual clutter. **Hide Home Button** if you prefer keyboard navigation, **Hide Sync Indicator** to clean up the status display, and **Navigation Arrows on Left** to reposition back/forward arrows. | |
 
 ## Installation
 
-### From Logseq Marketplace
-
-_(Coming soon — this plugin will be submitted to the Logseq marketplace)_
-
-### From Source
-
-1. Download or clone this repository
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
-3. Build the plugin:
-   ```bash
-   pnpm build
-   ```
-4. In Logseq:
-   - Go to **Settings → Advanced** and enable **Developer mode**
-   - Go to **Plugins → Load unpacked plugin**
-   - Select this project folder (the root folder, not `dist/`)
+This plugin is available on the Logseq Marketplace.
 
 ## Configuration
 
 All features can be toggled on or off through Logseq's plugin settings. Changes take effect immediately — just toggle the setting you want to adjust.
-
-## Usage Tips
-
-- **Hover** over page links to see the custom popovers (200ms delay prevents accidental triggers)
-- **Use page properties** like `type:: Person` or `type:: Code Base` to automatically get contextual popover layouts
-- **Customize to taste** — all features are optional and can be mixed and matched through settings
 
 ## Support
 

@@ -1,0 +1,59 @@
+/**
+ * Favorite Star Styles
+ * Star button next to page titles for quick favorite toggling
+ */
+
+// Star button
+.pl-favorite-star {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	align-self: center;
+	flex-shrink: 0;
+	width: 28px;
+	height: 28px;
+	margin-left: 8px;
+	padding: 0;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	svg {
+		display: block;
+		width: 20px;
+		height: 20px;
+		stroke: var(--ls-secondary-text-color);
+		fill: none;
+		transition: all 0.15s ease;
+	}
+
+	// Hover state
+	&:hover {
+		background-color: var(--ls-tertiary-background-color);
+
+		svg {
+			stroke: var(--ls-link-text-color);
+		}
+	}
+
+	// Active (favorited) state
+	&.pl-favorite-star--active {
+		svg {
+			fill: var(--ls-link-text-color);
+			stroke: var(--ls-link-text-color);
+		}
+
+		&:hover svg {
+			fill: var(--ls-link-text-hover-color);
+			stroke: var(--ls-link-text-hover-color);
+		}
+	}
+
+	// Focus state for accessibility
+	&:focus-visible {
+		outline: 2px solid var(--ls-link-text-color);
+		outline-offset: 2px;
+	}
+}
