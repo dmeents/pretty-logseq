@@ -47,6 +47,7 @@ async function main(): Promise<void> {
       'showPropertyIcons',
       'enablePrettyLinks',
       'enablePrettyTodos',
+      'enableFavoriteStar',
       'enableBulletThreading',
       'compactSidebarNav',
       'hideCreateButton',
@@ -103,6 +104,16 @@ async function main(): Promise<void> {
       } else {
         registry.destroyFeature('todos');
       }
+      refreshStyles();
+    }
+
+    // Handle content feature settings (bullet threading, favorite star)
+    if (
+      newSettings.enableBulletThreading !== oldSettings.enableBulletThreading ||
+      newSettings.enableFavoriteStar !== oldSettings.enableFavoriteStar
+    ) {
+      registry.destroyFeature('content');
+      registry.initializeFeature('content');
       refreshStyles();
     }
 

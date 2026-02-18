@@ -9,6 +9,7 @@ export interface PluginSettings {
   showPropertyIcons: boolean;
   enablePrettyLinks: boolean;
   enablePrettyTodos: boolean;
+  enableFavoriteStar: boolean;
   enableBulletThreading: boolean;
   compactSidebarNav: boolean;
   hideCreateButton: boolean;
@@ -30,6 +31,7 @@ export const defaultSettings: PluginSettings = {
   showPropertyIcons: true,
   enablePrettyLinks: true,
   enablePrettyTodos: true,
+  enableFavoriteStar: true,
   enableBulletThreading: true,
   compactSidebarNav: true,
   hideCreateButton: true,
@@ -107,6 +109,13 @@ export const settingsSchema: SettingSchemaDesc[] = [
     key: 'enableBulletThreading',
     title: 'Bullet Threading',
     description: 'Show visual hierarchy lines connecting parent blocks to children on hover.',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    key: 'enableFavoriteStar',
+    title: 'Favorite Star',
+    description: 'Show a star button next to page titles for one-click favorite toggling.',
     type: 'boolean',
     default: true,
   },
