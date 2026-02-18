@@ -65,7 +65,10 @@ async function scanAndInject(): Promise<void> {
   let pageName: string | null = null;
   try {
     const currentPage = await logseq.Editor.getCurrentPage();
-    pageName = currentPage?.name || currentPage?.originalName || null;
+    if (currentPage) {
+      // Cast to string since PageEntity/BlockEntity have string name/originalName
+      pageName = (currentPage.name as string) || (currentPage.originalName as string) || null;
+    }
   } catch (_error) {
     // Silently fail if we can't get current page (e.g., on home screen)
     return;
