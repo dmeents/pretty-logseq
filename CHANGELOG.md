@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.1](https://github.com/dmeents/pretty-logseq/compare/v1.3.0...v1.3.1) (2026-03-06)
+
+
+### Bug Fixes
+
+* description position in popover ([8a33ac0](https://github.com/dmeents/pretty-logseq/commit/8a33ac02b1d51fbf3ecadcca2ff563c479bf9f1d))
+* duplicate favorite icons ([4b205e2](https://github.com/dmeents/pretty-logseq/commit/4b205e2a97db048a2a2bba6aa1dde596063681b5))
+* macOS traffic lights obscuring logseq controls ([5314537](https://github.com/dmeents/pretty-logseq/commit/53145373d33f2cb9d6b8742f75863790c502ac19))
+* update readme ([58020b5](https://github.com/dmeents/pretty-logseq/commit/58020b56b981bade0d92adab32b3984edfaa119f))
+
 ## [1.3.0](https://github.com/dmeents/pretty-logseq/compare/v1.2.3...v1.3.0) (2026-02-18)
 
 
