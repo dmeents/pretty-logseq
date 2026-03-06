@@ -1,10 +1,17 @@
 // Hide the Electron window controls (minimize, maximize, close)
-
+// Windows/Linux: custom .window-controls element on the right
 .window-controls {
 	display: none !important;
 }
 
-// Reclaim the right margin reserved for window controls
+// Reclaim the right margin reserved for window controls (Windows/Linux)
 #head .r {
 	margin-right: 0 !important;
+}
+
+// macOS: native traffic lights are on the left and cannot be hidden via CSS,
+// but we can reclaim the padding reserved for them
+.is-electron.is-mac #head .l {
+	padding-left: 0 !important;
+	margin-left: 0 !important;
 }
