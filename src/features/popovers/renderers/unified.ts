@@ -19,14 +19,15 @@ export function renderPopover(pageData: PageData): HTMLElement {
   content.className = 'pretty-popover__content';
 
   // 1. Header (photo card or simple title + subtitle)
-  content.appendChild(buildHeader(pageData, config));
+  const { header, descriptionInHeader } = buildHeader(pageData, config);
+  content.appendChild(header);
 
   // 2. Aliases (subtle "aka" line)
   const aliases = buildAliases(pageData);
   if (aliases) content.appendChild(aliases);
 
-  // 3. Description
-  if (pageData.properties.description) {
+  // 3. Description (only if not already placed inside the photo card header)
+  if (!descriptionInHeader && pageData.properties.description) {
     content.appendChild(createDescription(cleanPropertyValue(pageData.properties.description)));
   }
 
@@ -78,7 +79,10 @@ export function renderPopover(pageData: PageData): HTMLElement {
   return content;
 }
 
-function buildHeader(pageData: PageData, config: PopoverConfig): HTMLElement {
+function buildHeader(
+  pageData: PageData,
+  config: PopoverConfig,
+): { header: HTMLElement; descriptionInHeader: boolean } {
   const photoUrl = config.photoProperty
     ? extractUrl(pageData.properties[config.photoProperty])
     : null;
@@ -100,9 +104,15 @@ function buildHeader(pageData: PageData, config: PopoverConfig): HTMLElement {
     info.className = 'pretty-popover__header-info';
     info.appendChild(createTitle(pageData));
     appendSubtitle(info, config.subtitleText);
+
+    const description = pageData.properties.description;
+    if (description) {
+      info.appendChild(createDescription(cleanPropertyValue(description)));
+    }
+
     card.appendChild(info);
 
-    return card;
+    return { header: card, descriptionInHeader: !!description };
   }
 
   // Simple header
@@ -111,7 +121,7 @@ function buildHeader(pageData: PageData, config: PopoverConfig): HTMLElement {
   header.appendChild(createTitle(pageData));
   appendSubtitle(header, config.subtitleText);
 
-  return header;
+  return { header, descriptionInHeader: false };
 }
 
 function appendSubtitle(parent: HTMLElement, subtitleText: string | null): void {

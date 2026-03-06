@@ -8,8 +8,9 @@
 }
 
 // Spread left section: menu | arrows | search
+// Only set right padding — macOS reserves the left side for native traffic lights
 #head .l {
-  padding: 0 8px;
+  padding-right: 8px;
   justify-content: space-between;
 }
 
