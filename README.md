@@ -36,7 +36,15 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 
 ## Installation
 
-This plugin is available on the Logseq Marketplace.
+Pretty Logseq is available on the Logseq Marketplace:
+
+1. Open Logseq and go to **Settings → Advanced** and enable **Developer mode**
+2. Click the **Plugins** icon in the top bar (or press `t p`)
+3. Select the **Marketplace** tab
+4. Search for **Pretty Logseq**
+5. Click **Install**
+
+The plugin activates immediately — no restart required.
 
 ## Configuration
 
