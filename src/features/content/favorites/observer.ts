@@ -84,7 +84,11 @@ async function scanAndInject(): Promise<void> {
   );
 
   for (const title of titles) {
-    // Mark as processed
+    // Re-check marker after the async gap — a concurrent scanAndInject call may have
+    // already processed this title while we were awaiting getCurrentPage().
+    if (title.hasAttribute(STAR_MARKER)) continue;
+
+    // Mark as processed before touching the DOM
     title.setAttribute(STAR_MARKER, 'true');
 
     // Create and insert star button inside the title (h1 is already flex)
@@ -110,6 +114,9 @@ function handleMutations(): void {
  * Setup MutationObserver and route listener
  */
 export function setupFavoriteObserver(): void {
+  // Guard against double-setup: clean up any existing observers/listeners first
+  cleanupFavoriteObserver();
+
   const doc = getParentDoc();
   console.log('[Pretty Logseq] Setting up favorite observer...');
 
