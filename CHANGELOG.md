@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/dmeents/pretty-logseq/compare/v1.3.1...v1.3.2) (2026-04-15)
+
+
+### Bug Fixes
+
+* skip codecov upload for dependabot PRs ([e560761](https://github.com/dmeents/pretty-logseq/commit/e5607610602b3e2e2ea45e271d07b8b066c825c0))
+* skip codecov upload for dependabot PRs ([63313bd](https://github.com/dmeents/pretty-logseq/commit/63313bd9113d4f13cedf4277fb98237ff6cbedba))
+
 ## [1.3.1](https://github.com/dmeents/pretty-logseq/compare/v1.3.0...v1.3.1) (2026-03-06)
 
 
