@@ -22,14 +22,14 @@
     "@biomejs/biome": "^2.4.15",
     "@logseq/libs": "^0.0.17",
     "@testing-library/dom": "^10.4.1",
-    "@vitest/coverage-v8": "^4.0.18",
-    "@vitest/ui": "^4.0.18",
-    "jsdom": "^28.0.0",
+    "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
+    "jsdom": "^29.1.1",
     "sass": "^1.99.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.2",
     "vite-plugin-logseq": "^1.1.2",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.5"
   },
   "keywords": [
     "logseq",
