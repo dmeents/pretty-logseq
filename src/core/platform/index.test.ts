@@ -34,12 +34,27 @@ describe('getPlatform', () => {
     expect(v2.selectors.propertyKey).toBe('.ls-page-properties .property-k');
     expect(v2.selectors.propertyKey).not.toBe(v1.selectors.propertyKey);
 
-    // Everything else still inherits v1 until verified against a DB instance.
-    expect(v2.api).toEqual(v1.api);
+    // Selectors (other than the property key) and theme still inherit v1.
     expect(v2.theme).toEqual(v1.theme);
     const { propertyKey: _v2Key, ...v2Rest } = v2.selectors;
     const { propertyKey: _v1Key, ...v1Rest } = v1.selectors;
     expect(v2Rest).toEqual(v1Rest);
+  });
+
+  it('routes v2 page/property reads through the v2 data adapter', () => {
+    setVersionForTest('v2');
+    const v2 = getPlatform();
+    setVersionForTest('v1');
+    const v1 = getPlatform();
+
+    // Data access diverges — v2 normalizes the DB model to the shared shape.
+    expect(v2.api.getPageData).not.toBe(v1.api.getPageData);
+    expect(v2.api.getPageBlocks).not.toBe(v1.api.getPageBlocks);
+    expect(v2.api.clearPageCache).not.toBe(v1.api.clearPageCache);
+
+    // Favorites are App-level and version-agnostic — still the v1 implementation.
+    expect(v2.api.getFavorites).toBe(v1.api.getFavorites);
+    expect(v2.api.setFavorites).toBe(v1.api.setFavorites);
   });
 
   it('honors a test override regardless of version', () => {

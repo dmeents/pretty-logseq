@@ -17,6 +17,39 @@ export function extractUrl(value: unknown): string | null {
   return null;
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * Build a neutral person-silhouette avatar as an inline `<svg>` element.
+ *
+ * Used as the photo fallback when a page's photo URL fails to load (dead,
+ * expired, or hotlink-blocked). Inline SVG is NOT subject to the host app's CSP
+ * `img-src`, so it always renders — unlike a `data:`-URI image, which v2 blocks.
+ */
+export function createAvatarSvg(): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.75');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+
+  const head = document.createElementNS(SVG_NS, 'circle');
+  head.setAttribute('cx', '12');
+  head.setAttribute('cy', '9');
+  head.setAttribute('r', '3.5');
+  svg.appendChild(head);
+
+  const body = document.createElementNS(SVG_NS, 'path');
+  body.setAttribute('d', 'M5.5 20a6.5 6.5 0 0 1 13 0');
+  svg.appendChild(body);
+
+  return svg;
+}
+
 /**
  * Derive a display label from a URL.
  * e.g. "https://github.com/user/repo" → "user/repo"

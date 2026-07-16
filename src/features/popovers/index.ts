@@ -1,7 +1,9 @@
+import { pickStyles } from '../../core/platform';
 import { getSettings } from '../../settings';
 import type { Feature } from '../../types';
 import { setupPopovers } from './manager';
 import popoverStyles from './styles.scss?inline';
+import popoverStylesV2 from './styles.v2.scss?inline';
 
 let cleanup: (() => void) | null = null;
 
@@ -13,7 +15,9 @@ export const popoversFeature: Feature = {
   description: 'Custom hover previews for page references',
 
   getStyles() {
-    return getSettings().enablePopovers ? popoverStyles : '';
+    return getSettings().enablePopovers
+      ? pickStyles({ v1: popoverStyles, v2: popoverStylesV2 })
+      : '';
   },
 
   init() {

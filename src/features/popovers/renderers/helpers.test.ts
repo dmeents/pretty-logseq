@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import type { PageData } from '../../../types';
 import {
   cleanAllValues,
+  createAvatarSvg,
   createDescription,
   createDetailRow,
   createRatingDisplay,
@@ -16,6 +17,18 @@ import {
   formatUrlLabel,
   renderPropertyValue,
 } from './helpers';
+
+describe('createAvatarSvg', () => {
+  it('builds an inline SVG element (CSP-safe, no img src)', () => {
+    const svg = createAvatarSvg();
+    expect(svg.tagName.toLowerCase()).toBe('svg');
+    expect(svg.namespaceURI).toBe('http://www.w3.org/2000/svg');
+    // A head (circle) + body (path) silhouette, stroked with currentColor.
+    expect(svg.querySelector('circle')).not.toBeNull();
+    expect(svg.querySelector('path')).not.toBeNull();
+    expect(svg.getAttribute('stroke')).toBe('currentColor');
+  });
+});
 
 describe('extractUrl', () => {
   it('extracts plain http URL', () => {

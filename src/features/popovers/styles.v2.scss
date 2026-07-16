@@ -1,0 +1,17 @@
+// Pretty Popovers — Logseq v2 (DB) stylesheet.
+//
+// The popover is the plugin's OWN markup, so it renders identically across
+// versions; this sheet pulls in the shared base and layers v2-only refinements
+// on top. `pickStyles` returns this whole sheet when v2 is active, so it must be
+// a superset of the v1 styles — hence the `@use` of the base below.
+//
+// VERIFY (during manual testing on a DB instance): v2's native page-preview
+// popup mechanism may differ from v1's Radix/Tippy popups suppressed in the base.
+// If a native preview still shows on hover in v2, add its selector here.
+
+@use './styles';
+
+// --- v2 refinements ---------------------------------------------------------
+// Reserved for DB-layout-specific tuning once the rich popover is confirmed
+// rendering with real v2 property data. Add v2-only rules here; they compose on
+// top of the base rules imported above.
