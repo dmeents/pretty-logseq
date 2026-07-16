@@ -1,0 +1,55 @@
+// Pretty Tags — Logseq v2 (DB) styling.
+//
+// v2 renders each tag/class on a block as a chip in a dedicated row:
+//   .block-tags.gap-1
+//     .block-tag
+//       .flex.items-center
+//         .hash-symbol "#"
+//         a.tag.relative[data-ref] "Task"
+//
+// These rules turn those chips into accent pills, matching the tag-pill language
+// used in the popover renderer. Only injected on v2 (via pickStyles), so no
+// [data-pl-version] scoping is needed.
+
+.block-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.block-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px 1px 6px;
+  border-radius: 10px;
+  background: var(--pl-accent-subtle);
+  border: 1px solid var(--pl-accent-border);
+  font-size: 0.78em;
+  line-height: 1.5;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+
+  &:hover {
+    background: var(--pl-accent-light);
+    border-color: var(--pl-accent-border-strong);
+  }
+
+  // The leading "#" glyph — de-emphasized so the tag label reads first.
+  .hash-symbol {
+    color: var(--pl-accent-text);
+    opacity: 0.55;
+    margin-right: 1px;
+  }
+
+  a.tag {
+    color: var(--pl-accent-text);
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}

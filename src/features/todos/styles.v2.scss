@@ -9,12 +9,12 @@
 // The Tabler glyphs stroke with `currentColor`, so setting `color` on the
 // `.ls-icon-*` wrapper tints the icon.
 //
-// NOTE: v1 also gives each task block a card background + colored left border.
-// That keys off a block-level marker; in v2 the only pure-CSS hook is the status
-// glyph inside a bottom-property pill, and `.ls-block:has(.ls-icon-Done)` would
-// over-match ancestor blocks (`:has` is subtree-wide). So v2 starts with glyph/
-// priority/overdue coloring; the full block-card effect is deferred until it can
-// be iterated against a live DB instance.
+// v1 also gives each task block a card background + a status-colored left border.
+// In v2 the status shows as an `.ls-icon-*` glyph inside the block's own content
+// row (`.block-main-content`). Scoping `:has()` to that row — rather than the
+// whole `.ls-block` — is what makes the card safe: a block's descendants live in
+// the *sibling* `.block-children-container`, so a parent's `.block-main-content`
+// never contains a child task's glyph and the card can't leak onto ancestors.
 
 // Status glyphs -------------------------------------------------------------
 // v2 vocabulary is Todo / InProgress / Done / Cancelled (not v1's TODO/DOING).
@@ -63,4 +63,35 @@
 .overdue a.page-ref {
   color: rgb(245, 158, 11);
   font-weight: 600;
+}
+
+// Block card ----------------------------------------------------------------
+// A task block's own content row gets a subtle card + status-colored left
+// border, echoing the v1 task-block look. `InProgress` matches by prefix because
+// v2 appends a percentage (`ls-icon-InProgress50`). Kept to a small vertical
+// padding so bullets stay aligned with non-task blocks; iterate against a live
+// DB instance if alignment needs tuning.
+.block-main-content {
+  &:has(.ls-icon-Todo),
+  &:has([class*="ls-icon-InProgress"]),
+  &:has(.ls-icon-Done),
+  &:has(.ls-icon-Cancelled) {
+    background: var(--ls-secondary-background-color, rgba(127, 127, 127, 0.06));
+    border-radius: 6px;
+    padding-block: 2px;
+    border-left: 3px solid var(--ls-border-color);
+  }
+
+  &:has([class*="ls-icon-InProgress"]) {
+    border-left-color: var(--pl-accent);
+  }
+
+  &:has(.ls-icon-Done) {
+    border-left-color: rgb(34, 197, 94);
+  }
+
+  &:has(.ls-icon-Cancelled) {
+    border-left-color: rgb(148, 163, 184);
+    opacity: 0.85;
+  }
 }

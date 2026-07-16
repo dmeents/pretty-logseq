@@ -163,6 +163,8 @@ describe('Settings Management', () => {
       // Version-agnostic toggles remain.
       expect(keys).toContain('compactSidebarNav');
       expect(keys).toContain('hideHomeButton');
+      // v2-only toggles appear.
+      expect(keys).toContain('enablePrettyTags');
     });
 
     it('keeps v1-only toggles when the active version is v1', () => {
@@ -171,6 +173,8 @@ describe('Settings Management', () => {
 
       expect(keys).toContain('hideCreateButton');
       expect(keys).toContain('hideSyncIndicator');
+      // v2-only toggles are hidden.
+      expect(keys).not.toContain('enablePrettyTags');
     });
 
     it('includes a status row only when version info is provided', () => {

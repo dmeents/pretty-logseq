@@ -42,6 +42,19 @@ export interface PlatformTheme {
   accentVars: string[];
   /** Fallback selector whose computed color is used if the vars miss. */
   accentFallbackSelector: string;
+  /**
+   * Attribute on the host `<html>` holding the user's chosen accent name, if the
+   * version exposes one (v2 writes `data-color="violet"` etc. from its settings
+   * accent picker). Read before probing so the plugin matches the user's exact
+   * choice rather than inferring it. Omit on versions without such an attribute.
+   */
+  accentAttr?: string;
+  /**
+   * Maps an `accentAttr` value to an `rgb(...)` string. A value not in the map
+   * (or a missing attribute) falls through to the CSS-var probe, so an unknown
+   * accent name is a safe no-op rather than a wrong color.
+   */
+  accentColorMap?: Record<string, string>;
 }
 
 /** The active version's adapter: all version-specific knowledge in one object. */

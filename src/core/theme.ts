@@ -9,7 +9,17 @@ function isUsableColor(color: string): boolean {
 
 function getAccentColor(): string | null {
   const doc = getParentDoc();
-  const { accentVars, accentFallbackSelector } = getPlatform().theme;
+  const { accentVars, accentFallbackSelector, accentAttr, accentColorMap } = getPlatform().theme;
+
+  // Highest priority: the user's explicit accent choice, if the version exposes
+  // it as an attribute on `<html>` (v2 `data-color`). An unmapped value falls
+  // through to the CSS-var probe below.
+  if (accentAttr && accentColorMap) {
+    const name = doc.documentElement.getAttribute(accentAttr);
+    const mapped = name ? accentColorMap[name] : undefined;
+    if (mapped && isUsableColor(mapped)) return mapped;
+  }
+
   const probe = doc.createElement('span');
   doc.body.appendChild(probe);
 
@@ -97,10 +107,15 @@ export function generateThemeCSS(): string {
 export function setupThemeObserver(onThemeChange: () => void): void {
   const doc = getParentDoc();
 
-  // Re-inject when theme might change (class changes on html/body)
+  // Attributes whose change may flip the accent: `class` (dark/light + skins) and
+  // the version's accent attribute (v2 `data-color`), if any.
+  const accentAttr = getPlatform().theme.accentAttr;
+  const watched = accentAttr ? ['class', accentAttr] : ['class'];
+
+  // Re-inject when theme might change (class / accent-attr changes on html/body)
   const observer = new MutationObserver(mutations => {
     for (const mutation of mutations) {
-      if (mutation.attributeName === 'class') {
+      if (mutation.attributeName && watched.includes(mutation.attributeName)) {
         // Debounce to avoid multiple rapid updates
         setTimeout(onThemeChange, 100);
         break;

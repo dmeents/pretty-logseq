@@ -1,0 +1,6 @@
+// Pretty Tags — Logseq v1 (file) styling.
+//
+// Intentionally empty: v1 renders `#tags` inline within block content rather than
+// as the discrete `.block-tags` pill strip v2 introduces, so there's no v1
+// surface for this feature. `pickStyles` falls back here on v1 and injects
+// nothing. The v2 rules live in `styles.v2.scss`.

@@ -143,4 +143,51 @@
       opacity: 1;
     }
   }
+
+  // Typed values -------------------------------------------------------------
+  // v2 tags each row with `data-property-type`. `node`-typed properties point at
+  // other pages (Status, Type, …); render their values as reference chips so
+  // they read as links, while `default` (scalar) values stay plain text. Scoped
+  // to the node row's value so the broadly-used `.select-item` (menus, dropdowns)
+  // elsewhere is untouched.
+  .property-pair.property-panel-row[data-property-type="node"] {
+    .property-value-inner .select-item {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 8px;
+      border-radius: 10px;
+      background: var(--pl-accent-subtle);
+      border: 1px solid var(--pl-accent-border);
+      color: var(--pl-accent-text);
+      font-weight: 500;
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+  }
+}
+
+// Bottom property pills ------------------------------------------------------
+// Separate from the page-properties panel: v2 renders a block's *own* properties
+// (Scheduled, Deadline, Status, …) as a horizontal pill strip beneath the block
+// body (`.bottom-properties-pills-strip > .bottom-property-pill`). Give each pill
+// a subtle chip so the row reads as metadata distinct from the block content.
+.bottom-properties-pills-strip .bottom-property-pill {
+  padding: 1px 8px;
+  border-radius: 8px;
+  background: var(--pl-accent-subtle);
+  border: 1px solid var(--pl-accent-border);
+  font-size: 0.8em;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+
+  &:hover {
+    background: var(--pl-accent-light);
+    border-color: var(--pl-accent-border-strong);
+  }
+
+  a.property-k {
+    color: var(--pl-accent-text);
+    font-weight: 600;
+  }
 }

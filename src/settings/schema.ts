@@ -9,6 +9,7 @@ export interface PluginSettings {
   showPropertyIcons: boolean;
   enablePrettyLinks: boolean;
   enablePrettyTodos: boolean;
+  enablePrettyTags: boolean;
   enableFavoriteStar: boolean;
   enableBulletThreading: boolean;
   compactSidebarNav: boolean;
@@ -32,6 +33,7 @@ export const defaultSettings: PluginSettings = {
   showPropertyIcons: true,
   enablePrettyLinks: true,
   enablePrettyTodos: true,
+  enablePrettyTags: true,
   enableFavoriteStar: true,
   enableBulletThreading: true,
   compactSidebarNav: true,
@@ -98,6 +100,13 @@ const SETTING_GROUPS: SettingGroup[] = [
         key: 'enablePrettyTodos',
         title: 'Pretty Todos',
         description: 'Status, priority, and past-due styling for task blocks.',
+      },
+      {
+        key: 'enablePrettyTags',
+        title: 'Pretty Tags',
+        description: "Accent pill styling for the tag/class chips on a block's tag row.",
+        // v2 renders tags as a `.block-tags` pill strip; v1 has no equivalent DOM.
+        versions: ['v2'],
       },
       {
         key: 'enablePrettyTables',

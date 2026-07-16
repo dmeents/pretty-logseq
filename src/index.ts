@@ -10,6 +10,7 @@ import { popoversFeature } from './features/popovers';
 import { propertiesFeature } from './features/properties';
 import { sidebarFeature } from './features/sidebar';
 import { tablesFeature } from './features/tables';
+import { tagsFeature } from './features/tags';
 import { templatesFeature } from './features/templates';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
@@ -85,6 +86,7 @@ const FEATURE_BINDINGS: FeatureBinding[] = [
   {
     keys: [
       'enablePrettyTables',
+      'enablePrettyTags',
       'enablePrettyTemplates',
       'compactSidebarNav',
       'hideCreateButton',
@@ -137,6 +139,7 @@ function registerFeatures(): void {
   registry.register(topbarFeature);
   registry.register(sidebarFeature);
   registry.register(tablesFeature);
+  registry.register(tagsFeature);
   registry.register(templatesFeature);
   registry.register(typographyFeature);
 }

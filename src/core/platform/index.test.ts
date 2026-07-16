@@ -34,11 +34,17 @@ describe('getPlatform', () => {
     expect(v2.selectors.propertyKey).toBe('.ls-page-properties .property-k');
     expect(v2.selectors.propertyKey).not.toBe(v1.selectors.propertyKey);
 
-    // Selectors (other than the property key) and theme still inherit v1.
-    expect(v2.theme).toEqual(v1.theme);
+    // Selectors other than the property key still inherit v1.
     const { propertyKey: _v2Key, ...v2Rest } = v2.selectors;
     const { propertyKey: _v1Key, ...v1Rest } = v1.selectors;
     expect(v2Rest).toEqual(v1Rest);
+
+    // Theme inherits v1's probe inputs but adds v2's `data-color` accent source.
+    expect(v2.theme.accentVars).toEqual(v1.theme.accentVars);
+    expect(v2.theme.accentFallbackSelector).toBe(v1.theme.accentFallbackSelector);
+    expect(v2.theme.accentAttr).toBe('data-color');
+    expect(v2.theme.accentColorMap?.violet).toBe('rgb(110, 86, 207)');
+    expect(v1.theme.accentAttr).toBeUndefined();
   });
 
   it('routes v2 page/property reads through the v2 data adapter', () => {
