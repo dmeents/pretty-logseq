@@ -6,9 +6,16 @@ This file provides guidance to Claude Code when working with this repository.
 
 **Pretty Logseq** is a Logseq plugin for frontend customizations. It provides a
 modular, settings-driven system of self-contained features: custom hover
-popovers, enhanced external links, styled properties/tables/templates/todos,
+popovers, enhanced external links, styled properties/tables/tags/templates/todos,
 typography, and top bar / sidebar tweaks. Each feature can be toggled
 independently from the plugin settings UI.
+
+The plugin supports **both Logseq editions**: v1 (the file/markdown app) and v2
+(the newer database-backed "DB" app). The two differ in DOM structure, CSS
+variables, and the shape of data returned by `Editor.getPage`, so a cross-version
+**platform adapter** (`src/core/platform/`) abstracts those differences behind a
+single `Platform` interface. All v2 work is strictly **additive** — v1 behavior
+must never regress (see the platform adapter section below).
 
 ## Tech Stack
 
@@ -93,10 +100,18 @@ pretty-logseq/
 │   ├── core/             # Core infrastructure
 │   │   ├── registry.ts   # Feature lifecycle + style aggregation
 │   │   ├── styles.ts     # Style injection (theme + features → provideStyle)
-│   │   └── theme.ts      # Accent-color auto-detection + theme observer
+│   │   ├── theme.ts      # Accent-color auto-detection + theme observer
+│   │   ├── version.ts    # Logseq edition detection (v1 vs v2), getVersion()
+│   │   └── platform/     # Cross-version adapter (selectors, api, theme per edition)
+│   │       ├── index.ts  # getPlatform() — resolves active Platform, pickStyles()
+│   │       ├── types.ts  # Platform interface
+│   │       ├── v1.ts     # v1 (file/markdown) platform — source of truth
+│   │       ├── v2.ts     # v2 (DB) platform — spreads v1, overrides confirmed diffs
+│   │       └── styles.ts # Version-aware style selection helpers
 │   ├── lib/              # Shared utilities
 │   │   ├── dom.ts        # Positioning, element creation, getParentDoc
-│   │   └── api.ts        # Logseq API helpers with caching
+│   │   ├── api.ts        # v1 Logseq API helpers with caching
+│   │   └── api.v2.ts     # v2 (DB) data adapter — normalizes DB property shape
 │   ├── settings/         # Plugin settings
 │   │   ├── index.ts      # getSettings / initSettings / onSettingsChanged
 │   │   └── schema.ts     # Settings UI schema + PluginSettings interface
@@ -117,10 +132,12 @@ pretty-logseq/
 │       │   ├── index.ts, styles.scss, threading.scss
 │       │   └── favorites/  # api.ts, observer.ts, styles.scss
 │       ├── properties/   # Styled page properties (+ optional icons)
-│       │   ├── index.ts, observer.ts, styles.scss
+│       │   ├── index.ts, observer.ts, v1.ts + v2.ts (per-version strategies)
 │       ├── todos/        # Restyled task blocks
-│       │   ├── index.ts, observer.ts, styles.scss
+│       │   ├── index.ts, observer.ts, v1.ts + v2.ts (per-version strategies)
 │       ├── tables/       # Styled query-result tables
+│       │   ├── index.ts, styles.scss
+│       ├── tags/         # Styled inline tags (Pretty Tags)
 │       │   ├── index.ts, styles.scss
 │       ├── templates/    # Styled template blocks
 │       │   ├── index.ts, styles.scss
@@ -165,6 +182,51 @@ Features are self-contained (styles, initialization, cleanup) and registered in
 (`src/core/registry.ts`) owns the lifecycle: `initializeAll`,
 `initializeFeature(id)`, `destroyFeature(id)`, `destroyAll`, and
 `getAggregatedStyles()`.
+
+### Cross-Version Support (v1 file app / v2 DB app)
+
+Logseq ships in two editions with different DOM, CSS variables, and API data
+shapes. Pretty Logseq supports both behind a small set of abstractions.
+**Guiding rule: v2 is purely additive — never regress v1.** v2 code starts by
+mirroring v1 and overrides only differences that have been *confirmed against a
+real DB instance*.
+
+- **Version detection** (`src/core/version.ts`): `detectVersion()` resolves the
+  active edition asynchronously at startup; `getVersion()` returns the cached
+  result synchronously (defaulting to `v1` before detection completes, so it's
+  safe to call anywhere). `applyVersionAttribute()` stamps `data-pl-version` on
+  the root so stylesheets can scope by edition. Tests use `setVersionForTest()`.
+
+- **Platform adapter** (`src/core/platform/`): the `Platform` interface
+  (`types.ts`) groups everything that differs per edition — DOM `selectors`, an
+  `api` object (page/blocks/theme/favorites), and `theme` config (accent vars /
+  attributes). `v1.ts` is the source of truth; `v2.ts` does
+  `{ ...v1Platform, ...overrides }`, so any field not explicitly overridden
+  inherits v1 (and is flagged as needing v2 verification). `getPlatform()`
+  returns the active adapter; `getObserverRoot()` resolves the observer mount
+  point from it. Tests use `setPlatformForTest()`.
+
+- **Version-aware styles** (`pickStyles`, `src/core/platform/styles.ts`):
+  features import both `styles.scss` and (where the DOM diverged) `styles.v2.scss`
+  with `?inline` and return `pickStyles({ v1, v2 })`. A missing/empty `v2` falls
+  back to `v1`, so v2 renders with v1 styling until its own SCSS is authored.
+
+- **Per-version feature strategies** (`features/*/v1.ts` + `v2.ts`): when a
+  feature's `getStyles`/`init`/`destroy` differ enough between editions, the
+  behavior is split into a `PropertiesStrategy`-style slice
+  (`Pick<Feature, 'getStyles' | 'init' | 'destroy'>`). The feature's `index.ts`
+  picks the strategy for the active version. Reuse v1's implementation wherever
+  it's version-agnostic (e.g. the property-icon observer reads its key selector
+  from `getPlatform().selectors.propertyKey`, so v2 reuses v1's `init`/`destroy`).
+
+- **v2 data adapter** (`src/lib/api.v2.ts`): the DB `Editor.getPage` returns a
+  very different shape than v1 — property keys are namespaced and id-suffixed
+  (`:user.property/<name>-<8char>`) and values are entity ids (or arrays of them),
+  not literals. `getPageV2`/`normalizeProperties` strip keys back to plain
+  lowercased names and batch-resolve every referenced id to its `:block/title`
+  (raw markdown like `[[Name]]`) in a single datascript query, producing the same
+  flat `PageProperties` map (`string | string[]`) the renderer already consumes.
+  See the module doc comment and `src/lib/api.v2.test.ts` for the exact shape.
 
 ### Settings-Driven Styles & Toggling
 
@@ -228,10 +290,13 @@ anchor tracking.
 
 1. Create a directory under `src/features/`
 2. Implement the `Feature` interface in `index.ts`
-3. Add styles in a `.scss` file (imported with `?inline`)
+3. Add styles in a `.scss` file (imported with `?inline`). If the DOM differs on
+   v2, add a `styles.v2.scss` and return `pickStyles({ v1, v2 })`; if behavior
+   differs, split into `v1.ts` + `v2.ts` strategies and pick one by `getVersion()`
 4. Register the feature in `src/index.ts`
 5. If it has a setting, add it to both the schema and `PluginSettings` in
-   `src/settings/schema.ts`, and handle its change in `onSettingsChanged`
+   `src/settings/schema.ts`, and handle its change in `onSettingsChanged`. To
+   scope a toggle to one edition, set its `versions` field in the schema
 6. Add `*.test.ts` files alongside the new code
 
 ```typescript
@@ -256,6 +321,9 @@ export const myFeature: Feature = {
 - **src/core/registry.ts** - Feature lifecycle + style aggregation
 - **src/core/styles.ts** - Aggregates theme + feature styles, single `provideStyle` call
 - **src/core/theme.ts** - Accent-color auto-detection + theme-change observer
+- **src/core/version.ts** - Logseq edition detection (`getVersion`/`detectVersion`)
+- **src/core/platform/** - Cross-version adapter (`getPlatform`, `pickStyles`)
+- **src/lib/api.v2.ts** - v2 (DB) data adapter, normalizes DB property shape
 - **src/settings/schema.ts** - Settings schema and `PluginSettings` interface
 - **src/settings/index.ts** - `getSettings` / `initSettings` / `onSettingsChanged`
 - **src/features/popovers/manager.ts** - Popover hover lifecycle

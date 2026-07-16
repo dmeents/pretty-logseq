@@ -120,6 +120,84 @@ describe('normalizeProperties', () => {
 
     expect(props).toEqual({});
   });
+
+  it('keeps a multi-element array as an array of titles', async () => {
+    mockRefTitles({ 100: '[[TypeScript]]', 200: '[[Rust]]' });
+
+    const props = await normalizeProperties({ ':user.property/stack-T_fP0Srf': [100, 200] });
+
+    expect(props.stack).toEqual(['[[TypeScript]]', '[[Rust]]']);
+  });
+
+  it('resolves an object value carrying an inline `block/title` without a query', async () => {
+    const props = await normalizeProperties({
+      ':user.property/status-cnmlDIuA': { 'block/title': 'Active' },
+    });
+
+    expect(props.status).toBe('Active');
+    // No entity ids to resolve, so the batch query is skipped entirely.
+    expect(logseq.DB.datascriptQuery).not.toHaveBeenCalled();
+  });
+
+  it('resolves an object value carrying a `db/id` via the batched query', async () => {
+    mockRefTitles({ 42: '[[David Meents]]' });
+
+    const props = await normalizeProperties({
+      ':user.property/owner-xEJFd0zo': { 'db/id': 42 },
+    });
+
+    expect(props.owner).toBe('[[David Meents]]');
+  });
+
+  it('passes a plain string property value through untouched', async () => {
+    const props = await normalizeProperties({ ':user.property/note-A1b2C3d4': 'just text' });
+
+    expect(props.note).toBe('just text');
+  });
+
+  it('stringifies a boolean property value', async () => {
+    const props = await normalizeProperties({
+      ':user.property/archived-A1b2C3d4': true,
+      ':user.property/pinned-Z9y8X7w6': false,
+    });
+
+    expect(props.archived).toBe('true');
+    expect(props.pinned).toBe('false');
+  });
+
+  it('collects properties from a nested `properties` map', async () => {
+    mockRefTitles({ 492: 'Active' });
+
+    const props = await normalizeProperties({
+      properties: { ':user.property/status-cnmlDIuA': [492] },
+    });
+
+    expect(props.status).toBe('Active');
+  });
+
+  it('drops an object value that carries neither a title nor a resolvable id', async () => {
+    const props = await normalizeProperties({
+      ':user.property/mystery-A1b2C3d4': { foo: 'bar' },
+    });
+
+    expect(props).toEqual({});
+  });
+
+  it('drops references when the resolution query returns null', async () => {
+    logseq.DB.datascriptQuery.mockResolvedValue(null);
+
+    const props = await normalizeProperties({ ':user.property/owner-xEJFd0zo': 1927 });
+
+    expect(props).toEqual({});
+  });
+
+  it('drops references when the resolution query throws', async () => {
+    logseq.DB.datascriptQuery.mockRejectedValue(new Error('query boom'));
+
+    const props = await normalizeProperties({ ':user.property/owner-xEJFd0zo': 1927 });
+
+    expect(props).toEqual({});
+  });
 });
 
 describe('getPageV2', () => {
@@ -173,6 +251,27 @@ describe('getPageV2', () => {
     const result = await getPageV2('david meents');
 
     expect(result?.name).toBe('David Meents');
+  });
+
+  it('prefers the v2 `block/title` over the other name shapes', async () => {
+    logseq.Editor.getPage.mockResolvedValue({
+      'block/title': 'DB Title',
+      title: 'old title',
+      name: 'db-title',
+    });
+
+    const result = await getPageV2('db-title');
+
+    expect(result?.name).toBe('DB Title');
+  });
+
+  it('falls back to the requested page name when the entity has no name fields', async () => {
+    logseq.Editor.getPage.mockResolvedValue({ id: 5 });
+
+    const result = await getPageV2('My Page');
+
+    expect(result?.name).toBe('My Page');
+    expect(result?.originalName).toBe('My Page');
   });
 
   it('caches within the TTL', async () => {
