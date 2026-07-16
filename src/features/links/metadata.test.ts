@@ -182,6 +182,50 @@ describe('fetchMetadata', () => {
   });
 });
 
+describe('fetchMetadata via logseq.Request proxy', () => {
+  beforeEach(() => {
+    clearMetadataCache();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    (globalThis.logseq as unknown as { Request?: unknown }).Request = undefined;
+  });
+
+  it('uses logseq.Request (proxy) instead of fetch when available', async () => {
+    const _request = vi
+      .fn()
+      .mockResolvedValue(
+        '<html><head><meta property="og:title" content="Proxied Title" /></head><body></body></html>',
+      );
+    (globalThis.logseq as unknown as { Request: { _request: typeof _request } }).Request = {
+      _request,
+    };
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+
+    const result = await fetchMetadata('https://example.com/proxy');
+
+    expect(_request).toHaveBeenCalledTimes(1);
+    expect(_request).toHaveBeenCalledWith(
+      expect.objectContaining({ url: 'https://example.com/proxy', returnType: 'text' }),
+    );
+    // The proxy bypasses CORS; the renderer's fetch is never used.
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result?.title).toBe('Proxied Title');
+  });
+
+  it('returns null when the proxy request fails', async () => {
+    const _request = vi.fn().mockRejectedValue(new Error('blocked'));
+    (globalThis.logseq as unknown as { Request: { _request: typeof _request } }).Request = {
+      _request,
+    };
+
+    const result = await fetchMetadata('https://example.com/proxy-fail');
+
+    expect(result).toBeNull();
+  });
+});
+
 describe('clearMetadataCache', () => {
   beforeEach(() => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(() =>

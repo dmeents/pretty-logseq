@@ -31,6 +31,60 @@ function resolveUrl(relative: string, base: string): string {
   }
 }
 
+interface HtmlResponse {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  text: string;
+}
+
+/** Minimal shape of Logseq's proxied request client (`logseq.Request`). */
+interface ProxyRequestClient {
+  _request(opts: {
+    url: string;
+    method?: string;
+    returnType?: string;
+    headers?: Record<string, string>;
+    timeout?: number;
+  }): Promise<unknown>;
+}
+
+function getProxyRequestClient(): ProxyRequestClient | null {
+  const client = (globalThis.logseq as unknown as { Request?: Partial<ProxyRequestClient> })
+    ?.Request;
+  return client && typeof client._request === 'function' ? (client as ProxyRequestClient) : null;
+}
+
+/**
+ * Fetch a page's HTML.
+ *
+ * Prefers Logseq's proxied request (`logseq.Request`), which runs in the app's
+ * main process and is therefore NOT subject to the renderer's CSP/CORS — the v2
+ * (DB) app blocks cross-origin `fetch()`, so a direct fetch returns nothing.
+ * Falls back to `fetch` when the proxy isn't available (v1 / test env).
+ */
+async function requestHtml(url: string, signal: AbortSignal): Promise<HtmlResponse> {
+  const proxy = getProxyRequestClient();
+  if (proxy) {
+    const text = (await proxy._request({
+      url,
+      method: 'GET',
+      returnType: 'text',
+      headers: { Accept: 'text/html' },
+      timeout: FETCH_TIMEOUT,
+    })) as string | null;
+    return { ok: true, status: 200, statusText: 'OK', text: text ?? '' };
+  }
+
+  const response = await fetch(url, { signal, headers: { Accept: 'text/html' } });
+  return {
+    ok: response.ok,
+    status: response.status,
+    statusText: response.statusText,
+    text: response.ok ? await response.text() : '',
+  };
+}
+
 export async function fetchMetadata(url: string): Promise<LinkMetadata | null> {
   // Check cache
   const cached = metadataCache.get(url);
@@ -48,12 +102,12 @@ export async function fetchMetadata(url: string): Promise<LinkMetadata | null> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
 
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: { Accept: 'text/html' },
-    });
-
-    clearTimeout(timeout);
+    let response: HtmlResponse;
+    try {
+      response = await requestHtml(url, controller.signal);
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!response.ok) {
       const hostname = new URL(url).hostname.replace(/^www\./, '');
@@ -71,7 +125,7 @@ export async function fetchMetadata(url: string): Promise<LinkMetadata | null> {
       return metadata;
     }
 
-    const html = await response.text();
+    const html = response.text;
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
 
