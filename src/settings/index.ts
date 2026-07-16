@@ -1,7 +1,12 @@
-import { defaultSettings, type PluginSettings, settingsSchema } from './schema';
+import {
+  defaultSettings,
+  type PluginSettings,
+  settingsSchema,
+  settingsSchemaWithVersion,
+} from './schema';
 
 export type { PluginSettings };
-export { defaultSettings, settingsSchema };
+export { defaultSettings, settingsSchema, settingsSchemaWithVersion };
 
 export function getSettings(): PluginSettings {
   const settings = logseq.settings as

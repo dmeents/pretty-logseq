@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { defaultSettings, getSettings, initSettings, onSettingsChanged } from './index';
+import {
+  defaultSettings,
+  getSettings,
+  initSettings,
+  onSettingsChanged,
+  settingsSchema,
+  settingsSchemaWithVersion,
+} from './index';
 
 describe('Settings Management', () => {
   beforeEach(() => {
@@ -107,6 +114,48 @@ describe('Settings Management', () => {
       expect(firstSetting).toBeDefined();
       expect(firstSetting?.type).toBe('boolean');
       expect(firstSetting?.default).toBe(true);
+    });
+  });
+
+  describe('settingsSchemaWithVersion', () => {
+    it('inserts a read-only status row above the picker', () => {
+      const schema = settingsSchemaWithVersion('v2');
+      const statusIndex = schema.findIndex(item => item.key === 'detectedVersionStatus');
+      const pickerIndex = schema.findIndex(item => item.key === 'logseqVersion');
+
+      const status = schema[statusIndex];
+      expect(status.type).toBe('heading');
+      expect(status.title).toContain('Logseq DB (v2)');
+      // Status row comes immediately before the picker.
+      expect(statusIndex).toBe(pickerIndex - 1);
+    });
+
+    it('describes auto-detection when source is auto (default)', () => {
+      const status = settingsSchemaWithVersion('v2').find(
+        item => item.key === 'detectedVersionStatus',
+      );
+      expect(status?.description).toContain('Auto-detected');
+    });
+
+    it('describes a manual override when source is manual', () => {
+      const status = settingsSchemaWithVersion('v1', 'manual').find(
+        item => item.key === 'detectedVersionStatus',
+      );
+      expect(status?.title).toContain('Logseq file (v1)');
+      expect(status?.description).toContain('Manually set');
+    });
+
+    it('leaves other entries untouched', () => {
+      const schema = settingsSchemaWithVersion('v1');
+      const original = settingsSchema.find(item => item.key === 'enablePopovers');
+      const mapped = schema.find(item => item.key === 'enablePopovers');
+
+      expect(mapped).toEqual(original);
+    });
+
+    it('places the Compatibility section first', () => {
+      expect(settingsSchema[0].key).toBe('compatibilityHeading');
+      expect(settingsSchema[1].key).toBe('logseqVersion');
     });
   });
 

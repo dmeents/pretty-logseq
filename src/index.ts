@@ -3,6 +3,7 @@ import '@logseq/libs';
 import { registry } from './core/registry';
 import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
+import { applyVersionAttribute, detectVersion } from './core/version';
 import { contentFeature } from './features/content';
 import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
@@ -13,7 +14,12 @@ import { templatesFeature } from './features/templates';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
 import { typographyFeature } from './features/typography';
-import { initSettings, onSettingsChanged } from './settings';
+import {
+  getSettings,
+  initSettings,
+  onSettingsChanged,
+  settingsSchemaWithVersion,
+} from './settings';
 
 function registerFeatures(): void {
   registry.register(contentFeature);
@@ -33,12 +39,32 @@ async function main(): Promise<void> {
 
   initSettings();
   registerFeatures();
+
+  const version = await detectVersion();
+  applyVersionAttribute(version);
+  const source = getSettings().logseqVersion === 'auto' ? 'auto' : 'manual';
+  logseq.useSettingsSchema(settingsSchemaWithVersion(version, source));
+  console.log(`[Pretty Logseq] Detected Logseq ${version}`);
+
   injectStyles();
   setupThemeObserver(refreshStyles);
 
   await registry.initializeAll();
 
-  onSettingsChanged((newSettings, oldSettings) => {
+  onSettingsChanged(async (newSettings, oldSettings) => {
+    // Version override changed: everything can differ, so treat it as a full
+    // reload — re-detect, update the scope attribute, then destroy + re-init all.
+    if (newSettings.logseqVersion !== oldSettings.logseqVersion) {
+      await registry.destroyAll();
+      const version = await detectVersion();
+      applyVersionAttribute(version);
+      const source = newSettings.logseqVersion === 'auto' ? 'auto' : 'manual';
+      logseq.useSettingsSchema(settingsSchemaWithVersion(version, source));
+      await registry.initializeAll();
+      refreshStyles();
+      return;
+    }
+
     const styleSettings = [
       'enablePrettyTypography',
       'enablePrettyTables',

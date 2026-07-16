@@ -20,6 +20,7 @@ export interface PluginSettings {
   styleTopbarIcons: boolean;
   topbarGradient: boolean;
   hideWindowControls: boolean;
+  logseqVersion: 'auto' | 'v1' | 'v2';
 }
 
 export const defaultSettings: PluginSettings = {
@@ -42,9 +43,27 @@ export const defaultSettings: PluginSettings = {
   styleTopbarIcons: true,
   topbarGradient: true,
   hideWindowControls: false,
+  logseqVersion: 'auto',
 };
 
 export const settingsSchema: SettingSchemaDesc[] = [
+  {
+    key: 'compatibilityHeading',
+    title: 'Compatibility',
+    description: '',
+    type: 'heading',
+    default: null,
+  },
+  {
+    key: 'logseqVersion',
+    title: 'Logseq Version',
+    description:
+      "Which Logseq version to target. 'auto' detects the DB (v2) vs file (v1) app at runtime; override only if detection is wrong.",
+    type: 'enum',
+    enumChoices: ['auto', 'v1', 'v2'],
+    enumPicker: 'select',
+    default: 'auto',
+  },
   {
     key: 'featuresHeading',
     title: 'Features',
@@ -221,3 +240,43 @@ export const settingsSchema: SettingSchemaDesc[] = [
     default: false,
   },
 ];
+
+const VERSION_LABELS: Record<'v1' | 'v2', string> = {
+  v1: 'Logseq file (v1)',
+  v2: 'Logseq DB (v2)',
+};
+
+/**
+ * Returns the settings schema with a read-only status row inserted above the
+ * "Logseq Version" picker, showing the currently active version. Re-registered
+ * after runtime detection so the user can see what `auto` resolved to (or
+ * confirm their manual override). The status row is a `heading` entry (not
+ * persisted), so it needs no `PluginSettings` field.
+ */
+export function settingsSchemaWithVersion(
+  active: 'v1' | 'v2',
+  source: 'auto' | 'manual' = 'auto',
+): SettingSchemaDesc[] {
+  const statusRow: SettingSchemaDesc = {
+    key: 'detectedVersionStatus',
+    title: `● Active: ${VERSION_LABELS[active]}`,
+    description:
+      source === 'auto'
+        ? `Auto-detected this graph as the ${active} app. Use the dropdown below to override.`
+        : `Manually set to the ${active} app. Set the dropdown below to 'auto' to re-detect.`,
+    type: 'heading',
+    default: null,
+  };
+
+  return settingsSchema.flatMap(entry =>
+    entry.key === 'logseqVersion'
+      ? [
+          statusRow,
+          {
+            ...entry,
+            description: 'Override the auto-detected version only if detection is wrong.',
+          },
+        ]
+      : [entry],
+  );
+}

@@ -25,3 +25,6 @@ npm-debug.log*
 # Claude
 .claude/
 coverage/
+
+# AI working notes (findings, decisions, sessions, processes)
+.ai/
