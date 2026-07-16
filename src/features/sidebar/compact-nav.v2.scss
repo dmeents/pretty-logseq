@@ -1,0 +1,92 @@
+// v2 (DB app) compact navigation.
+// Turns the primary nav (Journals, Pages, Graph view) into a compact inline icon
+// bar. v2 nests the nav under a "Navigations" section header inside
+// `.sidebar-header-container`; scope everything there so Favorites/Recent (in
+// `.sidebar-contents-container`) are untouched.
+
+#left-sidebar .sidebar-header-container {
+  // Compact the "Navigations" section header (title + edit pencil) for the
+  // icon-bar look.
+  .sidebar-content-group > .sidebar-content-group-inner > .hd {
+    display: none;
+  }
+
+  // Nav container — a self-contained, inset icon bar with a theme accent
+  // background. Kept inside the parent's padding (no negative-margin bleed) so
+  // the edge icons never clip against v2's nested containers.
+  .sidebar-navigations {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+    margin: 4px 0 8px;
+    background: var(--pl-accent-subtle);
+    border: 1px solid var(--pl-accent-border);
+    border-radius: 8px;
+  }
+
+  // Each nav item is an `a.item` wrapped in a `.journals-nav` / `.all-pages-nav`
+  // / `.graph-view-nav` div. Let the wrappers share the bar width equally so
+  // their buttons fill the available space.
+  .journals-nav,
+  .all-pages-nav,
+  .graph-view-nav {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .sidebar-navigations a.item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 6px;
+    margin: 0;
+    border-radius: 6px;
+    background-color: var(--pl-accent-light);
+    border: 1px solid var(--pl-accent-medium);
+    transition: all 0.15s ease;
+
+    .ui__icon {
+      color: var(--pl-accent-text);
+      opacity: 0.8;
+      transition: opacity 0.15s ease;
+      margin: 0;
+      padding: 0;
+      font-size: 18px;
+    }
+
+    &:hover {
+      background-color: var(--pl-accent-medium);
+      border-color: var(--pl-accent-border);
+
+      .ui__icon {
+        opacity: 1;
+      }
+    }
+
+    // Active/selected state. Exact v2 class is unconfirmed from the static
+    // sample; cover the likely variants.
+    &.active,
+    &.is-active,
+    &[data-active="true"] {
+      background-color: var(--pl-accent-strong);
+      border-color: var(--pl-accent);
+      box-shadow: 0 0 0 1px var(--pl-accent-border);
+
+      .ui__icon {
+        opacity: 1;
+        color: var(--pl-accent-text);
+      }
+    }
+
+    // Hide the text label and keyboard shortcut, keeping just the icon.
+    .flex-1,
+    .keyboard-shortcut,
+    > .ml-1 {
+      display: none;
+    }
+  }
+}

@@ -131,7 +131,8 @@ pretty-logseq/
 │       │   ├── icon-styling.scss, hide-home.scss, hide-sync.scss,
 │       │   └── hide-window-controls.scss
 │       └── sidebar/      # Left sidebar (compact nav, hide create, graph selector)
-│           ├── index.ts, compact-nav.scss, hide-create.scss, graph-bottom.scss
+│           ├── index.ts, compact-nav.scss, compact-nav.v2.scss,
+│           ├── hide-create.scss, graph-bottom.scss, graph-bottom.v2.scss
 ├── test/                 # Test infrastructure (fixtures, mocks, utils, setup.ts)
 ├── dist/                 # Built output (gitignored)
 ├── CHANGELOG.md
