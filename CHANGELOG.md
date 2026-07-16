@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/dmeents/pretty-logseq/compare/v1.3.2...v2.0.0) (2026-07-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Update CLAUDE.md and api.v2 tests
+
+### Features
+
+* Update CLAUDE.md and api.v2 tests ([2c29f2c](https://github.com/dmeents/pretty-logseq/commit/2c29f2c0204265048adcae9f0833133b0189edcd))
+
 ## [1.3.2](https://github.com/dmeents/pretty-logseq/compare/v1.3.1...v1.3.2) (2026-04-15)
 
 
