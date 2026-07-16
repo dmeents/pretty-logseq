@@ -14,7 +14,108 @@ import { templatesFeature } from './features/templates';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
 import { typographyFeature } from './features/typography';
-import { buildSettingsSchema, getSettings, initSettings, onSettingsChanged } from './settings';
+import {
+  buildSettingsSchema,
+  getSettings,
+  initSettings,
+  onSettingsChanged,
+  type PluginSettings,
+} from './settings';
+
+type BindingAction = 'toggle' | 'reinit' | 'restyle';
+
+interface FeatureBinding {
+  /** Setting keys that trigger this binding when any of them changes. */
+  keys: (keyof PluginSettings)[];
+  action: BindingAction;
+  /** Feature to (re)init/destroy for 'toggle'/'reinit'. */
+  featureId?: string;
+  /** Gate: the feature is active only while this setting is true. */
+  enableKey?: keyof PluginSettings;
+  /** Imperative side effect to run on change (e.g. DOM repositioning). */
+  onChange?: () => void;
+}
+
+/**
+ * Declarative map of setting keys → how a change should be applied. Replaces the
+ * old hand-written if-block dispatcher.
+ * - `toggle`: init the feature when `enableKey` is on, destroy it when off.
+ * - `reinit`: destroy then re-init (re-init only if `enableKey`, or always if none)
+ *   — used when a sub-setting changed and the feature must rebuild.
+ * - `restyle`: style-only settings; just re-aggregate CSS.
+ * Every binding re-injects styles after running.
+ */
+const FEATURE_BINDINGS: FeatureBinding[] = [
+  {
+    keys: ['enablePopovers'],
+    action: 'toggle',
+    featureId: 'popovers',
+    enableKey: 'enablePopovers',
+  },
+  {
+    keys: ['enablePrettyLinks'],
+    action: 'toggle',
+    featureId: 'links',
+    enableKey: 'enablePrettyLinks',
+  },
+  {
+    keys: ['enablePrettyTodos'],
+    action: 'toggle',
+    featureId: 'todos',
+    enableKey: 'enablePrettyTodos',
+  },
+  {
+    keys: ['enablePrettyTypography'],
+    action: 'toggle',
+    featureId: 'typography',
+    enableKey: 'enablePrettyTypography',
+  },
+  {
+    keys: ['enablePrettyProperties', 'showPropertyIcons'],
+    action: 'reinit',
+    featureId: 'properties',
+    enableKey: 'enablePrettyProperties',
+  },
+  {
+    keys: ['enableBulletThreading', 'enableFavoriteStar'],
+    action: 'reinit',
+    featureId: 'content',
+  },
+  { keys: ['navArrowsLeft'], action: 'restyle', onChange: applyNavArrowsSetting },
+  {
+    keys: [
+      'enablePrettyTables',
+      'enablePrettyTemplates',
+      'compactSidebarNav',
+      'hideCreateButton',
+      'graphSelectorBottom',
+      'hideHomeButton',
+      'hideSyncIndicator',
+      'styleTopbarIcons',
+      'topbarGradient',
+      'hideWindowControls',
+    ],
+    action: 'restyle',
+  },
+];
+
+function applyBinding(binding: FeatureBinding, settings: PluginSettings): void {
+  if (binding.action === 'toggle' && binding.featureId && binding.enableKey) {
+    if (settings[binding.enableKey]) {
+      registry.initializeFeature(binding.featureId);
+    } else {
+      registry.destroyFeature(binding.featureId);
+    }
+  } else if (binding.action === 'reinit' && binding.featureId) {
+    registry.destroyFeature(binding.featureId);
+    if (!binding.enableKey || settings[binding.enableKey]) {
+      registry.initializeFeature(binding.featureId);
+    }
+  }
+
+  binding.onChange?.();
+  refreshStyles();
+}
 
 /**
  * Re-register the settings schema with the detected version, so the read-only
@@ -68,98 +169,11 @@ async function main(): Promise<void> {
       return;
     }
 
-    const styleSettings = [
-      'enablePrettyTypography',
-      'enablePrettyTables',
-      'enablePrettyTemplates',
-      'enablePrettyProperties',
-      'showPropertyIcons',
-      'enablePrettyLinks',
-      'enablePrettyTodos',
-      'enableFavoriteStar',
-      'enableBulletThreading',
-      'compactSidebarNav',
-      'hideCreateButton',
-      'graphSelectorBottom',
-      'hideHomeButton',
-      'hideSyncIndicator',
-      'styleTopbarIcons',
-      'topbarGradient',
-      'hideWindowControls',
-    ] as const;
-
-    const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);
-
-    if (styleSettingChanged) {
-      refreshStyles();
-    }
-
-    // Handle popovers feature toggle
-    if (newSettings.enablePopovers !== oldSettings.enablePopovers) {
-      if (newSettings.enablePopovers) {
-        registry.initializeFeature('popovers');
-      } else {
-        registry.destroyFeature('popovers');
+    // Data-driven dispatch: run each binding whose keys changed.
+    for (const binding of FEATURE_BINDINGS) {
+      if (binding.keys.some(key => newSettings[key] !== oldSettings[key])) {
+        applyBinding(binding, newSettings);
       }
-      refreshStyles();
-    }
-
-    // Handle pretty links feature toggle
-    if (newSettings.enablePrettyLinks !== oldSettings.enablePrettyLinks) {
-      if (newSettings.enablePrettyLinks) {
-        registry.initializeFeature('links');
-      } else {
-        registry.destroyFeature('links');
-      }
-      refreshStyles();
-    }
-
-    // Handle properties feature toggle
-    if (
-      newSettings.enablePrettyProperties !== oldSettings.enablePrettyProperties ||
-      newSettings.showPropertyIcons !== oldSettings.showPropertyIcons
-    ) {
-      registry.destroyFeature('properties');
-      if (newSettings.enablePrettyProperties) {
-        registry.initializeFeature('properties');
-      }
-      refreshStyles();
-    }
-
-    // Handle pretty todos feature toggle
-    if (newSettings.enablePrettyTodos !== oldSettings.enablePrettyTodos) {
-      if (newSettings.enablePrettyTodos) {
-        registry.initializeFeature('todos');
-      } else {
-        registry.destroyFeature('todos');
-      }
-      refreshStyles();
-    }
-
-    // Handle content feature settings (bullet threading, favorite star)
-    if (
-      newSettings.enableBulletThreading !== oldSettings.enableBulletThreading ||
-      newSettings.enableFavoriteStar !== oldSettings.enableFavoriteStar
-    ) {
-      registry.destroyFeature('content');
-      registry.initializeFeature('content');
-      refreshStyles();
-    }
-
-    // Handle typography feature toggle (font link injection)
-    if (newSettings.enablePrettyTypography !== oldSettings.enablePrettyTypography) {
-      if (newSettings.enablePrettyTypography) {
-        registry.initializeFeature('typography');
-      } else {
-        registry.destroyFeature('typography');
-      }
-      refreshStyles();
-    }
-
-    // Handle DOM manipulation settings (also refresh styles for layout CSS)
-    if (newSettings.navArrowsLeft !== oldSettings.navArrowsLeft) {
-      applyNavArrowsSetting();
-      refreshStyles();
     }
   });
 

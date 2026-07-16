@@ -1,32 +1,32 @@
-import { getSettings } from '../../settings';
+import { getVersion } from '../../core/version';
 import type { Feature } from '../../types';
-import { setupPropertyObserver } from './observer';
-import styles from './styles.scss?inline';
-
-let cleanup: (() => void) | null = null;
+import { propertiesV1 } from './v1';
+import { propertiesV2 } from './v2';
 
 /**
- * Styles page property blocks with accent borders, refined keys,
- * and pipe-separated values. Optionally displays icons for property
- * keys that have an icon:: property on their page.
+ * Strategy exemplar: properties diverges deeply between versions (the v2 DB
+ * property model is a rework), so this thin `Feature` delegates its behavior to a
+ * version-specific implementation picked at call time. Most features don't need
+ * this — they consume the platform adapter and stay single-source.
  */
+function strategy() {
+  return getVersion() === 'v2' ? propertiesV2 : propertiesV1;
+}
+
 export const propertiesFeature: Feature = {
   id: 'properties',
   name: 'Pretty Properties',
   description: 'Style page property blocks with accent borders and refined formatting',
 
   getStyles() {
-    return getSettings().enablePrettyProperties ? styles : '';
+    return strategy().getStyles();
   },
 
   init() {
-    const settings = getSettings();
-    if (!settings.enablePrettyProperties) return;
-    if (settings.showPropertyIcons) cleanup = setupPropertyObserver();
+    return strategy().init();
   },
 
   destroy() {
-    cleanup?.();
-    cleanup = null;
+    strategy().destroy();
   },
 };

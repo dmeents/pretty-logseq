@@ -2,7 +2,8 @@
  * Tests for Properties Feature
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setVersionForTest } from '../../core/version';
 import type { PluginSettings } from '../../settings';
 import * as settingsModule from '../../settings';
 import { propertiesFeature } from './index';
@@ -39,6 +40,21 @@ describe('Properties Feature', () => {
 
     it('has a description', () => {
       expect(propertiesFeature.description).toBeTruthy();
+    });
+  });
+
+  describe('version strategy', () => {
+    afterEach(() => {
+      setVersionForTest(null);
+    });
+
+    it('delegates to the v2 strategy on v2 (currently mirrors v1)', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyProperties: true,
+      } as PluginSettings);
+      setVersionForTest('v2');
+
+      expect(propertiesFeature.getStyles()).toBe('.properties-styles { }');
     });
   });
 

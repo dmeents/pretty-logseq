@@ -1,3 +1,4 @@
+import { getObserverRoot, getPlatform } from '../../core/platform';
 import { getParentDoc } from '../../lib/dom';
 
 const PAST_DUE_CLASS = 'pl-past-due';
@@ -16,7 +17,7 @@ function getTodayString(): string {
  * (not from a nested child block).
  */
 function getOwnContentWrapper(block: Element): Element | null {
-  return block.querySelector('.block-content-wrapper');
+  return block.querySelector(getPlatform().selectors.blockContent);
 }
 
 /**
@@ -91,7 +92,7 @@ function processBlock(block: Element, today: string): void {
 
 function scanBlocks(today: string): void {
   const doc = getParentDoc();
-  const blocks = doc.querySelectorAll('.ls-block');
+  const blocks = doc.querySelectorAll(getPlatform().selectors.block);
   for (const block of blocks) {
     processBlock(block, today);
   }
@@ -119,7 +120,6 @@ function cleanupAll(): void {
  * 2. Inject a "CANCELLED" label into cancelled task blocks
  */
 export function setupTodoObserver(): () => void {
-  const doc = getParentDoc();
   scanBlocks(getTodayString());
 
   // Batch mutations via requestAnimationFrame
@@ -134,8 +134,7 @@ export function setupTodoObserver(): () => void {
     }
   });
 
-  const root = doc.getElementById('main-content-container') ?? doc.body;
-  observer.observe(root, { childList: true, subtree: true });
+  observer.observe(getObserverRoot(), { childList: true, subtree: true });
 
   return () => {
     observer.disconnect();

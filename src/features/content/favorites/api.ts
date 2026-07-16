@@ -3,6 +3,8 @@
  * Handles reading/writing favorite pages via Logseq API with caching
  */
 
+import { getPlatform } from '../../../core/platform';
+
 let favoritesCache = new Set<string>();
 
 /**
@@ -10,8 +12,8 @@ let favoritesCache = new Set<string>();
  */
 export async function refreshFavorites(): Promise<void> {
   try {
-    const favorites = await logseq.App.getCurrentGraphFavorites();
-    favoritesCache = new Set((favorites || []).map(name => name.toLowerCase()));
+    const favorites = await getPlatform().api.getFavorites();
+    favoritesCache = new Set(favorites.map(name => name.toLowerCase()));
   } catch (error) {
     console.error('[Pretty Logseq] Failed to refresh favorites:', error);
     favoritesCache = new Set();
@@ -41,7 +43,7 @@ export async function toggleFavorite(pageName: string): Promise<void> {
 
   try {
     // Read current favorites to preserve original case
-    const currentFavorites = (await logseq.App.getCurrentGraphFavorites()) || [];
+    const currentFavorites = await getPlatform().api.getFavorites();
 
     let newFavorites: string[];
     if (wasFavorited) {
@@ -53,7 +55,7 @@ export async function toggleFavorite(pageName: string): Promise<void> {
     }
 
     // Write back to config
-    await logseq.App.setCurrentGraphConfigs({ favorites: newFavorites });
+    await getPlatform().api.setFavorites(newFavorites);
   } catch (error) {
     console.error('[Pretty Logseq] Failed to toggle favorite:', error);
 

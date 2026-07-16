@@ -3,6 +3,7 @@
  * Injects star buttons next to page titles for quick favorite toggling
  */
 
+import { getObserverRoot, getPlatform } from '../../../core/platform';
 import { getParentDoc } from '../../../lib/dom';
 import { isFavorited, refreshFavorites, toggleFavorite } from './api';
 
@@ -57,7 +58,9 @@ function createStarButton(pageName: string): HTMLButtonElement {
  */
 async function scanAndInject(): Promise<void> {
   const doc = getParentDoc();
-  const titles = doc.querySelectorAll<HTMLHeadingElement>(`h1.title:not([${STAR_MARKER}])`);
+  const titles = doc.querySelectorAll<HTMLHeadingElement>(
+    `${getPlatform().selectors.pageTitle}:not([${STAR_MARKER}])`,
+  );
 
   if (titles.length === 0) return;
 
@@ -117,11 +120,10 @@ export function setupFavoriteObserver(): void {
   // Guard against double-setup: clean up any existing observers/listeners first
   cleanupFavoriteObserver();
 
-  const doc = getParentDoc();
   console.log('[Pretty Logseq] Setting up favorite observer...');
 
   // Observe DOM changes - fallback to body if main container not found
-  const root = doc.getElementById('main-content-container') ?? doc.body;
+  const root = getObserverRoot();
   console.log('[Pretty Logseq] Observing element:', root);
 
   observer = new MutationObserver(handleMutations);

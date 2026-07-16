@@ -1,12 +1,12 @@
+import { getObserverRoot, getPlatform } from '../../core/platform';
 import { getParentDoc } from '../../lib/dom';
 
 export function setupLinkObserver(onLinksFound: (links: HTMLAnchorElement[]) => void): () => void {
   const doc = getParentDoc();
+  const linkSelector = `${getPlatform().selectors.externalLink}:not([data-pl-favicon])`;
 
   // Initial scan
-  const initialLinks = Array.from(
-    doc.querySelectorAll('a.external-link:not([data-pl-favicon])'),
-  ) as HTMLAnchorElement[];
+  const initialLinks = Array.from(doc.querySelectorAll(linkSelector)) as HTMLAnchorElement[];
   if (initialLinks.length > 0) {
     onLinksFound(initialLinks);
   }
@@ -30,11 +30,11 @@ export function setupLinkObserver(onLinksFound: (links: HTMLAnchorElement[]) => 
         if (node.nodeType !== 1) continue;
         const el = node as Element;
 
-        if (el.matches?.('a.external-link:not([data-pl-favicon])')) {
+        if (el.matches?.(linkSelector)) {
           pendingLinks.push(el as HTMLAnchorElement);
         }
 
-        const descendants = el.querySelectorAll?.('a.external-link:not([data-pl-favicon])');
+        const descendants = el.querySelectorAll?.(linkSelector);
         if (descendants) {
           for (const link of descendants) {
             pendingLinks.push(link as HTMLAnchorElement);
@@ -48,8 +48,7 @@ export function setupLinkObserver(onLinksFound: (links: HTMLAnchorElement[]) => 
     }
   });
 
-  const root = doc.getElementById('main-content-container') ?? doc.body;
-  observer.observe(root, { childList: true, subtree: true });
+  observer.observe(getObserverRoot(), { childList: true, subtree: true });
 
   return () => {
     observer.disconnect();

@@ -28,3 +28,6 @@ coverage/
 
 # AI working notes (findings, decisions, sessions, processes)
 .ai/
+
+# Test Pages for developing
+.samples/

@@ -1,4 +1,5 @@
 import { getParentDoc } from '../lib/dom';
+import { getPlatform } from './platform';
 
 const GRAY_PATTERN = /^rgb\((\d+),\s*\1,\s*\1\)$/;
 
@@ -8,17 +9,11 @@ function isUsableColor(color: string): boolean {
 
 function getAccentColor(): string | null {
   const doc = getParentDoc();
+  const { accentVars, accentFallbackSelector } = getPlatform().theme;
   const probe = doc.createElement('span');
   doc.body.appendChild(probe);
 
-  const cssVars = [
-    '--ls-link-text-color',
-    '--lx-accent-09',
-    '--ls-active-primary-color',
-    '--ls-link-ref-text-color',
-  ];
-
-  for (const varName of cssVars) {
+  for (const varName of accentVars) {
     probe.style.color = `var(${varName})`;
     const color = getComputedStyle(probe).color;
 
@@ -31,7 +26,7 @@ function getAccentColor(): string | null {
   probe.remove();
 
   // Fallback: try to find a link element with accent color
-  const link = doc.querySelector('a.page-ref, .page-property-value a');
+  const link = doc.querySelector(accentFallbackSelector);
 
   if (link) {
     const color = getComputedStyle(link).color;

@@ -1,0 +1,6 @@
+// Pretty Tables — Logseq v2 (DB) overrides.
+//
+// Empty for now: with no rules here, `pickStyles` falls back to the v1 styles, so
+// v2 renders tables with the v1 stylesheet until the DB table DOM is confirmed
+// during triage (see .ai/findings/v2-feature-triage.md). Author v2-specific
+// selectors here as they're verified.
