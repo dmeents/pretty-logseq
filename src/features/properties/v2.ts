@@ -1,13 +1,23 @@
+import { getSettings } from '../../settings';
+import styles from './styles.v2.scss?inline';
 import type { PropertiesStrategy } from './v1';
 import { propertiesV1 } from './v1';
 
 /**
  * Logseq v2 (DB) properties.
  *
- * The v2 property model is a full rework — page properties are no longer set via
- * the first block, and properties are namespaced DB attributes (`:logseq.property/*`)
- * rather than a flat markdown map — so this strategy will diverge substantially
- * from v1. For now it mirrors v1 as a safe baseline; replace with the DB-specific
- * DOM/data implementation during triage (see .ai/findings/v2-feature-triage.md).
+ * v2 rebuilt the page-properties DOM, so it needs its own stylesheet
+ * (`styles.v2.scss`, targeting `.ls-page-properties` / `.property-k` /
+ * `.property-value-inner`). The icon observer is version-agnostic — it reads its
+ * key selector from `getPlatform().selectors.propertyKey`, which v2 defines
+ * correctly (`src/core/platform/v2.ts`) — so `init`/`destroy` are identical to v1
+ * and reuse its wiring (and its shared module-level cleanup).
  */
-export const propertiesV2: PropertiesStrategy = propertiesV1;
+export const propertiesV2: PropertiesStrategy = {
+  getStyles() {
+    return getSettings().enablePrettyProperties ? styles : '';
+  },
+
+  init: propertiesV1.init,
+  destroy: propertiesV1.destroy,
+};

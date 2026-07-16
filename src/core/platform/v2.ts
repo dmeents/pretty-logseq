@@ -11,9 +11,15 @@ import { v1Platform } from './v1';
  * To override, spread the parts that change, e.g.:
  *   selectors: { ...v1Platform.selectors, observerRoot: '#new-root' }
  *
- * Every value below is currently v1 and therefore NEEDS VERIFICATION for v2.
+ * Values not set below still inherit v1 and NEED VERIFICATION for v2.
  */
 export const v2Platform: Platform = {
   ...v1Platform,
   version: 'v2',
+  selectors: {
+    ...v1Platform.selectors,
+    // v2 renders page properties in `.ls-page-properties` with key labels in
+    // `a.property-k` (the v1 `.page-properties .page-property-key` is gone).
+    propertyKey: '.ls-page-properties .property-k',
+  },
 };

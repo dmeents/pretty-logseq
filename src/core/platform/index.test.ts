@@ -24,14 +24,22 @@ describe('getPlatform', () => {
     expect(getPlatform().version).toBe('v2');
   });
 
-  it('v2 mirrors v1 selectors/api/theme until overridden', () => {
+  it('defines the v2 property-key selector while inheriting the rest from v1', () => {
     setVersionForTest('v2');
     const v2 = getPlatform();
     setVersionForTest('v1');
     const v1 = getPlatform();
 
-    expect(v2.selectors).toEqual(v1.selectors);
+    // v2 rebuilt the page-properties DOM, so its property-key selector differs.
+    expect(v2.selectors.propertyKey).toBe('.ls-page-properties .property-k');
+    expect(v2.selectors.propertyKey).not.toBe(v1.selectors.propertyKey);
+
+    // Everything else still inherits v1 until verified against a DB instance.
+    expect(v2.api).toEqual(v1.api);
     expect(v2.theme).toEqual(v1.theme);
+    const { propertyKey: _v2Key, ...v2Rest } = v2.selectors;
+    const { propertyKey: _v1Key, ...v1Rest } = v1.selectors;
+    expect(v2Rest).toEqual(v1Rest);
   });
 
   it('honors a test override regardless of version', () => {
