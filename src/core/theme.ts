@@ -64,6 +64,31 @@ function rgba(r: number, g: number, b: number, a: number): string {
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
+/**
+ * Whether the current theme renders on a dark background. Probes the primary
+ * background color and compares its relative luminance. Defaults to dark when
+ * the color can't be read.
+ */
+function isDarkTheme(): boolean {
+  const doc = getParentDoc();
+  const probe = doc.createElement('span');
+  probe.style.color = 'var(--ls-primary-background-color)';
+  doc.body.appendChild(probe);
+  const bg = getComputedStyle(probe).color;
+  probe.remove();
+
+  const rgb = parseRGB(bg);
+  if (!rgb) return true;
+
+  const luminance = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
+  return luminance < 128;
+}
+
+/** Linear mix of a channel toward a target (0..1 amount). */
+function mixChannel(channel: number, target: number, amount: number): number {
+  return Math.round(channel + (target - channel) * amount);
+}
+
 export function generateThemeCSS(): string {
   const accentColor = getAccentColor();
 
@@ -84,12 +109,24 @@ export function generateThemeCSS(): string {
     }
   }
 
+  // A high-contrast variant of the accent for glyphs/text that sit on a
+  // same-hue tinted chip (where the raw accent reads as low-contrast). Lighten
+  // toward white on dark themes; darken toward black on light themes.
+  const dark = isDarkTheme();
+  const brightTarget = dark ? 255 : 0;
+  const brightAmount = dark ? 0.6 : 0.35;
+  const br = mixChannel(r, brightTarget, brightAmount);
+  const bg = mixChannel(g, brightTarget, brightAmount);
+  const bb = mixChannel(b, brightTarget, brightAmount);
+  const accentBright = `rgb(${br}, ${bg}, ${bb})`;
+
   // Generate CSS with actual color values
   return `
 /* Pretty Logseq Theme Colors (auto-detected) */
 :root {
   --pl-accent: ${accent};
   --pl-accent-text: ${accent};
+  --pl-accent-bright: ${accentBright};
   --pl-accent-subtle: ${rgba(r, g, b, 0.1)};
   --pl-accent-light: ${rgba(r, g, b, 0.15)};
   --pl-accent-medium: ${rgba(r, g, b, 0.25)};

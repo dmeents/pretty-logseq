@@ -45,32 +45,37 @@
     padding: 6px;
     margin: 0;
     border-radius: 6px;
-    background-color: var(--pl-accent-light);
-    border: 1px solid var(--pl-accent-medium);
+    // Stronger chip so the icon sits on a defined surface instead of a faint
+    // same-hue wash — this is what made the glyphs read as "dim".
+    background-color: var(--pl-accent-medium);
+    border: 1px solid var(--pl-accent-border);
     transition: all 0.15s ease;
 
     .ui__icon {
-      color: var(--pl-accent-text);
-      opacity: 0.8;
+      // Use the high-contrast accent variant: the raw accent is the same hue
+      // as the chip, so it reads as low-contrast. The bright variant is
+      // lightened (dark themes) or darkened (light themes) to stand out.
+      color: var(--pl-accent-bright);
+      // Full opacity + thicker stroke so the glyphs are vibrant and legible
+      // against the chip in both dark and light themes.
+      opacity: 1;
       transition: opacity 0.15s ease;
       margin: 0;
       padding: 0;
 
       // The glyph is an inline SVG with explicit width/height attributes, so
-      // `font-size` doesn't resize it — size the SVG directly.
+      // `font-size` doesn't resize it — size the SVG directly. The icons are
+      // stroke-based, so bump the stroke weight to make them stand out.
       svg {
         width: 18px;
         height: 18px;
+        stroke-width: 2.25;
       }
     }
 
     &:hover {
-      background-color: var(--pl-accent-medium);
-      border-color: var(--pl-accent-border);
-
-      .ui__icon {
-        opacity: 1;
-      }
+      background-color: var(--pl-accent-strong);
+      border-color: var(--pl-accent-border-strong);
     }
 
     // Active/selected state. Exact v2 class is unconfirmed from the static
@@ -84,7 +89,7 @@
 
       .ui__icon {
         opacity: 1;
-        color: var(--pl-accent-text);
+        color: var(--pl-accent-bright);
       }
     }
 
