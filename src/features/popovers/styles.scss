@@ -133,6 +133,14 @@
     }
   }
 
+  // Inline-SVG avatar shown when the photo URL fails to load (CSP-safe fallback).
+  &__photo-fallback {
+    padding: 16px;
+    color: var(--pl-accent-text);
+    background: var(--pl-accent-subtle);
+    opacity: 0.85;
+  }
+
   &__header-info {
     flex: 1;
     min-width: 0;

@@ -2,6 +2,7 @@ import { cleanPropertyValue } from '../../../lib/api';
 import type { PageData } from '../../../types';
 import {
   cleanAllValues,
+  createAvatarSvg,
   createDescription,
   createDetailRow,
   createTagPills,
@@ -97,6 +98,16 @@ function buildHeader(
     img.src = photoUrl;
     img.alt = 'Photo';
     img.loading = 'lazy';
+    // Some hosts (e.g. LinkedIn CDN) hotlink-protect by referer; dropping it can
+    // let the image through. If it still fails (dead/expired URL), swap in a
+    // CSP-safe inline-SVG avatar so the card keeps its shape instead of showing
+    // a broken-image box.
+    img.referrerPolicy = 'no-referrer';
+    img.onerror = () => {
+      const avatar = createAvatarSvg();
+      avatar.classList.add('pretty-popover__photo-fallback');
+      img.replaceWith(avatar);
+    };
     photoWrapper.appendChild(img);
     card.appendChild(photoWrapper);
 

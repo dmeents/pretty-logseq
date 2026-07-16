@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { defaultSettings, getSettings, initSettings, onSettingsChanged } from './index';
+import {
+  buildSettingsSchema,
+  defaultSettings,
+  getSettings,
+  initSettings,
+  onSettingsChanged,
+} from './index';
 
 describe('Settings Management', () => {
   beforeEach(() => {
@@ -107,6 +113,94 @@ describe('Settings Management', () => {
       expect(firstSetting).toBeDefined();
       expect(firstSetting?.type).toBe('boolean');
       expect(firstSetting?.default).toBe(true);
+    });
+  });
+
+  describe('buildSettingsSchema', () => {
+    it('places the Compatibility section first with the version picker', () => {
+      const schema = buildSettingsSchema();
+      expect(schema[0].key).toBe('compatibilityHeading');
+      expect(schema.find(item => item.key === 'logseqVersion')?.type).toBe('enum');
+    });
+
+    it('groups toggles under "Pretty" parent-feature headings', () => {
+      const schema = buildSettingsSchema();
+      const headings = schema.filter(item => item.type === 'heading').map(item => item.title);
+
+      expect(headings).toEqual(
+        expect.arrayContaining([
+          'Pretty Content',
+          'Pretty Properties',
+          'Pretty Left Sidebar',
+          'Pretty Top Bar',
+        ]),
+      );
+    });
+
+    it('uses consistent Pretty naming for feature toggles', () => {
+      const schema = buildSettingsSchema();
+      const popovers = schema.find(item => item.key === 'enablePopovers');
+
+      expect(popovers?.title).toBe('Pretty Popovers');
+      expect(popovers?.type).toBe('boolean');
+    });
+
+    it('includes every toggle when no version is provided', () => {
+      const schema = buildSettingsSchema();
+      const keys = ['showPropertyIcons', 'compactSidebarNav', 'styleTopbarIcons', 'navArrowsLeft'];
+
+      for (const key of keys) {
+        expect(schema.some(item => item.key === key)).toBe(true);
+      }
+    });
+
+    it('hides v1-only toggles when the active version is v2', () => {
+      const schema = buildSettingsSchema({ active: 'v2', source: 'auto' });
+      const keys = schema.map(item => item.key);
+
+      expect(keys).not.toContain('hideCreateButton');
+      expect(keys).not.toContain('hideSyncIndicator');
+      // Version-agnostic toggles remain.
+      expect(keys).toContain('compactSidebarNav');
+      expect(keys).toContain('hideHomeButton');
+      // v2-only toggles appear.
+      expect(keys).toContain('enablePrettyTags');
+    });
+
+    it('keeps v1-only toggles when the active version is v1', () => {
+      const schema = buildSettingsSchema({ active: 'v1', source: 'auto' });
+      const keys = schema.map(item => item.key);
+
+      expect(keys).toContain('hideCreateButton');
+      expect(keys).toContain('hideSyncIndicator');
+      // v2-only toggles are hidden.
+      expect(keys).not.toContain('enablePrettyTags');
+    });
+
+    it('includes a status row only when version info is provided', () => {
+      expect(buildSettingsSchema().some(item => item.key === 'detectedVersionStatus')).toBe(false);
+
+      const withVersion = buildSettingsSchema({ active: 'v2', source: 'auto' });
+      const status = withVersion.find(item => item.key === 'detectedVersionStatus');
+      expect(status?.title).toContain('Logseq DB (v2)');
+      expect(status?.description).toContain('Auto-detected');
+    });
+
+    it('describes a manual override in the status row', () => {
+      const status = buildSettingsSchema({ active: 'v1', source: 'manual' }).find(
+        item => item.key === 'detectedVersionStatus',
+      );
+      expect(status?.title).toContain('Logseq file (v1)');
+      expect(status?.description).toContain('Manually set');
+    });
+
+    it('sources toggle defaults from defaultSettings (no schema/default drift)', () => {
+      const schema = buildSettingsSchema();
+      for (const item of schema) {
+        if (item.type === 'boolean') {
+          expect(item.default).toBe(defaultSettings[item.key as keyof typeof defaultSettings]);
+        }
+      }
     });
   });
 

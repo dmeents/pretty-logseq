@@ -47,6 +47,19 @@ vi.mock('./hide-window-controls.scss?inline', () => ({
   default: '.hide-window-controls { }',
 }));
 
+/** Base settings with every top-bar toggle off. */
+function baseSettings(overrides: Partial<PluginSettings> = {}): PluginSettings {
+  return {
+    navArrowsLeft: false,
+    hideHomeButton: false,
+    hideSyncIndicator: false,
+    styleTopbarIcons: false,
+    topbarGradient: false,
+    hideWindowControls: false,
+    ...overrides,
+  } as PluginSettings;
+}
+
 describe('Topbar Feature', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -71,105 +84,64 @@ describe('Topbar Feature', () => {
 
   describe('getStyles', () => {
     it('returns empty when all settings disabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: false,
-        hideHomeButton: false,
-        hideSyncIndicator: false,
-        styleTopbarIcons: false,
-        topbarGradient: false,
-        hideWindowControls: false,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings());
 
       expect(topbarFeature.getStyles()).toBe('');
     });
 
     it('includes nav arrows styles when enabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: true,
-        hideHomeButton: false,
-        hideSyncIndicator: false,
-        styleTopbarIcons: false,
-        topbarGradient: false,
-        hideWindowControls: false,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: true }));
 
       expect(topbarFeature.getStyles()).toContain('.nav-arrows');
     });
 
     it('includes hide home styles when enabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: false,
-        hideHomeButton: true,
-        hideSyncIndicator: false,
-        styleTopbarIcons: false,
-        topbarGradient: false,
-        hideWindowControls: false,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ hideHomeButton: true }));
 
       expect(topbarFeature.getStyles()).toContain('.hide-home');
     });
 
     it('includes hide sync styles when enabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: false,
-        hideHomeButton: false,
-        hideSyncIndicator: true,
-        styleTopbarIcons: false,
-        topbarGradient: false,
-        hideWindowControls: false,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(
+        baseSettings({ hideSyncIndicator: true }),
+      );
 
       expect(topbarFeature.getStyles()).toContain('.hide-sync');
     });
 
     it('includes icon styling when enabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: false,
-        hideHomeButton: false,
-        hideSyncIndicator: false,
-        styleTopbarIcons: true,
-        topbarGradient: false,
-        hideWindowControls: false,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(
+        baseSettings({ styleTopbarIcons: true }),
+      );
 
       expect(topbarFeature.getStyles()).toContain('.icon-styling');
     });
 
     it('includes gradient styles when enabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: false,
-        hideHomeButton: false,
-        hideSyncIndicator: false,
-        styleTopbarIcons: false,
-        topbarGradient: true,
-        hideWindowControls: false,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ topbarGradient: true }));
 
       expect(topbarFeature.getStyles()).toContain('.gradient');
     });
 
     it('includes hide window controls styles when enabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: false,
-        hideHomeButton: false,
-        hideSyncIndicator: false,
-        styleTopbarIcons: false,
-        topbarGradient: false,
-        hideWindowControls: true,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(
+        baseSettings({ hideWindowControls: true }),
+      );
 
       expect(topbarFeature.getStyles()).toContain('.hide-window-controls');
     });
 
     it('combines all styles when all enabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: true,
-        hideHomeButton: true,
-        hideSyncIndicator: true,
-        styleTopbarIcons: true,
-        topbarGradient: true,
-        hideWindowControls: true,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(
+        baseSettings({
+          navArrowsLeft: true,
+          hideHomeButton: true,
+          hideSyncIndicator: true,
+          styleTopbarIcons: true,
+          topbarGradient: true,
+          hideWindowControls: true,
+        }),
+      );
 
       const styles = topbarFeature.getStyles();
       expect(styles).toContain('.nav-arrows');
@@ -183,9 +155,7 @@ describe('Topbar Feature', () => {
 
   describe('init', () => {
     it('calls applyNavArrowsSetting', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: true,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: true }));
 
       topbarFeature.init();
 
@@ -193,9 +163,7 @@ describe('Topbar Feature', () => {
     });
 
     it('does not create nav arrows when disabled', () => {
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: false,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: false }));
 
       topbarFeature.init();
 
@@ -207,9 +175,7 @@ describe('Topbar Feature', () => {
     it('calls nav arrows cleanup when active', () => {
       const mockCleanup = vi.fn();
       vi.mocked(handlersModule.createNavArrowsInLeft).mockReturnValue(mockCleanup);
-      vi.mocked(settingsModule.getSettings).mockReturnValue({
-        navArrowsLeft: true,
-      } as PluginSettings);
+      vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: true }));
 
       topbarFeature.init();
       topbarFeature.destroy();
@@ -230,9 +196,7 @@ describe('applyNavArrowsSetting', () => {
   });
 
   it('creates nav arrows when setting is enabled', () => {
-    vi.mocked(settingsModule.getSettings).mockReturnValue({
-      navArrowsLeft: true,
-    } as PluginSettings);
+    vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: true }));
 
     applyNavArrowsSetting();
 
@@ -240,9 +204,7 @@ describe('applyNavArrowsSetting', () => {
   });
 
   it('is idempotent — does not create twice', () => {
-    vi.mocked(settingsModule.getSettings).mockReturnValue({
-      navArrowsLeft: true,
-    } as PluginSettings);
+    vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: true }));
 
     applyNavArrowsSetting();
     applyNavArrowsSetting();
@@ -253,15 +215,11 @@ describe('applyNavArrowsSetting', () => {
   it('removes nav arrows when setting is disabled', () => {
     const mockCleanup = vi.fn();
     vi.mocked(handlersModule.createNavArrowsInLeft).mockReturnValue(mockCleanup);
-    vi.mocked(settingsModule.getSettings).mockReturnValue({
-      navArrowsLeft: true,
-    } as PluginSettings);
+    vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: true }));
 
     applyNavArrowsSetting(); // Enable
 
-    vi.mocked(settingsModule.getSettings).mockReturnValue({
-      navArrowsLeft: false,
-    } as PluginSettings);
+    vi.mocked(settingsModule.getSettings).mockReturnValue(baseSettings({ navArrowsLeft: false }));
 
     applyNavArrowsSetting(); // Disable
 

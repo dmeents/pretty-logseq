@@ -1,0 +1,193 @@
+// Pretty Properties — Logseq v2 (DB) styling.
+//
+// v2 rebuilt the page-properties DOM, so the v1 selectors (`.page-properties`,
+// `.page-property-key`, `.page-property-value`) no longer match. These rules
+// recreate the v1 accent-border callout on the v2 structure:
+//   .ls-page-properties.ls-properties-area
+//     .properties-panel
+//       .property-pair.property-panel-row[data-property-title][data-property-type]
+//         .property-key-panel > .property-key-inner > (.property-icon, a.property-k)
+//         .property-value-container > .property-value > .property-value-inner
+//
+// These styles are only injected on v2 (via the properties strategy), so no
+// [data-pl-version] scoping is needed.
+
+.ls-page-properties.ls-properties-area {
+  background: var(--pl-accent-subtle);
+  border: 1px solid var(--pl-accent-border);
+  border-left: 4px solid var(--pl-accent);
+  border-radius: 0;
+  padding: 10px 20px;
+  margin-bottom: 24px;
+  // No left gutter in v2 — align the callout's edges with the page content
+  // column (the v1 `margin-left: 32px` offset does not apply to the v2 layout).
+  margin-left: 0;
+  width: 100%;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+
+  .properties-panel {
+    padding: 0;
+  }
+
+  // Individual property rows
+  .property-pair.property-panel-row {
+    display: flex;
+    align-items: baseline;
+    padding: 0;
+  }
+
+  // Key side ---------------------------------------------------------------
+  .property-key-panel {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: baseline;
+
+    // Pipe separator between key and value (parity with the v1 look)
+    &::after {
+      content: "|";
+      font-size: 14px;
+      color: var(--pl-accent-border);
+      margin: 0 8px;
+    }
+  }
+
+  .property-key-inner {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  // Hide the native key-side bullet/point (v1 hid the block bullet too)
+  .property-icon {
+    display: none;
+  }
+
+  a.property-k {
+    color: var(--pl-accent-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75em;
+    letter-spacing: 0.05em;
+    width: auto;
+    min-width: 130px;
+    flex-shrink: 0;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--pl-accent-text);
+      text-decoration: none;
+    }
+
+    // Emoji prepended by the icon observer (see observer.ts)
+    .pl-property-icon {
+      text-transform: none;
+      font-weight: normal;
+      font-size: 1.5em;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  }
+
+  // Value side -------------------------------------------------------------
+  // Force flex so the hidden node-row bullet leaves no reserved column. Without
+  // this, node-typed rows (a leading .property-panel-bullet) indent their value
+  // further than default-typed rows, which have no bullet.
+  .property-value-container {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .property-value {
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .property-value-inner {
+    color: var(--ls-primary-text-color);
+    font-weight: 500;
+  }
+
+  // Both value renderings must start at the same left edge. default-typed values
+  // render through Logseq's nested block tree; node-typed values render as chips
+  // in `.multi-values`. Zero the intrinsic left insets Logseq applies on either
+  // path so node-typed values (Status, Type) line up with default-typed ones.
+  .property-value-inner,
+  .property-value-inner > .multi-values,
+  .property-value-inner .select-item,
+  .property-value-inner .property-block-container,
+  .property-value-inner .blocks-container,
+  .property-value-inner .blocks-list-wrap,
+  .property-value-inner .block-main-container {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  // Suppress value-side bullets/controls so values read flat like v1
+  // (default-typed values render as full nested block trees with their own
+  // bullet + control arrow; node-typed values carry a .property-panel-bullet).
+  .property-panel-bullet,
+  .property-value-container .block-control-wrap {
+    display: none;
+  }
+
+  // "Add property" affordance — de-emphasized so it sits neatly in the callout
+  .ls-new-property {
+    margin-top: 6px;
+    opacity: 0.6;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  // Typed values -------------------------------------------------------------
+  // v2 tags each row with `data-property-type`. `node`-typed properties point at
+  // other pages (Status, Type, …); render their values as reference chips so
+  // they read as links, while `default` (scalar) values stay plain text. Scoped
+  // to the node row's value so the broadly-used `.select-item` (menus, dropdowns)
+  // elsewhere is untouched.
+  .property-pair.property-panel-row[data-property-type="node"] {
+    .property-value-inner .select-item {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 8px;
+      border-radius: 10px;
+      background: var(--pl-accent-subtle);
+      border: 1px solid var(--pl-accent-border);
+      color: var(--pl-accent-text);
+      font-weight: 500;
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+  }
+}
+
+// Bottom property pills ------------------------------------------------------
+// Separate from the page-properties panel: v2 renders a block's *own* properties
+// (Scheduled, Deadline, Status, …) as a horizontal pill strip beneath the block
+// body (`.bottom-properties-pills-strip > .bottom-property-pill`). Give each pill
+// a subtle chip so the row reads as metadata distinct from the block content.
+.bottom-properties-pills-strip .bottom-property-pill {
+  padding: 1px 8px;
+  border-radius: 8px;
+  background: var(--pl-accent-subtle);
+  border: 1px solid var(--pl-accent-border);
+  font-size: 0.8em;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+
+  &:hover {
+    background: var(--pl-accent-light);
+    border-color: var(--pl-accent-border-strong);
+  }
+
+  a.property-k {
+    color: var(--pl-accent-text);
+    font-weight: 600;
+  }
+}

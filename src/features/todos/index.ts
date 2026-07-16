@@ -1,14 +1,19 @@
-import { getSettings } from '../../settings';
+import { getVersion } from '../../core/version';
 import type { Feature } from '../../types';
-import { setupTodoObserver } from './observer';
-import styles from './styles.scss?inline';
-
-let cleanup: (() => void) | null = null;
+import { todosV1 } from './v1';
+import { todosV2 } from './v2';
 
 /**
- * Restyles task blocks with visual indicators for status (TODO, DONE,
- * CANCELLED, DOING), priority levels (A, B, C), and past-due dates.
+ * Restyles task blocks with visual indicators for status, priority, and
+ * past-due dates. Tasks diverge deeply between versions — v1 is marker-based
+ * (`.todo`/`a.priority`) with an observer, v2 is property-based (icon-font
+ * glyphs, native `.overdue`) and CSS-only — so this thin `Feature` delegates to
+ * a version-specific implementation (same shape as the properties feature).
  */
+function strategy() {
+  return getVersion() === 'v2' ? todosV2 : todosV1;
+}
+
 export const todosFeature: Feature = {
   id: 'todos',
   name: 'Pretty Todos',
@@ -16,16 +21,14 @@ export const todosFeature: Feature = {
     'Restyle task blocks with visual indicators for status, priority, and past-due dates',
 
   getStyles() {
-    return getSettings().enablePrettyTodos ? styles : '';
+    return strategy().getStyles();
   },
 
   init() {
-    if (!getSettings().enablePrettyTodos) return;
-    cleanup = setupTodoObserver();
+    return strategy().init();
   },
 
   destroy() {
-    cleanup?.();
-    cleanup = null;
+    strategy().destroy();
   },
 };

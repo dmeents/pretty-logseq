@@ -1,0 +1,16 @@
+// Pretty Typography — Logseq v2 (DB) code-node styling.
+//
+// v2 marks a block whose body is a code block with `data-node-type="code"` on
+// its `.block-content-or-editor-wrap`. v1 has no node-type attribute, so this
+// sheet is appended only on v2 (see the feature's getStyles). Give code nodes a
+// subtle accent gutter so they read as distinct from surrounding prose blocks.
+.block-content-or-editor-wrap[data-node-type="code"] {
+  border-left: 3px solid var(--pl-accent-border);
+  border-radius: 4px;
+  padding-left: 8px;
+  transition: border-color 0.12s ease;
+
+  &:hover {
+    border-left-color: var(--pl-accent);
+  }
+}

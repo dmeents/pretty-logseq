@@ -4,10 +4,21 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPageRef } from '../../../test/utils/dom';
-import * as apiModule from '../../lib/api';
 import * as domModule from '../../lib/dom';
 import { setupPopovers } from './manager';
 import * as renderersModule from './renderers';
+
+const { getPageData, getPageBlocks } = vi.hoisted(() => ({
+  getPageData: vi.fn(),
+  getPageBlocks: vi.fn(),
+}));
+
+vi.mock('../../core/platform', () => ({
+  getPlatform: () => ({
+    api: { getPageData, getPageBlocks },
+    selectors: { pageRef: '.page-ref, .tag' },
+  }),
+}));
 
 describe('Popover Manager', () => {
   let cleanup: (() => void) | null = null;
@@ -15,12 +26,12 @@ describe('Popover Manager', () => {
   beforeEach(() => {
     vi.useFakeTimers();
 
-    // Mock API responses
-    vi.spyOn(apiModule, 'getPage').mockResolvedValue({
+    // Mock API responses (via the platform)
+    getPageData.mockReset().mockResolvedValue({
       name: 'Test Page',
       properties: {},
     });
-    vi.spyOn(apiModule, 'getPageBlocks').mockResolvedValue([]);
+    getPageBlocks.mockReset().mockResolvedValue([]);
 
     // Mock DOM positioning
     vi.spyOn(domModule, 'positionElement').mockImplementation(() => {});
@@ -131,8 +142,8 @@ describe('Popover Manager', () => {
       vi.advanceTimersByTime(300);
       await vi.runAllTimersAsync();
 
-      expect(apiModule.getPage).toHaveBeenCalledWith('Test Page');
-      expect(apiModule.getPageBlocks).toHaveBeenCalledWith('Test Page');
+      expect(getPageData).toHaveBeenCalledWith('Test Page');
+      expect(getPageBlocks).toHaveBeenCalledWith('Test Page');
     });
 
     it('uses renderer to build popover content', async () => {
@@ -168,7 +179,7 @@ describe('Popover Manager', () => {
       vi.advanceTimersByTime(300);
       await vi.runAllTimersAsync();
 
-      expect(apiModule.getPage).toHaveBeenCalledWith('Page From Attribute');
+      expect(getPageData).toHaveBeenCalledWith('Page From Attribute');
     });
 
     it('falls back to textContent if no data-ref', async () => {
@@ -181,7 +192,7 @@ describe('Popover Manager', () => {
       vi.advanceTimersByTime(300);
       await vi.runAllTimersAsync();
 
-      expect(apiModule.getPage).toHaveBeenCalledWith('Page From Text');
+      expect(getPageData).toHaveBeenCalledWith('Page From Text');
     });
   });
 
@@ -316,11 +327,11 @@ describe('Popover Manager', () => {
       await vi.runAllTimersAsync();
 
       // Should only call for the second page
-      expect(apiModule.getPage).toHaveBeenCalledWith('Page 2');
+      expect(getPageData).toHaveBeenCalledWith('Page 2');
     });
 
     it('does not show popover if page fetch returns null', async () => {
-      vi.mocked(apiModule.getPage).mockResolvedValue(null);
+      vi.mocked(getPageData).mockResolvedValue(null);
 
       const ref = createPageRef('Non Existent');
       document.body.appendChild(ref);
@@ -341,7 +352,7 @@ describe('Popover Manager', () => {
       vi.advanceTimersByTime(300);
       await vi.runAllTimersAsync();
 
-      const initialCallCount = apiModule.getPage.mock.calls.length;
+      const initialCallCount = getPageData.mock.calls.length;
 
       // Hover same anchor again
       ref.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
@@ -349,7 +360,7 @@ describe('Popover Manager', () => {
       await vi.runAllTimersAsync();
 
       // Should not fetch again
-      expect(apiModule.getPage.mock.calls.length).toBe(initialCallCount);
+      expect(getPageData.mock.calls.length).toBe(initialCallCount);
     });
   });
 
@@ -408,7 +419,7 @@ describe('Popover Manager', () => {
       vi.advanceTimersByTime(300);
       await vi.runAllTimersAsync();
 
-      expect(apiModule.getPage).not.toHaveBeenCalled();
+      expect(getPageData).not.toHaveBeenCalled();
       expect(document.getElementById('pretty-logseq-popover')).toBeNull();
     });
 

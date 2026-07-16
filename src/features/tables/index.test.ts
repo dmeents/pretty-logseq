@@ -2,7 +2,8 @@
  * Tests for Tables Feature
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setVersionForTest } from '../../core/version';
 import type { PluginSettings } from '../../settings';
 import * as settingsModule from '../../settings';
 import { tablesFeature } from './index';
@@ -15,6 +16,10 @@ vi.mock('../../settings', () => ({
 
 vi.mock('./styles.scss?inline', () => ({
   default: '.table-styles { }',
+}));
+
+vi.mock('./styles.v2.scss?inline', () => ({
+  default: '.table-styles-v2 { }',
 }));
 
 describe('Tables Feature', () => {
@@ -37,12 +42,26 @@ describe('Tables Feature', () => {
   });
 
   describe('getStyles', () => {
-    it('returns styles when enabled', () => {
+    afterEach(() => {
+      setVersionForTest(null);
+    });
+
+    it('returns v1 styles when enabled on v1', () => {
       vi.mocked(settingsModule.getSettings).mockReturnValue({
         enablePrettyTables: true,
       } as PluginSettings);
+      setVersionForTest('v1');
 
       expect(tablesFeature.getStyles()).toBe('.table-styles { }');
+    });
+
+    it('returns v2 styles when enabled on v2', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyTables: true,
+      } as PluginSettings);
+      setVersionForTest('v2');
+
+      expect(tablesFeature.getStyles()).toBe('.table-styles-v2 { }');
     });
 
     it('returns empty string when disabled', () => {

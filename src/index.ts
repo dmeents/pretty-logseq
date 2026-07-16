@@ -3,17 +3,132 @@ import '@logseq/libs';
 import { registry } from './core/registry';
 import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
+import { applyVersionAttribute, detectVersion, getVersion } from './core/version';
 import { contentFeature } from './features/content';
 import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
 import { propertiesFeature } from './features/properties';
 import { sidebarFeature } from './features/sidebar';
 import { tablesFeature } from './features/tables';
+import { tagsFeature } from './features/tags';
 import { templatesFeature } from './features/templates';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
 import { typographyFeature } from './features/typography';
-import { initSettings, onSettingsChanged } from './settings';
+import {
+  buildSettingsSchema,
+  getSettings,
+  initSettings,
+  onSettingsChanged,
+  type PluginSettings,
+} from './settings';
+
+type BindingAction = 'toggle' | 'reinit' | 'restyle';
+
+interface FeatureBinding {
+  /** Setting keys that trigger this binding when any of them changes. */
+  keys: (keyof PluginSettings)[];
+  action: BindingAction;
+  /** Feature to (re)init/destroy for 'toggle'/'reinit'. */
+  featureId?: string;
+  /** Gate: the feature is active only while this setting is true. */
+  enableKey?: keyof PluginSettings;
+  /** Imperative side effect to run on change (e.g. DOM repositioning). */
+  onChange?: () => void;
+}
+
+/**
+ * Declarative map of setting keys → how a change should be applied. Replaces the
+ * old hand-written if-block dispatcher.
+ * - `toggle`: init the feature when `enableKey` is on, destroy it when off.
+ * - `reinit`: destroy then re-init (re-init only if `enableKey`, or always if none)
+ *   — used when a sub-setting changed and the feature must rebuild.
+ * - `restyle`: style-only settings; just re-aggregate CSS.
+ * Every binding re-injects styles after running.
+ */
+const FEATURE_BINDINGS: FeatureBinding[] = [
+  {
+    keys: ['enablePopovers'],
+    action: 'toggle',
+    featureId: 'popovers',
+    enableKey: 'enablePopovers',
+  },
+  {
+    keys: ['enablePrettyLinks'],
+    action: 'toggle',
+    featureId: 'links',
+    enableKey: 'enablePrettyLinks',
+  },
+  {
+    keys: ['enablePrettyTodos'],
+    action: 'toggle',
+    featureId: 'todos',
+    enableKey: 'enablePrettyTodos',
+  },
+  {
+    keys: ['enablePrettyTypography'],
+    action: 'toggle',
+    featureId: 'typography',
+    enableKey: 'enablePrettyTypography',
+  },
+  {
+    keys: ['enablePrettyProperties', 'showPropertyIcons'],
+    action: 'reinit',
+    featureId: 'properties',
+    enableKey: 'enablePrettyProperties',
+  },
+  {
+    keys: ['enableBulletThreading', 'enableFavoriteStar'],
+    action: 'reinit',
+    featureId: 'content',
+  },
+  { keys: ['navArrowsLeft'], action: 'restyle', onChange: applyNavArrowsSetting },
+  {
+    keys: [
+      'enablePrettyTables',
+      'enablePrettyTags',
+      'enablePrettyTemplates',
+      'compactSidebarNav',
+      'hideCreateButton',
+      'graphSelectorBottom',
+      'hideHomeButton',
+      'hideSyncIndicator',
+      'styleTopbarIcons',
+      'topbarGradient',
+      'hideWindowControls',
+    ],
+    action: 'restyle',
+  },
+];
+
+function applyBinding(binding: FeatureBinding, settings: PluginSettings): void {
+  if (binding.action === 'toggle' && binding.featureId && binding.enableKey) {
+    if (settings[binding.enableKey]) {
+      registry.initializeFeature(binding.featureId);
+    } else {
+      registry.destroyFeature(binding.featureId);
+    }
+  } else if (binding.action === 'reinit' && binding.featureId) {
+    registry.destroyFeature(binding.featureId);
+    if (!binding.enableKey || settings[binding.enableKey]) {
+      registry.initializeFeature(binding.featureId);
+    }
+  }
+
+  binding.onChange?.();
+  refreshStyles();
+}
+
+/**
+ * Re-register the settings schema with the detected version, so the read-only
+ * "Active: …" status row reflects it. Called after detection and on version
+ * change. (Logseq only re-reads the schema when the panel is reopened, so this
+ * isn't used for live per-toggle updates.)
+ */
+function registerSchema(): void {
+  const source = getSettings().logseqVersion === 'auto' ? 'auto' : 'manual';
+  logseq.useSettingsSchema(buildSettingsSchema({ active: getVersion(), source }));
+}
 
 function registerFeatures(): void {
   registry.register(contentFeature);
@@ -24,6 +139,7 @@ function registerFeatures(): void {
   registry.register(topbarFeature);
   registry.register(sidebarFeature);
   registry.register(tablesFeature);
+  registry.register(tagsFeature);
   registry.register(templatesFeature);
   registry.register(typographyFeature);
 }
@@ -33,104 +149,34 @@ async function main(): Promise<void> {
 
   initSettings();
   registerFeatures();
+
+  const version = await detectVersion();
+  applyVersionAttribute(version);
+  registerSchema();
+  console.log(`[Pretty Logseq] Detected Logseq ${version}`);
+
   injectStyles();
   setupThemeObserver(refreshStyles);
 
   await registry.initializeAll();
 
-  onSettingsChanged((newSettings, oldSettings) => {
-    const styleSettings = [
-      'enablePrettyTypography',
-      'enablePrettyTables',
-      'enablePrettyTemplates',
-      'enablePrettyProperties',
-      'showPropertyIcons',
-      'enablePrettyLinks',
-      'enablePrettyTodos',
-      'enableFavoriteStar',
-      'enableBulletThreading',
-      'compactSidebarNav',
-      'hideCreateButton',
-      'graphSelectorBottom',
-      'hideHomeButton',
-      'hideSyncIndicator',
-      'styleTopbarIcons',
-      'topbarGradient',
-      'hideWindowControls',
-    ] as const;
-
-    const styleSettingChanged = styleSettings.some(key => newSettings[key] !== oldSettings[key]);
-
-    if (styleSettingChanged) {
+  onSettingsChanged(async (newSettings, oldSettings) => {
+    // Version override changed: everything can differ, so treat it as a full
+    // reload — re-detect, update the scope attribute, then destroy + re-init all.
+    if (newSettings.logseqVersion !== oldSettings.logseqVersion) {
+      await registry.destroyAll();
+      applyVersionAttribute(await detectVersion());
+      registerSchema();
+      await registry.initializeAll();
       refreshStyles();
+      return;
     }
 
-    // Handle popovers feature toggle
-    if (newSettings.enablePopovers !== oldSettings.enablePopovers) {
-      if (newSettings.enablePopovers) {
-        registry.initializeFeature('popovers');
-      } else {
-        registry.destroyFeature('popovers');
+    // Data-driven dispatch: run each binding whose keys changed.
+    for (const binding of FEATURE_BINDINGS) {
+      if (binding.keys.some(key => newSettings[key] !== oldSettings[key])) {
+        applyBinding(binding, newSettings);
       }
-      refreshStyles();
-    }
-
-    // Handle pretty links feature toggle
-    if (newSettings.enablePrettyLinks !== oldSettings.enablePrettyLinks) {
-      if (newSettings.enablePrettyLinks) {
-        registry.initializeFeature('links');
-      } else {
-        registry.destroyFeature('links');
-      }
-      refreshStyles();
-    }
-
-    // Handle properties feature toggle
-    if (
-      newSettings.enablePrettyProperties !== oldSettings.enablePrettyProperties ||
-      newSettings.showPropertyIcons !== oldSettings.showPropertyIcons
-    ) {
-      registry.destroyFeature('properties');
-      if (newSettings.enablePrettyProperties) {
-        registry.initializeFeature('properties');
-      }
-      refreshStyles();
-    }
-
-    // Handle pretty todos feature toggle
-    if (newSettings.enablePrettyTodos !== oldSettings.enablePrettyTodos) {
-      if (newSettings.enablePrettyTodos) {
-        registry.initializeFeature('todos');
-      } else {
-        registry.destroyFeature('todos');
-      }
-      refreshStyles();
-    }
-
-    // Handle content feature settings (bullet threading, favorite star)
-    if (
-      newSettings.enableBulletThreading !== oldSettings.enableBulletThreading ||
-      newSettings.enableFavoriteStar !== oldSettings.enableFavoriteStar
-    ) {
-      registry.destroyFeature('content');
-      registry.initializeFeature('content');
-      refreshStyles();
-    }
-
-    // Handle typography feature toggle (font link injection)
-    if (newSettings.enablePrettyTypography !== oldSettings.enablePrettyTypography) {
-      if (newSettings.enablePrettyTypography) {
-        registry.initializeFeature('typography');
-      } else {
-        registry.destroyFeature('typography');
-      }
-      refreshStyles();
-    }
-
-    // Handle DOM manipulation settings (also refresh styles for layout CSS)
-    if (newSettings.navArrowsLeft !== oldSettings.navArrowsLeft) {
-      applyNavArrowsSetting();
-      refreshStyles();
     }
   });
 

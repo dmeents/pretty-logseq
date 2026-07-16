@@ -1,0 +1,103 @@
+// v2 (DB app) compact navigation.
+// Turns the primary nav (Journals, Pages, Graph view) into a compact inline icon
+// bar. v2 nests the nav under a "Navigations" section header inside
+// `.sidebar-header-container`; scope everything there so Favorites/Recent (in
+// `.sidebar-contents-container`) are untouched.
+
+#left-sidebar .sidebar-header-container {
+  // Compact the "Navigations" section header (title + edit pencil) for the
+  // icon-bar look.
+  .sidebar-content-group > .sidebar-content-group-inner > .hd {
+    display: none;
+  }
+
+  // Nav container — a self-contained, inset icon bar with a theme accent
+  // background. Kept inside the parent's padding (no negative-margin bleed) so
+  // the edge icons never clip against v2's nested containers.
+  .sidebar-navigations {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+    margin: 4px 0 8px;
+    background: var(--pl-accent-subtle);
+    border: 1px solid var(--pl-accent-border);
+    border-radius: 8px;
+  }
+
+  // Each nav item is an `a.item` wrapped in a `.journals-nav` / `.all-pages-nav`
+  // / `.graph-view-nav` div. Let the wrappers share the bar width equally so
+  // their buttons fill the available space.
+  .journals-nav,
+  .all-pages-nav,
+  .graph-view-nav {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .sidebar-navigations a.item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 6px;
+    margin: 0;
+    border-radius: 6px;
+    // Stronger chip so the icon sits on a defined surface instead of a faint
+    // same-hue wash — this is what made the glyphs read as "dim".
+    background-color: var(--pl-accent-medium);
+    border: 1px solid var(--pl-accent-border);
+    transition: all 0.15s ease;
+
+    .ui__icon {
+      // Use the high-contrast accent variant: the raw accent is the same hue
+      // as the chip, so it reads as low-contrast. The bright variant is
+      // lightened (dark themes) or darkened (light themes) to stand out.
+      color: var(--pl-accent-bright);
+      // Full opacity + thicker stroke so the glyphs are vibrant and legible
+      // against the chip in both dark and light themes.
+      opacity: 1;
+      transition: opacity 0.15s ease;
+      margin: 0;
+      padding: 0;
+
+      // The glyph is an inline SVG with explicit width/height attributes, so
+      // `font-size` doesn't resize it — size the SVG directly. The icons are
+      // stroke-based, so bump the stroke weight to make them stand out.
+      svg {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2.25;
+      }
+    }
+
+    &:hover {
+      background-color: var(--pl-accent-strong);
+      border-color: var(--pl-accent-border-strong);
+    }
+
+    // Active/selected state. Exact v2 class is unconfirmed from the static
+    // sample; cover the likely variants.
+    &.active,
+    &.is-active,
+    &[data-active="true"] {
+      background-color: var(--pl-accent-strong);
+      border-color: var(--pl-accent);
+      box-shadow: 0 0 0 1px var(--pl-accent-border);
+
+      .ui__icon {
+        opacity: 1;
+        color: var(--pl-accent-bright);
+      }
+    }
+
+    // Hide the text label and keyboard shortcut, keeping just the icon.
+    .flex-1,
+    .keyboard-shortcut,
+    > .ml-1 {
+      display: none;
+    }
+  }
+}

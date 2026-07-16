@@ -1,3 +1,11 @@
+// v1: the Home button is a `.button` carrying `title="Home"`.
 #head .button[title="Home"] {
+	display: none !important;
+}
+
+// v2 (DB): the Home button is a shadcn `ui__button` with no `title`, identified
+// by its `.ls-icon-home` glyph. Scoped to the version attribute so it can't
+// affect v1 (and the v1 rule above can't match v2).
+[data-pl-version="v2"] #head button:has(.ls-icon-home) {
 	display: none !important;
 }

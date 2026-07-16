@@ -2,7 +2,8 @@
  * Tests for Typography Feature
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setVersionForTest } from '../../core/version';
 import type { PluginSettings } from '../../settings';
 import * as settingsModule from '../../settings';
 
@@ -35,6 +36,10 @@ vi.mock('./styles.scss?inline', () => ({
 
 vi.mock('./prose.scss?inline', () => ({
   default: '.prose-styles { }',
+}));
+
+vi.mock('./code-nodes.v2.scss?inline', () => ({
+  default: '.code-node-styles { }',
 }));
 
 // Import after mocks are set up
@@ -89,6 +94,39 @@ describe('Typography Feature', () => {
       expect(styles).toContain('.header-styles');
       expect(styles).not.toContain('.typography-styles');
       expect(styles).not.toContain('.prose-styles');
+    });
+
+    describe('code-node styling (v2 only)', () => {
+      afterEach(() => {
+        setVersionForTest(null);
+      });
+
+      it('excludes code-node styles on v1', () => {
+        vi.mocked(settingsModule.getSettings).mockReturnValue({
+          enablePrettyTypography: true,
+        } as PluginSettings);
+        setVersionForTest('v1');
+
+        expect(typographyFeature.getStyles()).not.toContain('.code-node-styles');
+      });
+
+      it('includes code-node styles on v2', () => {
+        vi.mocked(settingsModule.getSettings).mockReturnValue({
+          enablePrettyTypography: true,
+        } as PluginSettings);
+        setVersionForTest('v2');
+
+        expect(typographyFeature.getStyles()).toContain('.code-node-styles');
+      });
+
+      it('excludes code-node styles on v2 when typography is disabled', () => {
+        vi.mocked(settingsModule.getSettings).mockReturnValue({
+          enablePrettyTypography: false,
+        } as PluginSettings);
+        setVersionForTest('v2');
+
+        expect(typographyFeature.getStyles()).not.toContain('.code-node-styles');
+      });
     });
   });
 

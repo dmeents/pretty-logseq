@@ -1,4 +1,5 @@
-import { cleanPropertyValue, getPage } from '../../lib/api';
+import { getObserverRoot, getPlatform } from '../../core/platform';
+import { cleanPropertyValue } from '../../lib/api';
 import { getParentDoc } from '../../lib/dom';
 
 const ICON_CLASS = 'pl-property-icon';
@@ -11,7 +12,7 @@ async function processPropertyKey(keyEl: Element): Promise<void> {
   const keyName = keyEl.textContent?.trim();
   if (!keyName) return;
 
-  const page = await getPage(keyName);
+  const page = await getPlatform().api.getPageData(keyName);
   if (!page?.properties?.icon) return;
 
   const icon = cleanPropertyValue(page.properties.icon);
@@ -25,7 +26,7 @@ async function processPropertyKey(keyEl: Element): Promise<void> {
 
 function scanProperties(): void {
   const doc = getParentDoc();
-  const keys = doc.querySelectorAll('.page-properties .page-property-key');
+  const keys = doc.querySelectorAll(getPlatform().selectors.propertyKey);
   for (const key of keys) {
     processPropertyKey(key);
   }
@@ -42,7 +43,6 @@ function cleanupAll(): void {
 }
 
 export function setupPropertyObserver(): () => void {
-  const doc = getParentDoc();
   scanProperties();
 
   let rafId: number | null = null;
@@ -56,8 +56,7 @@ export function setupPropertyObserver(): () => void {
     }
   });
 
-  const root = doc.getElementById('main-content-container') ?? doc.body;
-  observer.observe(root, { childList: true, subtree: true });
+  observer.observe(getObserverRoot(), { childList: true, subtree: true });
 
   return () => {
     observer.disconnect();

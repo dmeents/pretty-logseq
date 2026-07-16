@@ -6,6 +6,24 @@
 
 A Logseq plugin that enhances your graph's visual experience with beautiful custom popovers, refined styling, and flexible UI customizations — all fully theme-aware and configurable.
 
+## Works with both Logseq versions
+
+Pretty Logseq supports **both major versions of the app**:
+
+- **Logseq file (v1)** — the classic file-based app
+- **Logseq DB (v2)** — the newer database-backed app
+
+The plugin **auto-detects** which version your graph is running and adapts its
+styling and behavior accordingly. On first install, open **Settings → Plugin
+settings → Pretty Logseq** and check the **Compatibility** section: a row reading
+**● Active: Logseq file (v1)** or **● Active: Logseq DB (v2)** shows the detected
+version.
+
+If detection is wrong — or you simply want to be sure — set the **Logseq Version**
+dropdown to `v1` or `v2` to override it (leave it on `auto` to let the plugin
+decide). Because v1 and v2 differ under the hood, confirming the version here
+ensures every feature renders correctly.
+
 ## Why Pretty Logseq?
 
 Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhancements:
@@ -38,17 +56,26 @@ Pretty Logseq improves your daily Logseq workflow with thoughtful visual enhance
 
 Pretty Logseq is available on the Logseq Marketplace:
 
-1. Open Logseq and go to **Settings → Advanced** and enable **Developer mode**
-2. Click the **Plugins** icon in the top bar (or press `t p`)
-3. Select the **Marketplace** tab
-4. Search for **Pretty Logseq**
-5. Click **Install**
+1. Click the **Plugins** icon in the top bar (or press `t p`)
+2. Select the **Marketplace** tab
+3. Search for **Pretty Logseq**
+4. Click **Install**
 
 The plugin activates immediately — no restart required.
 
+> [!TIP]
+> After installing, open the plugin settings and confirm the detected version
+> under **Compatibility** (see [Works with both Logseq versions](#works-with-both-logseq-versions)).
+
 ## Configuration
 
-All features can be toggled on or off through Logseq's plugin settings. Changes take effect immediately — just toggle the setting you want to adjust.
+Every feature can be toggled on or off through Logseq's plugin settings — open
+**Settings → Plugin settings → Pretty Logseq**. Changes take effect immediately;
+just toggle the setting you want to adjust, no reload required.
+
+Settings are grouped by feature, and toggles that don't apply to your detected
+Logseq version are hidden automatically so you only see what's relevant to your
+graph.
 
 ## Support
 

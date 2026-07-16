@@ -4,6 +4,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { generateThemeCSS, setupThemeObserver } from './theme';
+import { setVersionForTest } from './version';
 
 describe('Theme Color Management', () => {
   beforeEach(() => {
@@ -115,6 +116,51 @@ describe('Theme Color Management', () => {
 
       // Default purple
       expect(css).toContain('rgb(139, 92, 246)');
+    });
+  });
+
+  describe('v2 data-color accent', () => {
+    afterEach(() => {
+      setVersionForTest(null);
+      document.documentElement.removeAttribute('data-color');
+    });
+
+    it('uses the mapped color from html[data-color] before probing (v2)', () => {
+      setVersionForTest('v2');
+      document.documentElement.setAttribute('data-color', 'green');
+      // Probe would otherwise return purple; the attribute must win.
+      vi.spyOn(window, 'getComputedStyle').mockReturnValue({
+        color: 'rgb(139, 92, 246)',
+      } as CSSStyleDeclaration);
+
+      const css = generateThemeCSS();
+
+      expect(css).toContain('--pl-accent: rgb(48, 164, 108)');
+    });
+
+    it('falls through to probing for an unmapped data-color value (v2)', () => {
+      setVersionForTest('v2');
+      document.documentElement.setAttribute('data-color', 'chartreuse-not-a-radix-name');
+      vi.spyOn(window, 'getComputedStyle').mockReturnValue({
+        color: 'rgb(34, 197, 94)',
+      } as CSSStyleDeclaration);
+
+      const css = generateThemeCSS();
+
+      expect(css).toContain('--pl-accent: rgb(34, 197, 94)');
+    });
+
+    it('ignores data-color on v1 (no accentAttr)', () => {
+      setVersionForTest('v1');
+      document.documentElement.setAttribute('data-color', 'green');
+      vi.spyOn(window, 'getComputedStyle').mockReturnValue({
+        color: 'rgb(34, 197, 94)',
+      } as CSSStyleDeclaration);
+
+      const css = generateThemeCSS();
+
+      // v1 has no accentAttr, so the attribute is not consulted.
+      expect(css).toContain('--pl-accent: rgb(34, 197, 94)');
     });
   });
 
@@ -265,6 +311,21 @@ describe('Theme Color Management', () => {
       expect(callback).not.toHaveBeenCalled();
 
       vi.useRealTimers();
+    });
+
+    it('calls callback when the v2 accent attribute (data-color) changes', async () => {
+      setVersionForTest('v2');
+      const callback = vi.fn();
+
+      setupThemeObserver(callback);
+      document.documentElement.setAttribute('data-color', 'blue');
+
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      expect(callback).toHaveBeenCalled();
+
+      document.documentElement.removeAttribute('data-color');
+      setVersionForTest(null);
     });
   });
 });

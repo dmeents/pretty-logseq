@@ -1,6 +1,8 @@
+import { getVersion } from '../../core/version';
 import { getParentDoc } from '../../lib/dom';
 import { getSettings } from '../../settings';
 import type { Feature } from '../../types';
+import codeNodesV2Styles from './code-nodes.v2.scss?inline';
 import headersStyles from './headers.scss?inline';
 import proseStyles from './prose.scss?inline';
 import typographyStyles from './styles.scss?inline';
@@ -20,6 +22,8 @@ export const typographyFeature: Feature = {
     if (getSettings().enablePrettyTypography) {
       styles.push(typographyStyles);
       styles.push(proseStyles);
+      // Code-node gutter only exists in v2 (v1 has no `data-node-type`).
+      if (getVersion() === 'v2') styles.push(codeNodesV2Styles);
     }
 
     return styles.join('\n');

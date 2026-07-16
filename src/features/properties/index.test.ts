@@ -2,7 +2,8 @@
  * Tests for Properties Feature
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setVersionForTest } from '../../core/version';
 import type { PluginSettings } from '../../settings';
 import * as settingsModule from '../../settings';
 import { propertiesFeature } from './index';
@@ -23,6 +24,10 @@ vi.mock('./styles.scss?inline', () => ({
   default: '.properties-styles { }',
 }));
 
+vi.mock('./styles.v2.scss?inline', () => ({
+  default: '.properties-styles-v2 { }',
+}));
+
 describe('Properties Feature', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -39,6 +44,30 @@ describe('Properties Feature', () => {
 
     it('has a description', () => {
       expect(propertiesFeature.description).toBeTruthy();
+    });
+  });
+
+  describe('version strategy', () => {
+    afterEach(() => {
+      setVersionForTest(null);
+    });
+
+    it('returns the v2 stylesheet on v2 when enabled', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyProperties: true,
+      } as PluginSettings);
+      setVersionForTest('v2');
+
+      expect(propertiesFeature.getStyles()).toBe('.properties-styles-v2 { }');
+    });
+
+    it('returns empty string on v2 when disabled', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyProperties: false,
+      } as PluginSettings);
+      setVersionForTest('v2');
+
+      expect(propertiesFeature.getStyles()).toBe('');
     });
   });
 

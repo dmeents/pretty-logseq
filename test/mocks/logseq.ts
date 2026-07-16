@@ -28,6 +28,11 @@ export function mockLogseqAPI() {
         preferredThemeMode: 'light',
       }),
       pushState: vi.fn(),
+      getCurrentGraph: vi.fn().mockResolvedValue({
+        name: 'test-graph',
+        url: 'logseq_local_/home/user/test-graph',
+        path: '/home/user/test-graph',
+      }),
       getCurrentGraphFavorites: vi.fn().mockResolvedValue([]),
       setCurrentGraphConfigs: vi.fn().mockResolvedValue(undefined),
       onRouteChanged: vi.fn(),

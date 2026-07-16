@@ -1,9 +1,8 @@
-import { getPage, getPageBlocks } from '../../lib/api';
+import { getPlatform } from '../../core/platform';
 import { getParentDoc, positionElement, removeElementById } from '../../lib/dom';
 import { renderPopover } from './renderers';
 
 const POPOVER_ID = 'pretty-logseq-popover';
-const REF_SELECTOR = '.page-ref, .tag';
 const SHOW_DELAY = 300;
 const HIDE_DELAY = 150;
 
@@ -74,11 +73,11 @@ function attachPopoverListeners(popover: HTMLElement): void {
 }
 
 async function showPopover(anchor: HTMLElement, pageName: string): Promise<void> {
-  const pageData = await getPage(pageName);
+  const pageData = await getPlatform().api.getPageData(pageName);
   if (!pageData) return;
 
   // Use the resolved page name for blocks (handles aliases)
-  const blocks = await getPageBlocks(pageData.name);
+  const blocks = await getPlatform().api.getPageBlocks(pageData.name);
   pageData.blocks = blocks;
 
   // If anchor changed while we were fetching, abort
@@ -125,7 +124,7 @@ export function setupPopovers(): () => void {
 
   const handleEnter = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    const pageRef = target.closest?.(REF_SELECTOR) as HTMLElement | null;
+    const pageRef = target.closest?.(getPlatform().selectors.pageRef) as HTMLElement | null;
     if (!pageRef) return;
 
     // Don't trigger popovers for refs inside an existing popover
@@ -162,7 +161,7 @@ export function setupPopovers(): () => void {
 
   const handleClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (target.closest?.(REF_SELECTOR)) hidePopover();
+    if (target.closest?.(getPlatform().selectors.pageRef)) hidePopover();
   };
 
   // Capturing phase intercepts before Logseq's own handlers

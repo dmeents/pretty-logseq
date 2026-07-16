@@ -1,0 +1,52 @@
+// v2 (DB app) graph-selector-at-bottom.
+// In v2 the graph switcher (`.cp__graphs-selector`) sits at the TOP of the
+// sidebar inside `.sidebar-graphs`. Pin it to the bottom, styled to match the
+// compact nav bar.
+
+// Scope to `.is-open`: `position: fixed` detaches the bar from #left-sidebar, so
+// without this it would keep floating at bottom-left when the sidebar collapses.
+#left-sidebar.is-open .sidebar-graphs {
+  position: fixed;
+  z-index: 9;
+  left: 0;
+  bottom: 0;
+  width: var(--ls-left-sidebar-width);
+  margin: 0;
+  padding: 0;
+  background: var(--pl-accent-subtle);
+  border-top: 1px solid var(--pl-accent-border);
+  backdrop-filter: blur(8px);
+
+  // Selector row fills the bar.
+  .cp__graphs-selector {
+    width: 100%;
+    margin: 0;
+  }
+
+  // The clickable graph button spans the full width so the trailing chevron
+  // sits at the right edge; balanced padding matches the compact nav bar.
+  .cp__graphs-selector a.item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin: 0;
+    padding: 20px 16px;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: var(--pl-accent-medium) !important;
+    }
+
+    // Push the trailing selector chevron to the right edge.
+    .ls-icon-selector {
+      margin-left: auto;
+    }
+  }
+}
+
+// Reclaim space so the pinned bar doesn't overlap the Favorites/Recent list.
+// `.wrap` is the scroll container that holds the sidebar sections in v2.
+#left-sidebar.is-open .left-sidebar-inner .wrap {
+  padding-bottom: 72px;
+}
