@@ -1,6 +1,85 @@
-// Pretty Tables — Logseq v2 (DB) overrides.
+// Pretty Tables — Logseq v2 (DB) styling.
 //
-// Empty for now: with no rules here, `pickStyles` falls back to the v1 styles, so
-// v2 renders tables with the v1 stylesheet until the DB table DOM is confirmed
-// during triage (see .ai/findings/v2-feature-triage.md). Author v2-specific
-// selectors here as they're verified.
+// v2 renders query/class tables as a div grid (NOT a real <table>), so none of
+// the v1 `.custom-query .table-wrapper table.table-auto` / thead / tbody
+// selectors match. The DB DOM (confirmed in .samples/sample-page-table.html):
+//
+//   .ls-table.w-full.table-fixed              ← the "table" (accent frame lives here)
+//     .ls-table-rows.overflow-x-auto          ← horizontal scroll container
+//       .relative
+//         .ls-table-header.border-y.bg-gray-01
+//           .sticky-columns.flex.flex-row
+//             .ls-table-header-cell            ← first is a 32px checkbox gutter (.!border-0)
+//               button > span[title]           ← the column label
+//         .ls-table-row.border-b.ls-block      ← rows (virtualized via Virtuoso)
+//           .ls-table-cell.flex.relative
+//             .flex…border-r.px-2 > .table-block-title / .property-value-inner
+//         .ls-table-footer                     ← "＋ New" add-row row
+//
+// This ports the v1 design language onto that grid. Only injected on v2 (via
+// pickStyles), so no [data-pl-version] scoping is needed. Overrides are scoped
+// under `.ls-table` (and use !important where a Tailwind utility fights back) to
+// win the specificity tie against v2's utility classes (bg-gray-01,
+// hover:bg-muted/50, border-*).
+
+.ls-table {
+  // The signature accent frame — matches v1's `.table-wrapper`.
+  border: 1px solid var(--pl-accent-border);
+  border-left: 4px solid var(--pl-accent);
+  border-radius: 0;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+
+  // Header row — v1's `thead tr`. Override Tailwind's `bg-gray-01`.
+  .ls-table-header {
+    background: var(--pl-accent-subtle) !important;
+    border-bottom: 1px solid var(--pl-accent-border);
+  }
+
+  // Header cells — v1's `thead th`: uppercase accent labels. Don't set width;
+  // cells carry inline px widths. The first `.!border-0` checkbox/drag gutter
+  // has no label, so these text rules simply no-op there.
+  .ls-table-header-cell {
+    button,
+    .table-block-title {
+      color: var(--pl-accent-text);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75em;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    // Sort caret — v1's `.whitespace-nowrap` accent treatment.
+    .ui__icon {
+      color: var(--pl-accent-text);
+    }
+  }
+
+  // Body rows — v1's `tbody tr`. Override Tailwind `border-b` color and
+  // `hover:bg-muted/50`. Rows are virtualized (not direct siblings), so no
+  // `:last-child` rule — the footer reads as the closing edge.
+  .ls-table-row {
+    border-bottom: 1px solid var(--pl-accent-light) !important;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: var(--pl-accent-subtle) !important;
+    }
+  }
+
+  // Body cells — v1's `tbody td`. Inner `.px-2` already provides padding, so we
+  // only set typography/color. Drop the inner vertical divider (`border-r`) to
+  // match v1's borderless cells.
+  .ls-table-cell {
+    font-size: 0.875em;
+    color: var(--ls-primary-text-color);
+
+    .border-r {
+      border-right: none !important;
+    }
+  }
+}
