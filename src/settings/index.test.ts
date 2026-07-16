@@ -1,11 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  buildSettingsSchema,
   defaultSettings,
   getSettings,
   initSettings,
   onSettingsChanged,
-  settingsSchema,
-  settingsSchemaWithVersion,
 } from './index';
 
 describe('Settings Management', () => {
@@ -117,45 +116,68 @@ describe('Settings Management', () => {
     });
   });
 
-  describe('settingsSchemaWithVersion', () => {
-    it('inserts a read-only status row above the picker', () => {
-      const schema = settingsSchemaWithVersion('v2');
-      const statusIndex = schema.findIndex(item => item.key === 'detectedVersionStatus');
-      const pickerIndex = schema.findIndex(item => item.key === 'logseqVersion');
-
-      const status = schema[statusIndex];
-      expect(status.type).toBe('heading');
-      expect(status.title).toContain('Logseq DB (v2)');
-      // Status row comes immediately before the picker.
-      expect(statusIndex).toBe(pickerIndex - 1);
+  describe('buildSettingsSchema', () => {
+    it('places the Compatibility section first with the version picker', () => {
+      const schema = buildSettingsSchema();
+      expect(schema[0].key).toBe('compatibilityHeading');
+      expect(schema.find(item => item.key === 'logseqVersion')?.type).toBe('enum');
     });
 
-    it('describes auto-detection when source is auto (default)', () => {
-      const status = settingsSchemaWithVersion('v2').find(
-        item => item.key === 'detectedVersionStatus',
+    it('groups toggles under "Pretty" parent-feature headings', () => {
+      const schema = buildSettingsSchema();
+      const headings = schema.filter(item => item.type === 'heading').map(item => item.title);
+
+      expect(headings).toEqual(
+        expect.arrayContaining([
+          'Pretty Content',
+          'Pretty Properties',
+          'Pretty Left Sidebar',
+          'Pretty Top Bar',
+        ]),
       );
+    });
+
+    it('uses consistent Pretty naming for feature toggles', () => {
+      const schema = buildSettingsSchema();
+      const popovers = schema.find(item => item.key === 'enablePopovers');
+
+      expect(popovers?.title).toBe('Pretty Popovers');
+      expect(popovers?.type).toBe('boolean');
+    });
+
+    it('always includes every toggle (no conditional hiding)', () => {
+      const schema = buildSettingsSchema();
+      const keys = ['showPropertyIcons', 'compactSidebarNav', 'styleTopbarIcons', 'navArrowsLeft'];
+
+      for (const key of keys) {
+        expect(schema.some(item => item.key === key)).toBe(true);
+      }
+    });
+
+    it('includes a status row only when version info is provided', () => {
+      expect(buildSettingsSchema().some(item => item.key === 'detectedVersionStatus')).toBe(false);
+
+      const withVersion = buildSettingsSchema({ active: 'v2', source: 'auto' });
+      const status = withVersion.find(item => item.key === 'detectedVersionStatus');
+      expect(status?.title).toContain('Logseq DB (v2)');
       expect(status?.description).toContain('Auto-detected');
     });
 
-    it('describes a manual override when source is manual', () => {
-      const status = settingsSchemaWithVersion('v1', 'manual').find(
+    it('describes a manual override in the status row', () => {
+      const status = buildSettingsSchema({ active: 'v1', source: 'manual' }).find(
         item => item.key === 'detectedVersionStatus',
       );
       expect(status?.title).toContain('Logseq file (v1)');
       expect(status?.description).toContain('Manually set');
     });
 
-    it('leaves other entries untouched', () => {
-      const schema = settingsSchemaWithVersion('v1');
-      const original = settingsSchema.find(item => item.key === 'enablePopovers');
-      const mapped = schema.find(item => item.key === 'enablePopovers');
-
-      expect(mapped).toEqual(original);
-    });
-
-    it('places the Compatibility section first', () => {
-      expect(settingsSchema[0].key).toBe('compatibilityHeading');
-      expect(settingsSchema[1].key).toBe('logseqVersion');
+    it('sources toggle defaults from defaultSettings (no schema/default drift)', () => {
+      const schema = buildSettingsSchema();
+      for (const item of schema) {
+        if (item.type === 'boolean') {
+          expect(item.default).toBe(defaultSettings[item.key as keyof typeof defaultSettings]);
+        }
+      }
     });
   });
 

@@ -3,7 +3,7 @@ import '@logseq/libs';
 import { registry } from './core/registry';
 import { injectStyles, refreshStyles } from './core/styles';
 import { setupThemeObserver } from './core/theme';
-import { applyVersionAttribute, detectVersion } from './core/version';
+import { applyVersionAttribute, detectVersion, getVersion } from './core/version';
 import { contentFeature } from './features/content';
 import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
@@ -14,12 +14,18 @@ import { templatesFeature } from './features/templates';
 import { todosFeature } from './features/todos';
 import { applyNavArrowsSetting, topbarFeature } from './features/topbar';
 import { typographyFeature } from './features/typography';
-import {
-  getSettings,
-  initSettings,
-  onSettingsChanged,
-  settingsSchemaWithVersion,
-} from './settings';
+import { buildSettingsSchema, getSettings, initSettings, onSettingsChanged } from './settings';
+
+/**
+ * Re-register the settings schema with the detected version, so the read-only
+ * "Active: …" status row reflects it. Called after detection and on version
+ * change. (Logseq only re-reads the schema when the panel is reopened, so this
+ * isn't used for live per-toggle updates.)
+ */
+function registerSchema(): void {
+  const source = getSettings().logseqVersion === 'auto' ? 'auto' : 'manual';
+  logseq.useSettingsSchema(buildSettingsSchema({ active: getVersion(), source }));
+}
 
 function registerFeatures(): void {
   registry.register(contentFeature);
@@ -42,8 +48,7 @@ async function main(): Promise<void> {
 
   const version = await detectVersion();
   applyVersionAttribute(version);
-  const source = getSettings().logseqVersion === 'auto' ? 'auto' : 'manual';
-  logseq.useSettingsSchema(settingsSchemaWithVersion(version, source));
+  registerSchema();
   console.log(`[Pretty Logseq] Detected Logseq ${version}`);
 
   injectStyles();
@@ -56,10 +61,8 @@ async function main(): Promise<void> {
     // reload — re-detect, update the scope attribute, then destroy + re-init all.
     if (newSettings.logseqVersion !== oldSettings.logseqVersion) {
       await registry.destroyAll();
-      const version = await detectVersion();
-      applyVersionAttribute(version);
-      const source = newSettings.logseqVersion === 'auto' ? 'auto' : 'manual';
-      logseq.useSettingsSchema(settingsSchemaWithVersion(version, source));
+      applyVersionAttribute(await detectVersion());
+      registerSchema();
       await registry.initializeAll();
       refreshStyles();
       return;

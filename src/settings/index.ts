@@ -1,12 +1,7 @@
-import {
-  defaultSettings,
-  type PluginSettings,
-  settingsSchema,
-  settingsSchemaWithVersion,
-} from './schema';
+import { buildSettingsSchema, defaultSettings, type PluginSettings } from './schema';
 
-export type { PluginSettings };
-export { defaultSettings, settingsSchema, settingsSchemaWithVersion };
+export type { PluginSettings, VersionInfo } from './schema';
+export { buildSettingsSchema, defaultSettings };
 
 export function getSettings(): PluginSettings {
   const settings = logseq.settings as
@@ -22,7 +17,9 @@ export function getSettings(): PluginSettings {
 }
 
 export function initSettings(): void {
-  logseq.useSettingsSchema(settingsSchema);
+  // Registered before version detection, so no status row yet; index.ts
+  // re-registers with version info once detection resolves.
+  logseq.useSettingsSchema(buildSettingsSchema());
 }
 
 export function onSettingsChanged(
