@@ -66,31 +66,45 @@
 }
 
 // Block card ----------------------------------------------------------------
-// A task block's own content row gets a subtle card + status-colored left
-// border, echoing the v1 task-block look. `InProgress` matches by prefix because
-// v2 appends a percentage (`ls-icon-InProgress50`). Kept to a small vertical
-// padding so bullets stay aligned with non-task blocks; iterate against a live
-// DB instance if alignment needs tuning.
-.block-main-content {
-  &:has(.ls-icon-Todo),
-  &:has([class*="ls-icon-InProgress"]),
-  &:has(.ls-icon-Done),
-  &:has(.ls-icon-Cancelled) {
+// A task block gets a subtle card + status-colored left border, echoing the v1
+// task-block look. The card wraps BOTH the text/status row (`.block-main-content`)
+// and the sibling Scheduled/properties row (`.positioned-properties.block-below`,
+// which holds the Scheduled date pill + "Show hidden properties" toggle) so they
+// read as one coherent block.
+//
+// The element enclosing both rows is a generic Tailwind wrapper
+// (`div.flex.flex-col.w-full`) with no semantic class — but it's the only div
+// whose *direct* child is `.block-main-content`, so `div:has(> .block-main-content …)`
+// selects it uniquely. Scoping `:has()` to a status glyph inside that own
+// block-main-content keeps the card task-only and can't leak onto ancestor
+// blocks: a block's children live in the SIBLING `.block-children-container`, not
+// inside its block-main-content. `InProgress` matches by prefix because v2
+// appends a percentage (`ls-icon-InProgress50`).
+//
+// `border-radius: 0 6px 6px 0` keeps the left edge square so the 3px accent
+// renders as a clean full-height vertical bar (no rounded corner curl) while the
+// right side stays rounded.
+.block-main-container {
+  div:has(> .block-main-content .ls-icon-Todo),
+  div:has(> .block-main-content [class*="ls-icon-InProgress"]),
+  div:has(> .block-main-content .ls-icon-Done),
+  div:has(> .block-main-content .ls-icon-Cancelled) {
     background: var(--ls-secondary-background-color, rgba(127, 127, 127, 0.06));
-    border-radius: 6px;
-    padding-block: 2px;
+    border-radius: 0 6px 6px 0;
     border-left: 3px solid var(--ls-border-color);
+    padding: 5px 10px;
+    margin: 2px 0;
   }
 
-  &:has([class*="ls-icon-InProgress"]) {
+  div:has(> .block-main-content [class*="ls-icon-InProgress"]) {
     border-left-color: var(--pl-accent);
   }
 
-  &:has(.ls-icon-Done) {
+  div:has(> .block-main-content .ls-icon-Done) {
     border-left-color: rgb(34, 197, 94);
   }
 
-  &:has(.ls-icon-Cancelled) {
+  div:has(> .block-main-content .ls-icon-Cancelled) {
     border-left-color: rgb(148, 163, 184);
     opacity: 0.85;
   }
