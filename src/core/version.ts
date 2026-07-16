@@ -31,8 +31,12 @@ export function setVersionForTest(version: LogseqVersion | null): void {
  *   1. Explicit `logseqVersion` override setting (`v1`/`v2`) — used verbatim.
  *   2. Graph URL heuristic — DB graphs use a `logseq_db_` prefix, file graphs
  *      `logseq_local_`. (Primary signal; verify against a real DB graph.)
- *   3. DOM feature-probe on the host document.
+ *   3. DOM feature-probe on the host document (positive markers for each shell).
  *   4. Default to `v1` (preserves existing behavior when signals are inconclusive).
+ *
+ * The result is cached and only re-computed when `detectVersion()` is called
+ * again (currently just the `logseqVersion` settings-change path). Switching
+ * graphs across versions at runtime without that would not re-detect.
  */
 export async function detectVersion(): Promise<LogseqVersion> {
   const override = getSettings().logseqVersion;
@@ -72,13 +76,19 @@ export function getVersion(): LogseqVersion {
 }
 
 /**
- * Best-effort DOM probe. v1 renders a `#head` top bar; the v2 shadcn shell does
- * not. Returns `null` when inconclusive so callers can apply the safe default.
- * (v2-specific positive markers are TBD from a real DB instance.)
+ * Best-effort DOM probe using version-distinctive sidebar shells (`#head` is NOT
+ * a signal — both apps render it). v2's DB shell wraps the left sidebar in
+ * `.cp__sidebar-left-layout` and renders nav under `.sidebar-navigations`;
+ * v1 renders a `.nav-header` inside `#left-sidebar`. Returns `null` when neither
+ * is present so callers can apply the safe default.
  */
 function probeDomVersion(): LogseqVersion | null {
   try {
-    if (getParentDoc().getElementById('head')) {
+    const doc = getParentDoc();
+    if (doc.querySelector('.cp__sidebar-left-layout, .sidebar-navigations')) {
+      return 'v2';
+    }
+    if (doc.querySelector('#left-sidebar .nav-header')) {
       return 'v1';
     }
   } catch {

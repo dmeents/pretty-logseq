@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   cleanupAllLinks,
   cleanupLink,
+  createGlobeSvg,
   decorateLink,
   FALLBACK_ICON,
   getFaviconUrl,
@@ -27,6 +28,23 @@ describe('FALLBACK_ICON', () => {
   });
 });
 
+describe('createGlobeSvg', () => {
+  it('builds an inline <svg> element (not an <img> data URI)', () => {
+    const svg = createGlobeSvg(16);
+    expect(svg.tagName.toLowerCase()).toBe('svg');
+    expect(svg.getAttribute('width')).toBe('16');
+    expect(svg.getAttribute('height')).toBe('16');
+    // Inline SVG is not subject to CSP img-src, unlike <img src="data:…">.
+    expect(svg.querySelectorAll('path').length).toBe(2);
+  });
+
+  it('respects a custom size', () => {
+    const svg = createGlobeSvg(14);
+    expect(svg.getAttribute('width')).toBe('14');
+    expect(svg.getAttribute('height')).toBe('14');
+  });
+});
+
 describe('decorateLink', () => {
   function createExternalLink(href: string): HTMLAnchorElement {
     const anchor = document.createElement('a');
@@ -36,16 +54,36 @@ describe('decorateLink', () => {
     return anchor;
   }
 
-  it('inserts a favicon image before link text', () => {
+  it('inserts a real favicon image before link text', () => {
     const anchor = createExternalLink('https://example.com');
 
     decorateLink(anchor);
 
     const favicon = anchor.querySelector('.pretty-link__favicon') as HTMLImageElement;
     expect(favicon).not.toBeNull();
-    expect(favicon.src).toBe(FALLBACK_ICON);
+    expect(favicon.tagName.toLowerCase()).toBe('img');
+    // Loads the real per-site favicon; the domain is passed to the service.
+    expect(favicon.src).toContain('example.com');
     expect(favicon.width).toBe(16);
     expect(favicon.height).toBe(16);
+  });
+
+  it('falls back to an inline globe svg when the favicon fails to load', () => {
+    const anchor = createExternalLink('https://example.com');
+
+    decorateLink(anchor);
+
+    const img = anchor.querySelector('img.pretty-link__favicon') as HTMLImageElement;
+    expect(img).not.toBeNull();
+
+    // Simulate the real favicon failing (offline / 404 / CSP img-src block).
+    img.onerror?.(new Event('error'));
+
+    expect(anchor.querySelector('img.pretty-link__favicon')).toBeNull();
+    const globe = anchor.querySelector('svg.pretty-link__favicon');
+    expect(globe).not.toBeNull();
+    // The swapped-in icon is still the first child, before the link text.
+    expect(anchor.firstChild).toBe(globe);
   });
 
   it('sets data-pl-favicon attribute', () => {

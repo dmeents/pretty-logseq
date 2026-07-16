@@ -1,5 +1,5 @@
 import { getParentDoc, positionElement, removeElementById } from '../../lib/dom';
-import { FALLBACK_ICON } from './favicons';
+import { createGlobeSvg, getFaviconUrl } from './favicons';
 import { fetchMetadata } from './metadata';
 import type { LinkMetadata } from './types';
 
@@ -61,18 +61,70 @@ function attachPopoverListeners(popover: HTMLElement): void {
   };
 }
 
+const POPOVER_FAVICON_STYLE = 'width:14px;height:14px;flex-shrink:0;margin:0;padding:0;border:none';
+
 function createFavicon(src: string): HTMLImageElement {
   const favicon = getParentDoc().createElement('img');
   favicon.src = src;
   favicon.className = 'pretty-link-popover__favicon';
   favicon.width = 14;
   favicon.height = 14;
-  favicon.style.cssText = 'width:14px;height:14px;flex-shrink:0;margin:0;padding:0;border:none';
+  favicon.style.cssText = POPOVER_FAVICON_STYLE;
+  // Swap to the CSP-safe inline globe if the favicon can't load (offline, 404,
+  // or blocked by CSP img-src — which is why v2 showed a blank icon).
   favicon.onerror = () => {
-    favicon.src = FALLBACK_ICON;
-    favicon.onerror = null;
+    const globe = createGlobeSvg(14);
+    globe.setAttribute('class', 'pretty-link-popover__favicon');
+    globe.style.cssText = POPOVER_FAVICON_STYLE;
+    favicon.replaceWith(globe);
   };
   return favicon;
+}
+
+/**
+ * Build a minimal, URL-derived metadata object so the popover can render even
+ * when the metadata fetch is blocked (CSP `connect-src` / CORS in v2).
+ */
+function createFallbackMetadata(url: string): LinkMetadata {
+  let domain = url;
+  try {
+    domain = new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    // Leave `domain` as the raw url if it can't be parsed.
+  }
+  return {
+    url,
+    title: null,
+    description: null,
+    image: null,
+    siteName: null,
+    domain,
+    faviconUrl: getFaviconUrl(domain),
+    error: null,
+  };
+}
+
+/**
+ * Critical container styles applied inline.
+ *
+ * The rest of the popover is styled via `provideStyle()` CSS, but that CSS
+ * doesn't reliably reach `top.document` elements (see styles.scss), so these
+ * base styles are inlined to guarantee the popover is visible and positioned.
+ */
+function applyPopoverBaseStyles(popover: HTMLElement): void {
+  popover.style.cssText = [
+    'position:fixed',
+    'z-index:9999',
+    'max-width:380px',
+    'min-width:280px',
+    'overflow:hidden',
+    'border-radius:6px',
+    'pointer-events:auto',
+    'background:var(--ls-primary-background-color,#fff)',
+    'border:1px solid var(--pl-accent-border,var(--ls-border-color,rgba(0,0,0,0.1)))',
+    'border-left:3px solid var(--pl-accent,#8b5cf6)',
+    'box-shadow:0 4px 6px -1px rgba(0,0,0,0.08),0 10px 15px -3px rgba(0,0,0,0.1)',
+  ].join(';');
 }
 
 function renderLinkPopover(metadata: LinkMetadata): HTMLElement {
@@ -125,14 +177,7 @@ function renderLinkPopover(metadata: LinkMetadata): HTMLElement {
   return content;
 }
 
-async function showLinkPopover(anchor: HTMLAnchorElement): Promise<void> {
-  const url = anchor.href;
-  if (!url) return;
-
-  const metadata = await fetchMetadata(url);
-  if (!metadata) return;
-  if (currentAnchor !== anchor) return;
-
+function renderAndShow(anchor: HTMLAnchorElement, metadata: LinkMetadata): void {
   cleanupPopoverListeners();
   removeElementById(LINK_POPOVER_ID);
 
@@ -141,11 +186,27 @@ async function showLinkPopover(anchor: HTMLAnchorElement): Promise<void> {
   const popover = doc.createElement('div');
   popover.id = LINK_POPOVER_ID;
   popover.className = 'pretty-link-popover';
+  applyPopoverBaseStyles(popover);
   popover.appendChild(content);
 
   doc.body.appendChild(popover);
   positionElement(popover, anchor, { placement: 'bottom', offset: 8 });
   attachPopoverListeners(popover);
+}
+
+async function showLinkPopover(anchor: HTMLAnchorElement): Promise<void> {
+  const url = anchor.href;
+  if (!url) return;
+
+  // Show immediately with URL-derived data so the popover always appears, even
+  // when the metadata fetch is blocked (CSP/CORS in v2).
+  renderAndShow(anchor, createFallbackMetadata(url));
+
+  // Enrich once metadata resolves — unless the user has moved on.
+  const metadata = await fetchMetadata(url);
+  if (metadata && currentAnchor === anchor && getPopover()) {
+    renderAndShow(anchor, metadata);
+  }
 }
 
 export function setupLinkPopovers(): () => void {

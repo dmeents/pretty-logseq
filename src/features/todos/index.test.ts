@@ -2,7 +2,8 @@
  * Tests for Todos Feature
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setVersionForTest } from '../../core/version';
 import type { PluginSettings } from '../../settings';
 import * as settingsModule from '../../settings';
 import { todosFeature } from './index';
@@ -22,6 +23,10 @@ vi.mock('./styles.scss?inline', () => ({
   default: '.todo-styles { }',
 }));
 
+vi.mock('./styles.v2.scss?inline', () => ({
+  default: '.todo-styles-v2 { }',
+}));
+
 describe('Todos Feature', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,6 +43,32 @@ describe('Todos Feature', () => {
 
     it('has a description', () => {
       expect(todosFeature.description).toBeTruthy();
+    });
+  });
+
+  describe('version strategy', () => {
+    afterEach(() => {
+      setVersionForTest(null);
+    });
+
+    it('returns the v2 stylesheet on v2 when enabled', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyTodos: true,
+      } as PluginSettings);
+      setVersionForTest('v2');
+
+      expect(todosFeature.getStyles()).toBe('.todo-styles-v2 { }');
+    });
+
+    it('does not set up the v1 observer on v2', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyTodos: true,
+      } as PluginSettings);
+      setVersionForTest('v2');
+
+      todosFeature.init();
+
+      expect(observerModule.setupTodoObserver).not.toHaveBeenCalled();
     });
   });
 

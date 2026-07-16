@@ -1,0 +1,66 @@
+// Pretty Todos — Logseq v2 (DB) styling.
+//
+// v2 has no marker text or `a.priority` anchors: task state is a property whose
+// value renders as a Tabler icon-font glyph. This stylesheet colors those glyphs
+// by state, colors the priority glyphs, and highlights native overdue dates.
+// It's only injected on v2 (via the todos strategy), so no [data-pl-version]
+// scoping is needed.
+//
+// The Tabler glyphs stroke with `currentColor`, so setting `color` on the
+// `.ls-icon-*` wrapper tints the icon.
+//
+// NOTE: v1 also gives each task block a card background + colored left border.
+// That keys off a block-level marker; in v2 the only pure-CSS hook is the status
+// glyph inside a bottom-property pill, and `.ls-block:has(.ls-icon-Done)` would
+// over-match ancestor blocks (`:has` is subtree-wide). So v2 starts with glyph/
+// priority/overdue coloring; the full block-card effect is deferred until it can
+// be iterated against a live DB instance.
+
+// Status glyphs -------------------------------------------------------------
+// v2 vocabulary is Todo / InProgress / Done / Cancelled (not v1's TODO/DOING).
+.ls-icon-Todo {
+  color: var(--ls-secondary-text-color);
+}
+
+.ls-icon-InProgress,
+.ls-icon-Doing {
+  color: var(--pl-accent);
+}
+
+.ls-icon-Done {
+  color: rgb(34, 197, 94);
+}
+
+.ls-icon-Cancelled,
+.ls-icon-Canceled {
+  color: rgb(148, 163, 184);
+}
+
+// Priority glyphs -----------------------------------------------------------
+// Only High/Medium were observed in the sample; the rest follow the naming
+// pattern (`ls-icon-priorityLvl<Level>`).
+.ls-icon-priorityLvlUrgent {
+  color: rgb(220, 38, 38);
+}
+
+.ls-icon-priorityLvlHigh {
+  color: rgb(239, 68, 68);
+}
+
+.ls-icon-priorityLvlMedium {
+  color: rgb(234, 179, 8);
+}
+
+.ls-icon-priorityLvlLow {
+  color: rgb(96, 165, 250);
+}
+
+// Past-due -----------------------------------------------------------------
+// v2 marks overdue Scheduled/Deadline dates natively with `.overdue`; give it a
+// warn tint (parity with the v1 observer's past-due indicator).
+.overdue,
+.overdue .ls-datetime,
+.overdue a.page-ref {
+  color: rgb(245, 158, 11);
+  font-weight: 600;
+}

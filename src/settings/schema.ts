@@ -54,6 +54,12 @@ interface SettingToggle {
   title: string;
   /** Optional — omit when the title is self-explanatory (Logseq also shows the key). */
   description?: string;
+  /**
+   * Versions this toggle applies to. Omit when it applies to both. When the
+   * active version is known, `buildSettingsSchema` hides toggles that don't list
+   * it (e.g. v1-only toggles whose target element doesn't exist in v2).
+   */
+  versions?: ('v1' | 'v2')[];
 }
 
 interface SettingGroup {
@@ -144,6 +150,8 @@ const SETTING_GROUPS: SettingGroup[] = [
         key: 'hideCreateButton',
         title: 'Hide Create Button',
         description: "Hide the 'New page' create button in the sidebar.",
+        // No `.create` element exists in the v2 sidebar.
+        versions: ['v1'],
       },
       {
         key: 'graphSelectorBottom',
@@ -180,6 +188,8 @@ const SETTING_GROUPS: SettingGroup[] = [
         key: 'hideSyncIndicator',
         title: 'Hide Sync Indicator',
         description: 'Hide the sync/cloud status indicator from the top bar.',
+        // Targets v1's `.cp__file-sync-indicator`, which the DB app doesn't render.
+        versions: ['v1'],
       },
       {
         key: 'hideWindowControls',
@@ -237,8 +247,15 @@ export function buildSettingsSchema(version?: VersionInfo): SettingSchemaDesc[] 
   });
 
   for (const group of SETTING_GROUPS) {
+    // Hide toggles that don't apply to the active version (only once detection
+    // has resolved; before that, show everything).
+    const toggles = version
+      ? group.toggles.filter(t => !t.versions || t.versions.includes(version.active))
+      : group.toggles;
+    if (toggles.length === 0) continue;
+
     schema.push(heading(`${group.id}Heading`, group.title));
-    for (const t of group.toggles) {
+    for (const t of toggles) {
       schema.push({
         key: t.key,
         title: t.title,

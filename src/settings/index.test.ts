@@ -145,13 +145,32 @@ describe('Settings Management', () => {
       expect(popovers?.type).toBe('boolean');
     });
 
-    it('always includes every toggle (no conditional hiding)', () => {
+    it('includes every toggle when no version is provided', () => {
       const schema = buildSettingsSchema();
       const keys = ['showPropertyIcons', 'compactSidebarNav', 'styleTopbarIcons', 'navArrowsLeft'];
 
       for (const key of keys) {
         expect(schema.some(item => item.key === key)).toBe(true);
       }
+    });
+
+    it('hides v1-only toggles when the active version is v2', () => {
+      const schema = buildSettingsSchema({ active: 'v2', source: 'auto' });
+      const keys = schema.map(item => item.key);
+
+      expect(keys).not.toContain('hideCreateButton');
+      expect(keys).not.toContain('hideSyncIndicator');
+      // Version-agnostic toggles remain.
+      expect(keys).toContain('compactSidebarNav');
+      expect(keys).toContain('hideHomeButton');
+    });
+
+    it('keeps v1-only toggles when the active version is v1', () => {
+      const schema = buildSettingsSchema({ active: 'v1', source: 'auto' });
+      const keys = schema.map(item => item.key);
+
+      expect(keys).toContain('hideCreateButton');
+      expect(keys).toContain('hideSyncIndicator');
     });
 
     it('includes a status row only when version info is provided', () => {

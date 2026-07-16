@@ -48,13 +48,38 @@ describe('detectVersion', () => {
     await expect(detectVersion()).resolves.toBe('v1');
   });
 
-  it('falls back to a DOM probe (#head → v1) when the graph url is inconclusive', async () => {
+  it('DOM-probes v2 from the .sidebar-navigations shell when the url is inconclusive', async () => {
+    mockGraph({ url: 'unknown', name: 'unknown' });
+    const nav = document.createElement('div');
+    nav.className = 'sidebar-navigations';
+    document.body.appendChild(nav);
+
+    await expect(detectVersion()).resolves.toBe('v2');
+    nav.remove();
+  });
+
+  it('DOM-probes v1 from #left-sidebar .nav-header when the url is inconclusive', async () => {
+    mockGraph({ url: 'unknown', name: 'unknown' });
+    const sidebar = document.createElement('div');
+    sidebar.id = 'left-sidebar';
+    const navHeader = document.createElement('div');
+    navHeader.className = 'nav-header';
+    sidebar.appendChild(navHeader);
+    document.body.appendChild(sidebar);
+
+    await expect(detectVersion()).resolves.toBe('v1');
+    sidebar.remove();
+  });
+
+  it('ignores #head (present in both apps) as a version signal', async () => {
     mockGraph({ url: 'unknown', name: 'unknown' });
     const head = document.createElement('div');
     head.id = 'head';
     document.body.appendChild(head);
 
+    // No sidebar shell marker → inconclusive → safe default.
     await expect(detectVersion()).resolves.toBe('v1');
+    head.remove();
   });
 
   it('defaults to v1 when all signals are inconclusive', async () => {

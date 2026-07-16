@@ -3,7 +3,9 @@
 // sidebar inside `.sidebar-graphs`. Pin it to the bottom, styled to match the
 // compact nav bar.
 
-#left-sidebar .sidebar-graphs {
+// Scope to `.is-open`: `position: fixed` detaches the bar from #left-sidebar, so
+// without this it would keep floating at bottom-left when the sidebar collapses.
+#left-sidebar.is-open .sidebar-graphs {
   position: fixed;
   z-index: 9;
   left: 0;
@@ -45,6 +47,6 @@
 
 // Reclaim space so the pinned bar doesn't overlap the Favorites/Recent list.
 // `.wrap` is the scroll container that holds the sidebar sections in v2.
-#left-sidebar .left-sidebar-inner .wrap {
+#left-sidebar.is-open .left-sidebar-inner .wrap {
   padding-bottom: 72px;
 }

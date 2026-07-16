@@ -189,11 +189,11 @@ describe('setupLinkPopovers', () => {
     expect(title?.textContent).toBe('example.com');
   });
 
-  it('does not show popover when metadata is null', async () => {
+  it('shows a fallback popover when metadata is null (fetch blocked)', async () => {
     vi.mocked(metadataModule.fetchMetadata).mockResolvedValue(null);
     cleanup = setupLinkPopovers();
 
-    const link = createExternalLink();
+    const link = createExternalLink('https://example.com/page');
     const event = new MouseEvent('mouseenter', { bubbles: true });
     Object.defineProperty(event, 'target', { value: link });
     document.dispatchEvent(event);
@@ -201,7 +201,13 @@ describe('setupLinkPopovers', () => {
     vi.advanceTimersByTime(400);
     await vi.runAllTimersAsync();
 
-    expect(document.getElementById(POPOVER_ID)).toBeNull();
+    // Popover still appears, built from the URL alone (domain + full URL).
+    const popover = document.getElementById(POPOVER_ID);
+    expect(popover).not.toBeNull();
+    expect(popover?.querySelector('.pretty-link-popover__title')?.textContent).toBe('example.com');
+    expect(popover?.querySelector('.pretty-link-popover__footer')?.textContent).toBe(
+      'https://example.com/page',
+    );
   });
 
   it('hides popover on click', async () => {
@@ -322,7 +328,7 @@ describe('setupLinkPopovers', () => {
     expect(document.getElementById(POPOVER_ID)).toBeNull();
   });
 
-  it('favicon error handler falls back to fallback icon', async () => {
+  it('favicon error handler swaps in an inline globe svg', async () => {
     vi.mocked(metadataModule.fetchMetadata).mockResolvedValue(makeMeta());
     cleanup = setupLinkPopovers();
 
@@ -333,14 +339,15 @@ describe('setupLinkPopovers', () => {
     vi.advanceTimersByTime(400);
     await vi.runAllTimersAsync();
 
-    const favicon = document.querySelector('.pretty-link-popover__favicon') as HTMLImageElement;
+    const favicon = document.querySelector('img.pretty-link-popover__favicon') as HTMLImageElement;
     expect(favicon).not.toBeNull();
 
-    // Simulate image error
+    // Simulate image error (offline / 404 / CSP img-src block).
     favicon.onerror?.(new Event('error'));
 
-    // Should fall back and clear the error handler
-    expect(favicon.onerror).toBeNull();
+    // The <img> is replaced by an inline <svg>, which renders under any CSP.
+    expect(document.querySelector('img.pretty-link-popover__favicon')).toBeNull();
+    expect(document.querySelector('svg.pretty-link-popover__favicon')).not.toBeNull();
   });
 
   it('does not show popover for non-external-link targets', async () => {
