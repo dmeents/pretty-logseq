@@ -8,8 +8,11 @@
 //     .ls-table-rows.overflow-x-auto          ← horizontal scroll container
 //       .relative
 //         .ls-table-header.border-y.bg-gray-01
-//           .sticky-columns.flex.flex-row
-//             .ls-table-header-cell            ← first is a 32px checkbox gutter (.!border-0)
+//           .sticky-columns.flex.flex-row      ← PINNED left column; opaque bg for scroll
+//             .ls-table-header-cell            ← the 32px "select all" checkbox gutter (.!border-0)
+//               label > button[role=checkbox]
+//           .flex.flex-row                     ← the remaining (scrollable) header cells
+//             .ls-table-header-cell
 //               button > span[title]           ← the column label
 //         .ls-table-row.border-b.ls-block      ← rows (virtualized via Virtuoso)
 //           .ls-table-cell.flex.relative
@@ -37,6 +40,23 @@
   .ls-table-header {
     background: var(--pl-accent-subtle) !important;
     border-bottom: 1px solid var(--pl-accent-border);
+
+    // The pinned checkbox gutter lives in its own `.sticky-columns` wrapper,
+    // which Logseq gives an opaque background (`bg-gray-01`) so it stays solid
+    // over horizontal scroll. Left alone, that leaves the header's 32px "select
+    // all" column gray instead of picking up the accent fill.
+    //
+    // `--pl-accent-subtle` is only 10% alpha, so simply setting it here would
+    // stack a second translucent layer over the header's own accent fill and
+    // read darker than the other cells. Composite ONE accent layer over an
+    // opaque page background instead, so the gutter is both solid (for scroll)
+    // and an exact color match for the transparent header cells beside it.
+    .sticky-columns,
+    .sticky-columns .ls-table-header-cell {
+      background:
+        linear-gradient(var(--pl-accent-subtle), var(--pl-accent-subtle)),
+        var(--ls-primary-background-color) !important;
+    }
   }
 
   // Header cells — v1's `thead th`: uppercase accent labels. Don't set width;
@@ -68,6 +88,17 @@
 
     &:hover {
       background: var(--pl-accent-subtle) !important;
+
+      // The pinned checkbox column carries its own opaque bg (see header note),
+      // so tint it on hover too — otherwise the 32px gutter stays gray while the
+      // rest of the row lights up. Composite one accent layer over the opaque
+      // page background so it matches the hovered row without double-stacking.
+      .sticky-columns,
+      .sticky-columns .ls-table-cell {
+        background:
+          linear-gradient(var(--pl-accent-subtle), var(--pl-accent-subtle)),
+          var(--ls-primary-background-color) !important;
+      }
     }
   }
 
