@@ -4,6 +4,7 @@
  */
 
 import { getObserverRoot, getPlatform } from '../../../core/platform';
+import { getVersion } from '../../../core/version';
 import { getParentDoc } from '../../../lib/dom';
 import { isFavorited, refreshFavorites, toggleFavorite } from './api';
 
@@ -86,6 +87,8 @@ async function scanAndInject(): Promise<void> {
     titles.length,
   );
 
+  const isV2 = getVersion() === 'v2';
+
   for (const title of titles) {
     // Re-check marker after the async gap — a concurrent scanAndInject call may have
     // already processed this title while we were awaiting getCurrentPage().
@@ -94,10 +97,21 @@ async function scanAndInject(): Promise<void> {
     // Mark as processed before touching the DOM
     title.setAttribute(STAR_MARKER, 'true');
 
-    // Create and insert star button inside the title (h1 is already flex)
     const starButton = createStarButton(pageName);
-    title.appendChild(starButton);
-    console.log('[Pretty Logseq] Star button injected inside title');
+
+    if (isV2) {
+      // v2 renders the title as an editable block inside a `space-between` row
+      // (`.flex.flex-row.space-between > .ls-page-title`). Insert the star as a
+      // sibling of the title so it sits at the row's right edge, stays outside
+      // the editable block, and survives the block's React re-renders. Fall back
+      // to appending inside the title if it has no parent row.
+      const inserted = title.insertAdjacentElement('afterend', starButton);
+      if (!inserted) title.appendChild(starButton);
+    } else {
+      // v1 title is an `h1.title` flex container — append the star inside it.
+      title.appendChild(starButton);
+    }
+    console.log('[Pretty Logseq] Star button injected for title');
   }
 }
 

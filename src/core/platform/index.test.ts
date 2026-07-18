@@ -24,7 +24,7 @@ describe('getPlatform', () => {
     expect(getPlatform().version).toBe('v2');
   });
 
-  it('defines the v2 property-key selector while inheriting the rest from v1', () => {
+  it('overrides the v2 page-title and property-key selectors while inheriting the rest from v1', () => {
     setVersionForTest('v2');
     const v2 = getPlatform();
     setVersionForTest('v1');
@@ -34,9 +34,13 @@ describe('getPlatform', () => {
     expect(v2.selectors.propertyKey).toBe('.ls-page-properties .property-k');
     expect(v2.selectors.propertyKey).not.toBe(v1.selectors.propertyKey);
 
-    // Selectors other than the property key still inherit v1.
-    const { propertyKey: _v2Key, ...v2Rest } = v2.selectors;
-    const { propertyKey: _v1Key, ...v1Rest } = v1.selectors;
+    // v2 renders the page title as an editable block, not an `<h1>`.
+    expect(v2.selectors.pageTitle).toBe('.ls-page-title');
+    expect(v2.selectors.pageTitle).not.toBe(v1.selectors.pageTitle);
+
+    // Selectors other than the page-title and property key still inherit v1.
+    const { propertyKey: _v2Key, pageTitle: _v2Title, ...v2Rest } = v2.selectors;
+    const { propertyKey: _v1Key, pageTitle: _v1Title, ...v1Rest } = v1.selectors;
     expect(v2Rest).toEqual(v1Rest);
 
     // Theme inherits v1's probe inputs but adds v2's `data-color` accent source.
@@ -58,9 +62,10 @@ describe('getPlatform', () => {
     expect(v2.api.getPageBlocks).not.toBe(v1.api.getPageBlocks);
     expect(v2.api.clearPageCache).not.toBe(v1.api.clearPageCache);
 
-    // Favorites are App-level and version-agnostic — still the v1 implementation.
+    // Reading favorites is App-level and version-agnostic — still v1's.
     expect(v2.api.getFavorites).toBe(v1.api.getFavorites);
-    expect(v2.api.setFavorites).toBe(v1.api.setFavorites);
+    // Writing diverges: v1 rewrites the graph config, v2 invokes the DB command.
+    expect(v2.api.toggleFavorite).not.toBe(v1.api.toggleFavorite);
   });
 
   it('honors a test override regardless of version', () => {

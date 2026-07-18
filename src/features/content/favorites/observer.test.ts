@@ -2,7 +2,8 @@
  * Tests for Favorites Observer
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setVersionForTest } from '../../../core/version';
 import { clearFavoritesCache, refreshFavorites } from './api';
 import { cleanupFavoriteObserver, setupFavoriteObserver } from './observer';
 
@@ -275,6 +276,81 @@ describe('setupFavoriteObserver', () => {
     expect(scanCount).toBeLessThan(5);
 
     cleanupFavoriteObserver();
+  });
+});
+
+describe('setupFavoriteObserver (v2)', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    clearFavoritesCache();
+    setVersionForTest('v2');
+    logseq.App.getCurrentGraphFavorites.mockResolvedValue([]);
+    logseq.Editor.getCurrentPage.mockResolvedValue({
+      name: 'test-page',
+      originalName: 'Test Page',
+    });
+  });
+
+  afterEach(() => {
+    setVersionForTest(null);
+  });
+
+  // v2 renders the title as an editable block inside a `space-between` row:
+  // `#main-content-container > .flex.flex-row.space-between > .ls-page-title`.
+  function createV2Title(): { row: HTMLDivElement; title: HTMLDivElement } {
+    const container = document.createElement('div');
+    container.id = 'main-content-container';
+    const row = document.createElement('div');
+    row.className = 'flex flex-row space-between';
+    const title = document.createElement('div');
+    title.className = 'title ls-page-title flex flex-1 w-full content items-start';
+    title.textContent = 'Test Page';
+    row.appendChild(title);
+    container.appendChild(row);
+    document.body.appendChild(container);
+    return { row, title };
+  }
+
+  it('injects the star as a sibling of the v2 page title, not inside it', async () => {
+    const { row, title } = createV2Title();
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // The star must stay outside the editable title block…
+    expect(title.querySelector('.pl-favorite-star')).toBeNull();
+    // …and sit directly after the title in the title row.
+    const star = row.querySelector('.pl-favorite-star');
+    expect(star).not.toBeNull();
+    expect(star?.previousElementSibling).toBe(title);
+    expect(title.getAttribute('data-pl-favorite-resolved')).toBe('true');
+
+    cleanupFavoriteObserver();
+  });
+
+  it('does not duplicate the star on repeated scans', async () => {
+    const { row } = createV2Title();
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(row.querySelectorAll('.pl-favorite-star').length).toBe(1);
+
+    cleanupFavoriteObserver();
+  });
+
+  it('cleanup removes the sibling star and its marker', async () => {
+    const { row, title } = createV2Title();
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(row.querySelector('.pl-favorite-star')).not.toBeNull();
+
+    cleanupFavoriteObserver();
+
+    expect(row.querySelector('.pl-favorite-star')).toBeNull();
+    expect(title.getAttribute('data-pl-favorite-resolved')).toBeNull();
   });
 });
 
