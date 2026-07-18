@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/dmeents/pretty-logseq/compare/v2.0.0...v2.0.1) (2026-07-18)
+
+
+### Bug Fixes
+
+* styles and cleanup ([#56](https://github.com/dmeents/pretty-logseq/issues/56)) ([4103b19](https://github.com/dmeents/pretty-logseq/commit/4103b19d829a498e73d56983b6750ffce2fce35a))
+
 ## [2.0.0](https://github.com/dmeents/pretty-logseq/compare/v1.3.2...v2.0.0) (2026-07-16)
 
 
