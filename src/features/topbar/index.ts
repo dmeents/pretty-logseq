@@ -1,3 +1,4 @@
+import { getVersion } from '../../core/version';
 import { getSettings } from '../../settings';
 import type { Feature } from '../../types';
 import gradientStyles from './gradient.scss?inline';
@@ -6,6 +7,7 @@ import hideHomeStyles from './hide-home.scss?inline';
 import hideSyncStyles from './hide-sync.scss?inline';
 import hideWindowControlsStyles from './hide-window-controls.scss?inline';
 import iconStylingStyles from './icon-styling.scss?inline';
+import rtcCollaboratorsV2Styles from './rtc-collaborators.v2.scss?inline';
 import navArrowsStyles from './styles.scss?inline';
 
 let navArrowsCleanup: (() => void) | null = null;
@@ -39,7 +41,11 @@ export const topbarFeature: Feature = {
     if (settings.navArrowsLeft) styles.push(navArrowsStyles);
     if (settings.hideHomeButton) styles.push(hideHomeStyles);
     if (settings.hideSyncIndicator) styles.push(hideSyncStyles);
-    if (settings.styleTopbarIcons) styles.push(iconStylingStyles);
+    if (settings.styleTopbarIcons) {
+      styles.push(iconStylingStyles);
+      // v2 (DB) only: blend the RTC collaborators section into the top bar.
+      if (getVersion() === 'v2') styles.push(rtcCollaboratorsV2Styles);
+    }
     if (settings.topbarGradient) styles.push(gradientStyles);
     if (settings.hideWindowControls) styles.push(hideWindowControlsStyles);
 
