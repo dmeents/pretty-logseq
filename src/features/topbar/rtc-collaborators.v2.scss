@@ -1,0 +1,49 @@
+// v2 (DB) only: the RTC collaborators section — the invite (user-plus) button
+// plus member avatars that Logseq DB adds to the top bar. Out of the box it sits
+// in a distinct grey box (`bg-gray-01`), the invite button ships oversized
+// (`h-10 px-4 py-2`), and it butts straight up against the sync/window controls.
+// These rules blend it into the header, right-size the button, and separate it
+// from the "normal" controls. Scoped to `data-pl-version="v2"` — this DOM only
+// exists in the DB app.
+
+[data-pl-version="v2"] .rtc-collaborators {
+	// Drop the grey box so the section matches the rest of the header.
+	background-color: transparent !important;
+	gap: 0.25rem;
+
+	// The invite button ships as a full-size `ui__button` (h-10 px-4). Bring it
+	// in line with the other compact topbar icon buttons.
+	.ui__button {
+		height: auto;
+		min-height: 0;
+		padding: 4px;
+		color: var(--ls-header-button-color, var(--ls-icon-color, var(--ls-primary-text-color)));
+		border-radius: 6px;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
+
+		&:hover {
+			background-color: var(--pl-accent-medium);
+			color: var(--ls-link-text-color);
+		}
+
+		// Icon glyphs are sized SVGs — resize the svg directly, not via font-size.
+		.ls-icon-user-plus svg {
+			width: 18px;
+			height: 18px;
+		}
+	}
+
+	// Give the member avatar a subtle ring so it reads as a distinct element.
+	.ui__avatar {
+		box-shadow: 0 0 0 1px var(--ls-border-color);
+	}
+}
+
+// Separate the collaborators block from the sync/other controls that follow it.
+[data-pl-version="v2"] .rtc-collaborators + .cp__rtc-sync {
+	margin-left: 1rem;
+	padding-left: 0.5rem;
+	border-left: 1px solid var(--ls-border-color);
+}

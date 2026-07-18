@@ -3,6 +3,7 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { setVersionForTest } from '../../core/version';
 import type { PluginSettings } from '../../settings';
 import * as settingsModule from '../../settings';
 import * as handlersModule from './handlers';
@@ -39,6 +40,10 @@ vi.mock('./icon-styling.scss?inline', () => ({
   default: '.icon-styling { }',
 }));
 
+vi.mock('./rtc-collaborators.v2.scss?inline', () => ({
+  default: '.rtc-collaborators { }',
+}));
+
 vi.mock('./gradient.scss?inline', () => ({
   default: '.gradient { }',
 }));
@@ -63,6 +68,7 @@ function baseSettings(overrides: Partial<PluginSettings> = {}): PluginSettings {
 describe('Topbar Feature', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    setVersionForTest(null); // default to v1 unless a test opts into v2
 
     // Reset module-level state by destroying then re-initializing
     topbarFeature.destroy();
@@ -115,6 +121,35 @@ describe('Topbar Feature', () => {
       );
 
       expect(topbarFeature.getStyles()).toContain('.icon-styling');
+    });
+
+    it('excludes RTC collaborator styles on v1 even when icon styling is enabled', () => {
+      setVersionForTest('v1');
+      vi.mocked(settingsModule.getSettings).mockReturnValue(
+        baseSettings({ styleTopbarIcons: true }),
+      );
+
+      expect(topbarFeature.getStyles()).not.toContain('.rtc-collaborators');
+    });
+
+    it('includes RTC collaborator styles on v2 when icon styling is enabled', () => {
+      setVersionForTest('v2');
+      vi.mocked(settingsModule.getSettings).mockReturnValue(
+        baseSettings({ styleTopbarIcons: true }),
+      );
+
+      const styles = topbarFeature.getStyles();
+      expect(styles).toContain('.icon-styling');
+      expect(styles).toContain('.rtc-collaborators');
+    });
+
+    it('excludes RTC collaborator styles on v2 when icon styling is disabled', () => {
+      setVersionForTest('v2');
+      vi.mocked(settingsModule.getSettings).mockReturnValue(
+        baseSettings({ styleTopbarIcons: false }),
+      );
+
+      expect(topbarFeature.getStyles()).not.toContain('.rtc-collaborators');
     });
 
     it('includes gradient styles when enabled', () => {
