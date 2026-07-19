@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 634 nodes · 1329 edges · 40 communities (38 shown, 2 thin omitted)
+- 634 nodes · 1303 edges · 42 communities (39 shown, 3 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 38 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e3379861`
+- Built from commit: `f4d6d8c6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -27,7 +27,9 @@
 - Version Detection & Platform Core
 - theme.ts
 - Feature Registry
+- blocks.ts
 - Project Documentation
+- logseq.ts
 - biome.json
 - Plugin Manifest
 - formatter
@@ -55,16 +57,16 @@
 - correctness
 
 ## God Nodes (most connected - your core abstractions)
-1. `getParentDoc()` - 48 edges
+1. `getParentDoc()` - 43 edges
 2. `Feature` - 27 edges
-3. `getPlatform()` - 23 edges
-4. `getSettings()` - 22 edges
-5. `getVersion()` - 17 edges
-6. `renderPopover()` - 17 edges
-7. `PluginSettings` - 16 edges
-8. `compilerOptions` - 16 edges
+3. `getSettings()` - 22 edges
+4. `getPlatform()` - 21 edges
+5. `renderPopover()` - 17 edges
+6. `PluginSettings` - 16 edges
+7. `compilerOptions` - 16 edges
+8. `getVersion()` - 15 edges
 9. `cleanPropertyValue()` - 15 edges
-10. `setVersionForTest()` - 14 edges
+10. `PageData` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `CI Test Job` --shares_data_with--> `Codecov Coverage Config`  [INFERRED]
@@ -85,7 +87,7 @@
 - **CI Pipeline (lint, test, build)** — github_workflows_ci_workflow_lint_job, github_workflows_ci_workflow_test_job, github_workflows_ci_workflow_build_job [EXTRACTED 1.00]
 - **Release & Dependency Automation** — github_workflows_release_workflow, github_workflows_dependabot_auto_merge_workflow, github_dependabot_config, changelog [INFERRED 0.75]
 
-## Communities (40 total, 2 thin omitted)
+## Communities (42 total, 3 thin omitted)
 
 ### Community 0 - "External Links & Favicons"
 Cohesion: 0.09
@@ -96,20 +98,20 @@ Cohesion: 0.04
 Nodes (48): @biomejs/biome, jsdom, @logseq/libs, description, devDependencies, @biomejs/biome, jsdom, @logseq/libs (+40 more)
 
 ### Community 2 - "Platform Adapter & Page API"
-Cohesion: 0.08
-Nodes (36): PLATFORMS, setPlatformForTest(), Platform, PlatformApi, PlatformSelectors, PlatformTheme, v1Platform, V2_ACCENT_COLORS (+28 more)
+Cohesion: 0.07
+Nodes (38): PLATFORMS, setPlatformForTest(), Platform, PlatformApi, PlatformSelectors, PlatformTheme, v1Platform, V2_ACCENT_COLORS (+30 more)
 
 ### Community 3 - "Popover DOM Helpers"
-Cohesion: 0.14
-Nodes (30): cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills(), createTitle() (+22 more)
+Cohesion: 0.12
+Nodes (34): cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills(), createTitle() (+26 more)
 
 ### Community 4 - "Biome Formatter Config"
 Cohesion: 0.20
 Nodes (10): arrowParentheses, bracketSameLine, bracketSpacing, jsxQuoteStyle, quoteProperties, quoteStyle, semicolons, trailingCommas (+2 more)
 
 ### Community 5 - "Favorites Feature"
-Cohesion: 0.08
-Nodes (39): getObserverRoot(), getPlatform(), clearFavoritesCache(), favoritesCache, isFavorited(), refreshFavorites(), toggleFavorite(), favoritesFeature (+31 more)
+Cohesion: 0.09
+Nodes (33): getObserverRoot(), getPlatform(), generateThemeCSS(), getAccentColor(), isDarkTheme(), isUsableColor(), mixChannel(), parseRGB() (+25 more)
 
 ### Community 6 - "Popover Hover Manager"
 Cohesion: 0.16
@@ -124,20 +126,24 @@ Cohesion: 0.07
 Nodes (26): DOM, DOM.Iterable, ES2020, **/*.spec.ts, src, test, **/*.test.ts, vitest/globals (+18 more)
 
 ### Community 9 - "Version Detection & Platform Core"
-Cohesion: 0.07
-Nodes (49): pickStyles(), applyVersionAttribute(), detectVersion(), getVersion(), probeDomVersion(), setVersionForTest(), contentFeature, popoversFeature (+41 more)
+Cohesion: 0.06
+Nodes (56): pickStyles(), RegisteredFeature, registry, injectStyles(), refreshStyles(), applyVersionAttribute(), detectVersion(), getVersion() (+48 more)
 
 ### Community 10 - "theme.ts"
-Cohesion: 0.27
-Nodes (11): registry, injectStyles(), refreshStyles(), generateThemeCSS(), getAccentColor(), isDarkTheme(), isUsableColor(), mixChannel() (+3 more)
+Cohesion: 0.18
+Nodes (14): clearFavoritesCache(), favoritesCache, isFavorited(), refreshFavorites(), toggleFavorite(), favoritesFeature, applyStarState(), cleanupFavoriteObserver() (+6 more)
 
-### Community 11 - "Feature Registry"
-Cohesion: 0.06
-Nodes (20): FeatureRegistry, RegisteredFeature, ConfigurableFeature, Feature, FeatureSetting, PageProperties, ThemeMode, blockWithMarkdown (+12 more)
+### Community 12 - "blocks.ts"
+Cohesion: 0.29
+Nodes (6): blockWithMarkdown, blockWithProperties, blockWithReferences, multiLineDescription, nestedBlocks, simpleBlock
 
 ### Community 13 - "Project Documentation"
 Cohesion: 0.20
 Nodes (14): CLAUDE.md Project Instructions, Contributing Guide, Cross-Version Support (v1/v2), Feature Interface, Vite Entry index.html, MIT License, Logseq Plugin API, Platform Adapter (+6 more)
+
+### Community 14 - "logseq.ts"
+Cohesion: 0.47
+Nodes (3): mockLogseqAPI(), mockPageData(), mockPageWithProperties()
 
 ### Community 16 - "biome.json"
 Cohesion: 0.20
@@ -234,15 +240,17 @@ Nodes (4): noUnusedImports, recommended, useExhaustiveDependencies, correctness
 ## Knowledge Gaps
 - **186 isolated node(s):** `$schema`, `enabled`, `clientKind`, `useIgnoreFile`, `ignoreUnknown` (+181 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `getParentDoc()` connect `Favorites Feature` to `External Links & Favicons`, `Platform Adapter & Page API`, `Popover Hover Manager`, `Version Detection & Platform Core`, `theme.ts`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
-- **Why does `Feature` connect `Feature Registry` to `External Links & Favicons`, `Version Detection & Platform Core`, `Favorites Feature`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
+- **Why does `getParentDoc()` connect `Favorites Feature` to `External Links & Favicons`, `Version Detection & Platform Core`, `Platform Adapter & Page API`, `Popover Hover Manager`?**
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **Why does `Feature` connect `Version Detection & Platform Core` to `External Links & Favicons`, `theme.ts`, `Feature Registry`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+- **Why does `FeatureRegistry` connect `Feature Registry` to `Version Detection & Platform Core`?**
+  _High betweenness centrality (0.011) - this node is a cross-community bridge._
 - **What connects `$schema`, `enabled`, `clientKind` to the rest of the system?**
   _186 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `External Links & Favicons` be split into smaller, more focused modules?**
@@ -250,6 +258,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Package Dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.04081632653061224 - nodes in this community are weakly interconnected._
 - **Should `Platform Adapter & Page API` be split into smaller, more focused modules?**
-  _Cohesion score 0.07764876632801161 - nodes in this community are weakly interconnected._
-- **Should `Popover DOM Helpers` be split into smaller, more focused modules?**
-  _Cohesion score 0.14304993252361672 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07205513784461152 - nodes in this community are weakly interconnected._

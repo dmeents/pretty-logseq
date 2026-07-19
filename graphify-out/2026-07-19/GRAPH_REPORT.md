@@ -1,7 +1,7 @@
 # Graph Report - pretty-logseq  (2026-07-19)
 
 ## Corpus Check
-- 108 files · ~246,544 words
+- 108 files · ~246,579 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
