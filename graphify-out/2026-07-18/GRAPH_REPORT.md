@@ -1,18 +1,13 @@
-# Graph Report - pretty-logseq  (2026-07-18)
+# Graph Report - .  (2026-07-18)
 
 ## Corpus Check
-- 104 files · ~244,751 words
+- 123 files · ~244,159 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 620 nodes · 1290 edges · 34 communities (32 shown, 2 thin omitted)
+- 616 nodes · 1273 edges · 43 communities (39 shown, 4 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 37 edges (avg confidence: 0.82)
-- Token cost: 0 input · 0 output
-
-## Graph Freshness
-- Built from commit: `52d2a8f8`
-- Run `git rev-parse HEAD` and compare to check if the graph is stale.
-- Run `graphify update .` after code changes (no API cost).
+- Token cost: 369,045 input · 18,445 output
 
 ## Community Hubs (Navigation)
 - External Links & Favicons
@@ -25,9 +20,17 @@
 - Biome Linter Rules
 - TypeScript Compiler Config
 - Version Detection & Platform Core
+- Settings & Popover Registration
 - Feature Registry
+- Style Injection & Feature Modules
 - Project Documentation
+- Todo Block Observer
+- Theme & Accent Color
+- Todos Feature Strategy
 - Plugin Manifest
+- Top Bar Navigation
+- Properties Feature Strategy
+- Platform API Interface
 - Brand Banner Imagery
 - Codebase Popover Screenshot
 - Person Popover Screenshot
@@ -45,6 +48,7 @@
 - No-Logo Banner Imagery
 - Links Preview Screenshot
 - Release Automation
+- Sidebar Feature
 - SCSS Type Declarations
 - Dependabot Config
 
@@ -67,10 +71,10 @@
   .github/workflows/release.yml → CHANGELOG.md
 - `pnpm Workspace Config` --conceptually_related_to--> `Vite + vite-plugin-logseq Build`  [INFERRED]
   pnpm-workspace.yaml → CLAUDE.md
+- `strategy()` --calls--> `getVersion()`  [EXTRACTED]
+  src/features/todos/index.ts → src/core/version.ts
 - `CLAUDE.md Project Instructions` --references--> `Pretty Logseq Plugin`  [EXTRACTED]
   CLAUDE.md → README.md
-- `Contributing Guide` --cites--> `CLAUDE.md Project Instructions`  [EXTRACTED]
-  CONTRIBUTING.md → CLAUDE.md
 
 ## Import Cycles
 - None detected.
@@ -79,59 +83,87 @@
 - **CI Pipeline (lint, test, build)** — github_workflows_ci_workflow_lint_job, github_workflows_ci_workflow_test_job, github_workflows_ci_workflow_build_job [EXTRACTED 1.00]
 - **Release & Dependency Automation** — github_workflows_release_workflow, github_workflows_dependabot_auto_merge_workflow, github_dependabot_config, changelog [INFERRED 0.75]
 
-## Communities (34 total, 2 thin omitted)
+## Communities (43 total, 4 thin omitted)
 
 ### Community 0 - "External Links & Favicons"
-Cohesion: 0.08
-Nodes (37): cleanupAllLinks(), cleanupLink(), createFaviconImg(), createGlobeSvg(), decorateLink(), getFaviconUrl(), getRemoteFaviconUrl(), GLOBE_PATHS (+29 more)
+Cohesion: 0.09
+Nodes (38): cleanupAllLinks(), cleanupLink(), createGlobeSvg(), decorateLink(), getFaviconUrl(), getRemoteFaviconUrl(), GLOBE_PATHS, isValidHttpUrl() (+30 more)
 
 ### Community 1 - "Package Dependencies"
 Cohesion: 0.04
 Nodes (48): @biomejs/biome, jsdom, @logseq/libs, description, devDependencies, @biomejs/biome, jsdom, @logseq/libs (+40 more)
 
 ### Community 2 - "Platform Adapter & Page API"
-Cohesion: 0.14
-Nodes (19): v1Platform, V2_ACCENT_COLORS, v2Platform, REF_TITLES, buildValue(), CacheEntry, clearPageCacheV2(), collectPropertyEntries() (+11 more)
+Cohesion: 0.08
+Nodes (36): v1Platform, V2_ACCENT_COLORS, v2Platform, REF_TITLES, CacheEntry, cleanBlockContent(), clearPageCache(), getPage() (+28 more)
 
 ### Community 3 - "Popover DOM Helpers"
-Cohesion: 0.06
-Nodes (53): PlatformApi, cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills() (+45 more)
+Cohesion: 0.12
+Nodes (34): cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills(), createTitle() (+26 more)
 
 ### Community 4 - "Biome Formatter Config"
-Cohesion: 0.05
-Nodes (38): source, assist, actions, files, ignoreUnknown, includes, formatter, arrowParentheses (+30 more)
+Cohesion: 0.06
+Nodes (36): source, assist, actions, files, ignoreUnknown, includes, formatter, arrowParentheses (+28 more)
 
 ### Community 5 - "Favorites Feature"
-Cohesion: 0.09
-Nodes (39): getObserverRoot(), getPlatform(), generateThemeCSS(), getAccentColor(), isDarkTheme(), isUsableColor(), mixChannel(), parseRGB() (+31 more)
+Cohesion: 0.16
+Nodes (20): getObserverRoot(), getPlatform(), clearFavoritesCache(), favoritesCache, isFavorited(), refreshFavorites(), toggleFavorite(), favoritesFeature (+12 more)
 
 ### Community 6 - "Popover Hover Manager"
 Cohesion: 0.16
-Nodes (24): attachPopoverListeners(), cleanupPopoverListeners(), clearHideTimer(), clearShowTimer(), getPageNameFromRef(), getPopover(), hidePopover(), scheduleHide() (+16 more)
+Nodes (23): attachPopoverListeners(), cleanupPopoverListeners(), clearHideTimer(), clearShowTimer(), getPageNameFromRef(), getPopover(), hidePopover(), scheduleHide() (+15 more)
 
 ### Community 7 - "Biome Linter Rules"
-Cohesion: 0.08
-Nodes (25): recommended, recommended, noUnusedImports, recommended, useExhaustiveDependencies, rules, noBarrelFile, recommended (+17 more)
+Cohesion: 0.07
+Nodes (27): recommended, recommended, noUnusedImports, recommended, useExhaustiveDependencies, linter, enabled, rules (+19 more)
 
 ### Community 8 - "TypeScript Compiler Config"
 Cohesion: 0.07
 Nodes (26): DOM, DOM.Iterable, ES2020, **/*.spec.ts, src, test, **/*.test.ts, vitest/globals (+18 more)
 
 ### Community 9 - "Version Detection & Platform Core"
-Cohesion: 0.06
-Nodes (57): PLATFORMS, setPlatformForTest(), pickStyles(), Platform, PlatformSelectors, PlatformTheme, registry, injectStyles() (+49 more)
+Cohesion: 0.16
+Nodes (15): PLATFORMS, setPlatformForTest(), pickStyles(), Platform, PlatformSelectors, PlatformTheme, applyVersionAttribute(), detectVersion() (+7 more)
+
+### Community 10 - "Settings & Popover Registration"
+Cohesion: 0.15
+Nodes (16): popoversFeature, mockDocument, mockHead, mockLinkElement, initSettings(), onSettingsChanged(), BooleanSettingKey, buildSettingsSchema() (+8 more)
 
 ### Community 11 - "Feature Registry"
-Cohesion: 0.13
+Cohesion: 0.14
 Nodes (5): FeatureRegistry, RegisteredFeature, ConfigurableFeature, Feature, FeatureSetting
+
+### Community 12 - "Style Injection & Feature Modules"
+Cohesion: 0.20
+Nodes (13): registry, injectStyles(), refreshStyles(), contentFeature, templatesFeature, typographyFeature, applyBinding(), BindingAction (+5 more)
 
 ### Community 13 - "Project Documentation"
 Cohesion: 0.20
 Nodes (14): CLAUDE.md Project Instructions, Contributing Guide, Cross-Version Support (v1/v2), Feature Interface, Vite Entry index.html, MIT License, Logseq Plugin API, Platform Adapter (+6 more)
 
+### Community 14 - "Todo Block Observer"
+Cohesion: 0.26
+Nodes (9): cleanupAll(), getOwnContentWrapper(), getTodayString(), hasActiveTaskMarker(), isPastDue(), processBlock(), processCancelledLabel(), scanBlocks() (+1 more)
+
+### Community 15 - "Theme & Accent Color"
+Cohesion: 0.40
+Nodes (8): generateThemeCSS(), getAccentColor(), isDarkTheme(), isUsableColor(), mixChannel(), parseRGB(), rgba(), setupThemeObserver()
+
+### Community 16 - "Todos Feature Strategy"
+Cohesion: 0.33
+Nodes (6): strategy(), todosFeature, TodosStrategy, todosV1, todosV2, getSettings()
+
 ### Community 17 - "Plugin Manifest"
 Cohesion: 0.22
 Nodes (8): author, description, effect, icon, repo, supportsDB, theme, title
+
+### Community 18 - "Top Bar Navigation"
+Cohesion: 0.39
+Nodes (3): createNavArrowsInLeft(), applyNavArrowsSetting(), topbarFeature
+
+### Community 19 - "Properties Feature Strategy"
+Cohesion: 0.46
+Nodes (4): propertiesFeature, PropertiesStrategy, propertiesV1, propertiesV2
 
 ### Community 21 - "Brand Banner Imagery"
 Cohesion: 0.47
@@ -204,22 +236,22 @@ Nodes (3): Changelog, Release Please Action, Release Workflow
 ## Knowledge Gaps
 - **186 isolated node(s):** `$schema`, `enabled`, `clientKind`, `useIgnoreFile`, `ignoreUnknown` (+181 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `getParentDoc()` connect `Favorites Feature` to `External Links & Favicons`, `Version Detection & Platform Core`, `Popover Hover Manager`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
-- **Why does `Feature` connect `Feature Registry` to `External Links & Favicons`, `Version Detection & Platform Core`, `Popover DOM Helpers`, `Favorites Feature`?**
+- **Why does `getParentDoc()` connect `External Links & Favicons` to `Favorites Feature`, `Popover Hover Manager`, `Version Detection & Platform Core`, `Style Injection & Feature Modules`, `Todo Block Observer`, `Theme & Accent Color`, `Top Bar Navigation`?**
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
+- **Why does `Feature` connect `Feature Registry` to `External Links & Favicons`, `Favorites Feature`, `Sidebar Feature`, `Version Detection & Platform Core`, `Settings & Popover Registration`, `Style Injection & Feature Modules`, `Todos Feature Strategy`, `Top Bar Navigation`, `Properties Feature Strategy`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
 - **What connects `$schema`, `enabled`, `clientKind` to the rest of the system?**
   _186 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `External Links & Favicons` be split into smaller, more focused modules?**
-  _Cohesion score 0.08270676691729323 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08888888888888889 - nodes in this community are weakly interconnected._
 - **Should `Package Dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.04081632653061224 - nodes in this community are weakly interconnected._
 - **Should `Platform Adapter & Page API` be split into smaller, more focused modules?**
-  _Cohesion score 0.14333333333333334 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07624113475177305 - nodes in this community are weakly interconnected._
 - **Should `Popover DOM Helpers` be split into smaller, more focused modules?**
-  _Cohesion score 0.06414414414414414 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11733615221987315 - nodes in this community are weakly interconnected._

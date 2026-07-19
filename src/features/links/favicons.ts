@@ -69,28 +69,51 @@ function isValidHttpUrl(href: string): boolean {
   }
 }
 
+/**
+ * Build a favicon `<img>` that swaps to the CSP-safe inline globe on error.
+ *
+ * Shared by `decorateLink` (inline link favicons) and the link-preview popover,
+ * so both render the same real-favicon-then-globe-fallback element. The inline
+ * globe is a DOM `<svg>` (see `createGlobeSvg`), which is not subject to the
+ * host app's CSP `img-src` — that's why the fallback works where a `data:` image
+ * would be blocked in v2.
+ */
+export function createFaviconImg(opts: {
+  src: string;
+  size: number;
+  className: string;
+  style: string;
+}): HTMLImageElement {
+  const img = getParentDoc().createElement('img');
+  img.src = opts.src;
+  img.setAttribute('class', opts.className);
+  img.width = opts.size;
+  img.height = opts.size;
+  img.style.cssText = opts.style;
+  img.onerror = () => {
+    const globe = createGlobeSvg(opts.size);
+    globe.setAttribute('class', opts.className);
+    globe.style.cssText = opts.style;
+    img.replaceWith(globe);
+  };
+  return img;
+}
+
 export function decorateLink(anchor: HTMLAnchorElement): void {
   if (anchor.hasAttribute(PROCESSED_ATTR)) return;
 
   const href = anchor.href;
   if (!href || !isValidHttpUrl(href)) return;
 
-  const doc = getParentDoc();
   const domain = new URL(href).hostname;
 
   // Try the real favicon first; swap to the CSP-safe inline globe on failure.
-  const favicon = doc.createElement('img');
-  favicon.setAttribute('class', FAVICON_CLASS);
-  favicon.src = getRemoteFaviconUrl(domain);
-  favicon.width = 16;
-  favicon.height = 16;
-  favicon.style.cssText = ICON_STYLE;
-  favicon.onerror = () => {
-    const globe = createGlobeSvg(16);
-    globe.setAttribute('class', FAVICON_CLASS);
-    globe.style.cssText = ICON_STYLE;
-    favicon.replaceWith(globe);
-  };
+  const favicon = createFaviconImg({
+    src: getRemoteFaviconUrl(domain),
+    size: 16,
+    className: FAVICON_CLASS,
+    style: ICON_STYLE,
+  });
 
   anchor.insertBefore(favicon, anchor.firstChild);
   anchor.setAttribute(PROCESSED_ATTR, 'true');
