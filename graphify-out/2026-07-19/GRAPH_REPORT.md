@@ -1,16 +1,16 @@
-# Graph Report - pretty-logseq  (2026-07-19)
+# Graph Report - pretty-logseq  (2026-07-18)
 
 ## Corpus Check
 - 104 files · ~244,751 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 620 nodes · 1290 edges · 34 communities (32 shown, 2 thin omitted)
+- 620 nodes · 1264 edges · 35 communities (33 shown, 2 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 37 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `042c12e0`
+- Built from commit: `68f6f7d9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,6 +25,7 @@
 - Biome Linter Rules
 - TypeScript Compiler Config
 - Version Detection & Platform Core
+- blocks.ts
 - Feature Registry
 - Project Documentation
 - Plugin Manifest
@@ -49,7 +50,7 @@
 - Dependabot Config
 
 ## God Nodes (most connected - your core abstractions)
-1. `getParentDoc()` - 43 edges
+1. `getParentDoc()` - 34 edges
 2. `Feature` - 26 edges
 3. `getPlatform()` - 23 edges
 4. `getSettings()` - 21 edges
@@ -79,7 +80,7 @@
 - **CI Pipeline (lint, test, build)** — github_workflows_ci_workflow_lint_job, github_workflows_ci_workflow_test_job, github_workflows_ci_workflow_build_job [EXTRACTED 1.00]
 - **Release & Dependency Automation** — github_workflows_release_workflow, github_workflows_dependabot_auto_merge_workflow, github_dependabot_config, changelog [INFERRED 0.75]
 
-## Communities (34 total, 2 thin omitted)
+## Communities (35 total, 2 thin omitted)
 
 ### Community 0 - "External Links & Favicons"
 Cohesion: 0.08
@@ -94,8 +95,8 @@ Cohesion: 0.14
 Nodes (19): v1Platform, V2_ACCENT_COLORS, v2Platform, REF_TITLES, buildValue(), CacheEntry, clearPageCacheV2(), collectPropertyEntries() (+11 more)
 
 ### Community 3 - "Popover DOM Helpers"
-Cohesion: 0.06
-Nodes (53): PlatformApi, cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills() (+45 more)
+Cohesion: 0.07
+Nodes (47): PlatformApi, cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills() (+39 more)
 
 ### Community 4 - "Biome Formatter Config"
 Cohesion: 0.05
@@ -120,6 +121,10 @@ Nodes (26): DOM, DOM.Iterable, ES2020, **/*.spec.ts, src, test, **/*.test.ts, vi
 ### Community 9 - "Version Detection & Platform Core"
 Cohesion: 0.06
 Nodes (57): PLATFORMS, setPlatformForTest(), pickStyles(), Platform, PlatformSelectors, PlatformTheme, registry, injectStyles() (+49 more)
+
+### Community 10 - "blocks.ts"
+Cohesion: 0.29
+Nodes (6): blockWithMarkdown, blockWithProperties, blockWithReferences, multiLineDescription, nestedBlocks, simpleBlock
 
 ### Community 11 - "Feature Registry"
 Cohesion: 0.13
@@ -202,7 +207,7 @@ Cohesion: 0.67
 Nodes (3): Changelog, Release Please Action, Release Workflow
 
 ## Knowledge Gaps
-- **186 isolated node(s):** `$schema`, `enabled`, `clientKind`, `useIgnoreFile`, `ignoreUnknown` (+181 more)
+- **186 isolated node(s):** `GLOBE_PATHS`, `$schema`, `enabled`, `clientKind`, `useIgnoreFile` (+181 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -210,16 +215,16 @@ Nodes (3): Changelog, Release Please Action, Release Workflow
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `getParentDoc()` connect `Favorites Feature` to `External Links & Favicons`, `Version Detection & Platform Core`, `Popover Hover Manager`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **Why does `Feature` connect `Feature Registry` to `External Links & Favicons`, `Version Detection & Platform Core`, `Popover DOM Helpers`, `Favorites Feature`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **What connects `$schema`, `enabled`, `clientKind` to the rest of the system?**
+  _High betweenness centrality (0.021) - this node is a cross-community bridge._
+- **What connects `GLOBE_PATHS`, `$schema`, `enabled` to the rest of the system?**
   _186 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `External Links & Favicons` be split into smaller, more focused modules?**
-  _Cohesion score 0.08270676691729323 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07706766917293233 - nodes in this community are weakly interconnected._
 - **Should `Package Dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.04081632653061224 - nodes in this community are weakly interconnected._
 - **Should `Platform Adapter & Page API` be split into smaller, more focused modules?**
   _Cohesion score 0.14333333333333334 - nodes in this community are weakly interconnected._
 - **Should `Popover DOM Helpers` be split into smaller, more focused modules?**
-  _Cohesion score 0.06414414414414414 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07462686567164178 - nodes in this community are weakly interconnected._

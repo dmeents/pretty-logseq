@@ -57,3 +57,14 @@
 		outline-offset: 2px;
 	}
 }
+
+// v2 (DB): the star is inserted as a sibling of `.ls-page-title` inside the
+// `.flex.flex-row.space-between` row. That title container holds the whole title
+// *block* — including page/tag properties — so it grows tall whenever properties
+// are shown or a property dropdown is open. `align-self: center` then floats the
+// star to the vertical middle of that tall block (beside the properties) instead
+// of next to the title. Pin it to the top so it always sits beside the title text.
+[data-pl-version='v2'] .pl-favorite-star {
+	align-self: flex-start;
+	margin-top: 4px;
+}
