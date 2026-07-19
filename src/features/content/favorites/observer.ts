@@ -81,10 +81,19 @@ function updateAllStarStates(): void {
 /**
  * Scan for page titles and inject star buttons
  */
+/** A page title still needs a star if it doesn't already contain one. */
+function needsStar(title: Element): boolean {
+  return !title.querySelector(`.${STAR_BUTTON_CLASS}`);
+}
+
 async function scanAndInject(): Promise<void> {
   const doc = getParentDoc();
-  const titles = doc.querySelectorAll<HTMLHeadingElement>(
-    `${getPlatform().selectors.pageTitle}:not([${STAR_MARKER}])`,
+  // Select every title and filter to those still missing a star (rather than
+  // gating on the marker). This self-heals: if the v2 title block re-renders and
+  // drops the in-block star, the next scan re-injects it — the marker alone would
+  // suppress that forever.
+  const titles = [...doc.querySelectorAll<HTMLElement>(getPlatform().selectors.pageTitle)].filter(
+    needsStar,
   );
 
   if (titles.length === 0) return;
@@ -114,23 +123,30 @@ async function scanAndInject(): Promise<void> {
   const isV2 = getVersion() === 'v2';
 
   for (const title of titles) {
-    // Re-check marker after the async gap — a concurrent scanAndInject call may have
-    // already processed this title while we were awaiting getCurrentPage().
-    if (title.hasAttribute(STAR_MARKER)) continue;
+    // Re-check after the async gap — a concurrent scanAndInject call may have
+    // already injected a star while we were awaiting getCurrentPage().
+    if (!needsStar(title)) continue;
 
-    // Mark as processed before touching the DOM
+    // Mark as processed (used for cleanup); star-presence is what actually gates.
     title.setAttribute(STAR_MARKER, 'true');
 
     const starButton = createStarButton(pageName);
 
     if (isV2) {
-      // v2 renders the title as an editable block inside a `space-between` row
-      // (`.flex.flex-row.space-between > .ls-page-title`). Insert the star as a
-      // sibling of the title so it sits at the row's right edge, stays outside
-      // the editable block, and survives the block's React re-renders. Fall back
-      // to appending inside the title if it has no parent row.
-      const inserted = title.insertAdjacentElement('afterend', starButton);
-      if (!inserted) title.appendChild(starButton);
+      // v2 renders the title as an editable block. Inject the star at the START of
+      // the title — right before the title text (`.block-content`) inside its
+      // `.block-content-wrapper` — so it reads "★ Title". (The old placement, a
+      // sibling of `.ls-page-title` pushed to the row's right edge, collided with
+      // the DB app's own page-tag pill, which renders on the right in
+      // `.ls-block-right`.) Sitting in the title's own row also keeps the star
+      // vertically aligned and stops it from stealing width from the
+      // page-properties block nested lower in the same title. Fall back through
+      // the wrapper / title element if the inner structure isn't there yet.
+      const wrapper = title.querySelector('.block-content-wrapper');
+      const text = wrapper?.querySelector('.block-content');
+      if (text) text.before(starButton);
+      else if (wrapper) wrapper.prepend(starButton);
+      else title.prepend(starButton);
     } else {
       // v1 title is an `h1.title` flex container — append the star inside it.
       title.appendChild(starButton);

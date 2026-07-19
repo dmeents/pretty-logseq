@@ -58,27 +58,14 @@
 	}
 }
 
-// v2 (DB): the star is inserted as a sibling of `.ls-page-title` inside the
-// `.flex.flex-row.space-between` row. That title container holds the whole title
-// *block* — including page/tag properties — so it grows tall whenever properties
-// are shown or a property dropdown is open. `align-self: center` then floats the
-// star to the vertical middle of that tall block (beside the properties) instead
-// of next to the title.
-//
-// The title (`.ls-page-title`) is `flex-1` and shares this row with the star, so
-// while the star sits in the flex flow it steals ~36px of horizontal space from
-// the title — and the page-properties block nested inside the title renders that
-// much narrower than the content/table below (a full-width sibling grid item).
-// Pull the star out of flow (top-right of the row, where it already sits) so the
-// title — and its nested properties callout — spans the full content column.
-[data-pl-version='v2'] .flex.flex-row.space-between:has(> .pl-favorite-star) {
-	position: relative;
-}
-
+// v2 (DB): the star is injected in-flow at the start of the title, right before
+// the title text inside the title block's `.block-content-wrapper`. It no longer
+// collides with the DB app's page-tag pill (which renders to the right in
+// `.ls-block-right`), and because it lives in the title's own row it stays
+// vertically aligned and doesn't steal width from the page-properties block
+// nested lower in the same title. Flip the base `margin-left` to a trailing gap
+// so the star sits snug against the left edge with breathing room before the text.
 [data-pl-version='v2'] .pl-favorite-star {
-	position: absolute;
-	top: 4px;
-	right: 0;
-	margin: 0;
-	align-self: auto;
+	margin-left: 0;
+	margin-right: 6px;
 }

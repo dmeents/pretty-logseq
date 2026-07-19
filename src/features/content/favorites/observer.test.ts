@@ -297,33 +297,70 @@ describe('setupFavoriteObserver (v2)', () => {
 
   // v2 renders the title as an editable block inside a `space-between` row:
   // `#main-content-container > .flex.flex-row.space-between > .ls-page-title`.
-  function createV2Title(): { row: HTMLDivElement; title: HTMLDivElement } {
+  // The editable title text lives in a nested `.block-content-wrapper`.
+  function createV2Title(): {
+    row: HTMLDivElement;
+    title: HTMLDivElement;
+    wrapper: HTMLDivElement;
+    text: HTMLDivElement;
+  } {
     const container = document.createElement('div');
     container.id = 'main-content-container';
     const row = document.createElement('div');
     row.className = 'flex flex-row space-between';
     const title = document.createElement('div');
     title.className = 'title ls-page-title flex flex-1 w-full content items-start';
-    title.textContent = 'Test Page';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex flex-1 w-full block-content-wrapper';
+    const text = document.createElement('div');
+    text.className = 'block-content inline';
+    text.textContent = 'Test Page';
+    wrapper.appendChild(text);
+    title.appendChild(wrapper);
     row.appendChild(title);
     container.appendChild(row);
     document.body.appendChild(container);
-    return { row, title };
+    return { row, title, wrapper, text };
   }
 
-  it('injects the star as a sibling of the v2 page title, not inside it', async () => {
-    const { row, title } = createV2Title();
+  it('injects the star at the start of the title, before the title text', async () => {
+    const { title, wrapper, text } = createV2Title();
 
     setupFavoriteObserver();
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    // The star must stay outside the editable title block…
-    expect(title.querySelector('.pl-favorite-star')).toBeNull();
-    // …and sit directly after the title in the title row.
-    const star = row.querySelector('.pl-favorite-star');
+    // The star sits inside the title's `.block-content-wrapper`, immediately
+    // before the title text — not out at the row's right edge, where the DB app
+    // now renders the page-tag pill.
+    const star = wrapper.querySelector('.pl-favorite-star');
     expect(star).not.toBeNull();
-    expect(star?.previousElementSibling).toBe(title);
+    expect(star?.parentElement).toBe(wrapper);
+    expect(star?.nextElementSibling).toBe(text);
     expect(title.getAttribute('data-pl-favorite-resolved')).toBe('true');
+
+    cleanupFavoriteObserver();
+  });
+
+  it('re-injects the star on the next scan if the title block drops it', async () => {
+    let routeCallback: (() => void) | null = null;
+    logseq.App.onRouteChanged.mockImplementation(cb => {
+      routeCallback = cb;
+      return () => {};
+    });
+
+    const { wrapper } = createV2Title();
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(wrapper.querySelector('.pl-favorite-star')).not.toBeNull();
+
+    // Simulate a React re-render wiping the in-block star; the next scan (driven
+    // here by a route change) must restore it despite the marker still being set.
+    wrapper.querySelector('.pl-favorite-star')?.remove();
+    routeCallback?.();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(wrapper.querySelector('.pl-favorite-star')).not.toBeNull();
 
     cleanupFavoriteObserver();
   });
@@ -371,7 +408,7 @@ describe('setupFavoriteObserver (v2)', () => {
     cleanupFavoriteObserver();
   });
 
-  it('cleanup removes the sibling star and its marker', async () => {
+  it('cleanup removes the star and its marker', async () => {
     const { row, title } = createV2Title();
 
     setupFavoriteObserver();

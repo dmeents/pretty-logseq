@@ -11,14 +11,9 @@
   "9": "Version Detection & Platform Core",
   "10": "theme.ts",
   "11": "Feature Registry",
-  "12": "index.ts",
   "13": "Project Documentation",
-  "14": "version.ts",
-  "15": "observer.ts",
   "16": "biome.json",
   "17": "Plugin Manifest",
-  "18": "getSettings",
-  "19": "index.ts",
   "20": "formatter",
   "21": "Brand Banner Imagery",
   "22": "Codebase Popover Screenshot",
@@ -28,7 +23,6 @@
   "26": "Tables Screenshot",
   "27": "Todos Screenshot",
   "28": "CI & Coverage Config",
-  "29": "index.ts",
   "30": "Logo Design Elements",
   "31": "Default Popover Screenshot",
   "32": "Properties Screenshot",
@@ -43,9 +37,6 @@
   "41": "Vite Build Config",
   "42": "Vitest Config",
   "43": "suspicious",
-  "44": "logseq.ts",
   "45": "source",
-  "46": "correctness",
-  "47": "index.ts",
-  "48": "index.ts"
+  "46": "correctness"
 }

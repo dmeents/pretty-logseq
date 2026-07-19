@@ -12,7 +12,9 @@
   "10": "theme.ts",
   "11": "Feature Registry",
   "13": "Project Documentation",
+  "16": "biome.json",
   "17": "Plugin Manifest",
+  "20": "formatter",
   "21": "Brand Banner Imagery",
   "22": "Codebase Popover Screenshot",
   "23": "Person Popover Screenshot",
@@ -29,8 +31,12 @@
   "35": "No-Logo Banner Imagery",
   "36": "Links Preview Screenshot",
   "37": "Release Automation",
+  "38": "includes",
   "39": "SCSS Type Declarations",
   "40": "Dependabot Config",
   "41": "Vite Build Config",
-  "42": "Vitest Config"
+  "42": "Vitest Config",
+  "43": "suspicious",
+  "45": "source",
+  "46": "correctness"
 }

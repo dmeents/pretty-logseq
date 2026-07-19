@@ -105,14 +105,14 @@
     "semantic_hash": "cab0ebc81174446582c2f8d71b4ff26b"
   },
   "src/features/content/favorites/observer.test.ts": {
-    "mtime": 1784430047.5101326,
-    "ast_hash": "3ce9c7ab188f8f23a8f8460782ed9ffc",
-    "semantic_hash": "3ce9c7ab188f8f23a8f8460782ed9ffc"
+    "mtime": 1784500005.663938,
+    "ast_hash": "fe094c277f005505aa2f8c8ad52e9af7",
+    "semantic_hash": ""
   },
   "src/features/content/favorites/observer.ts": {
-    "mtime": 1784430001.597734,
-    "ast_hash": "807afaa47d1a4115ab735d216f0fdcf5",
-    "semantic_hash": "807afaa47d1a4115ab735d216f0fdcf5"
+    "mtime": 1784499891.5229843,
+    "ast_hash": "d54746d2ce928c2ff252292663b2a107",
+    "semantic_hash": ""
   },
   "src/features/content/index.test.ts": {
     "mtime": 1784169484.076924,

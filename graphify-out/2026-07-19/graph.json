@@ -40,8 +40,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "biome",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "biome.json"
     },
     {
@@ -51,8 +51,8 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "biome_schema",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "$schema"
     },
     {
@@ -62,8 +62,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "biome_vcs",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "vcs"
     },
     {
@@ -73,8 +73,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "biome_vcs_enabled",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "enabled"
     },
     {
@@ -84,8 +84,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "biome_vcs_clientkind",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "clientkind"
     },
     {
@@ -95,8 +95,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "biome_vcs_useignorefile",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "useignorefile"
     },
     {
@@ -106,8 +106,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "biome_files",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 38,
+      "community_name": "includes",
       "norm_label": "files"
     },
     {
@@ -117,8 +117,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "biome_files_ignoreunknown",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 38,
+      "community_name": "includes",
       "norm_label": "ignoreunknown"
     },
     {
@@ -128,8 +128,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "biome_files_includes",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 38,
+      "community_name": "includes",
       "norm_label": "includes"
     },
     {
@@ -139,8 +139,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "ref_ts",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 38,
+      "community_name": "includes",
       "norm_label": "**/*.ts"
     },
     {
@@ -150,8 +150,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "ref_js",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 38,
+      "community_name": "includes",
       "norm_label": "**/*.js"
     },
     {
@@ -161,8 +161,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "ref_json",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 38,
+      "community_name": "includes",
       "norm_label": "**/*.json"
     },
     {
@@ -172,8 +172,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "biome_formatter",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "formatter"
     },
     {
@@ -183,8 +183,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "biome_formatter_enabled",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "enabled"
     },
     {
@@ -194,8 +194,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "biome_formatter_formatwitherrors",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "formatwitherrors"
     },
     {
@@ -205,8 +205,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "biome_formatter_indentstyle",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "indentstyle"
     },
     {
@@ -216,8 +216,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "biome_formatter_indentwidth",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "indentwidth"
     },
     {
@@ -227,8 +227,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "biome_formatter_lineending",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "lineending"
     },
     {
@@ -238,8 +238,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "biome_formatter_linewidth",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "linewidth"
     },
     {
@@ -249,8 +249,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "biome_formatter_attributeposition",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 20,
+      "community_name": "formatter",
       "norm_label": "attributeposition"
     },
     {
@@ -260,8 +260,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "biome_linter",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "linter"
     },
     {
@@ -271,8 +271,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "biome_linter_enabled",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "enabled"
     },
     {
@@ -348,8 +348,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "biome_rules_correctness",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 46,
+      "community_name": "correctness",
       "norm_label": "correctness"
     },
     {
@@ -359,8 +359,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "biome_correctness_recommended",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 46,
+      "community_name": "correctness",
       "norm_label": "recommended"
     },
     {
@@ -370,8 +370,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "biome_correctness_useexhaustivedependencies",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 46,
+      "community_name": "correctness",
       "norm_label": "useexhaustivedependencies"
     },
     {
@@ -381,8 +381,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "biome_correctness_nounusedimports",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 46,
+      "community_name": "correctness",
       "norm_label": "nounusedimports"
     },
     {
@@ -491,8 +491,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "biome_rules_suspicious",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 43,
+      "community_name": "suspicious",
       "norm_label": "suspicious"
     },
     {
@@ -502,8 +502,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "biome_suspicious_recommended",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 43,
+      "community_name": "suspicious",
       "norm_label": "recommended"
     },
     {
@@ -513,8 +513,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "biome_suspicious_noconsole",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 43,
+      "community_name": "suspicious",
       "norm_label": "noconsole"
     },
     {
@@ -524,8 +524,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "biome_suspicious_noemptyblock",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 43,
+      "community_name": "suspicious",
       "norm_label": "noemptyblock"
     },
     {
@@ -535,8 +535,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "biome_suspicious_noarrayindexkey",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 43,
+      "community_name": "suspicious",
       "norm_label": "noarrayindexkey"
     },
     {
@@ -546,8 +546,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "biome_suspicious_noexplicitany",
-      "community": 7,
-      "community_name": "Biome Linter Rules",
+      "community": 43,
+      "community_name": "suspicious",
       "norm_label": "noexplicitany"
     },
     {
@@ -557,8 +557,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "biome_assist",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 45,
+      "community_name": "source",
       "norm_label": "assist"
     },
     {
@@ -568,8 +568,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "biome_assist_actions",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 45,
+      "community_name": "source",
       "norm_label": "actions"
     },
     {
@@ -579,8 +579,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "biome_actions_source",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 45,
+      "community_name": "source",
       "norm_label": "source"
     },
     {
@@ -590,8 +590,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "biome_source_organizeimports",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 45,
+      "community_name": "source",
       "norm_label": "organizeimports"
     },
     {
@@ -601,8 +601,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "biome_organizeimports_level",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 45,
+      "community_name": "source",
       "norm_label": "level"
     },
     {
@@ -612,8 +612,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "biome_javascript",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "javascript"
     },
     {
@@ -733,8 +733,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "biome_overrides",
-      "community": 4,
-      "community_name": "Biome Formatter Config",
+      "community": 16,
+      "community_name": "biome.json",
       "norm_label": "overrides"
     },
     {
@@ -1525,8 +1525,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_core_platform_types_platformapi_getthememode",
-      "community": 2,
-      "community_name": "Platform Adapter & Page API",
+      "community": 11,
+      "community_name": "Feature Registry",
       "norm_label": ".getthememode()"
     },
     {
@@ -2215,7 +2215,7 @@
       "label": "createV2Title()",
       "file_type": "code",
       "source_file": "src/features/content/favorites/observer.test.ts",
-      "source_location": "L300",
+      "source_location": "L301",
       "_origin": "ast",
       "id": "src_features_content_favorites_observer_test_createv2title",
       "community": 5,
@@ -2267,10 +2267,21 @@
       "norm_label": "updateallstarstates()"
     },
     {
+      "label": "needsStar()",
+      "file_type": "code",
+      "source_file": "src/features/content/favorites/observer.ts",
+      "source_location": "L85",
+      "_origin": "ast",
+      "id": "src_features_content_favorites_observer_needsstar",
+      "community": 5,
+      "community_name": "Favorites Feature",
+      "norm_label": "needsstar()"
+    },
+    {
       "label": "scanAndInject()",
       "file_type": "code",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L84",
+      "source_location": "L89",
       "_origin": "ast",
       "id": "src_features_content_favorites_observer_scanandinject",
       "community": 5,
@@ -2281,7 +2292,7 @@
       "label": "handleMutations()",
       "file_type": "code",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L145",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "src_features_content_favorites_observer_handlemutations",
       "community": 5,
@@ -2292,7 +2303,7 @@
       "label": "setupFavoriteObserver()",
       "file_type": "code",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L157",
+      "source_location": "L169",
       "_origin": "ast",
       "id": "src_features_content_favorites_observer_setupfavoriteobserver",
       "community": 5,
@@ -2303,7 +2314,7 @@
       "label": "cleanupFavoriteObserver()",
       "file_type": "code",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L198",
+      "source_location": "L210",
       "_origin": "ast",
       "id": "src_features_content_favorites_observer_cleanupfavoriteobserver",
       "community": 5,
@@ -4297,8 +4308,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_topbar_handlers_test",
-      "community": 9,
-      "community_name": "Version Detection & Platform Core",
+      "community": 5,
+      "community_name": "Favorites Feature",
       "norm_label": "handlers.test.ts"
     },
     {
@@ -4308,8 +4319,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_features_topbar_handlers_test_setupdom",
-      "community": 9,
-      "community_name": "Version Detection & Platform Core",
+      "community": 5,
+      "community_name": "Favorites Feature",
       "norm_label": "setupdom()"
     },
     {
@@ -4319,8 +4330,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_features_topbar_handlers",
-      "community": 9,
-      "community_name": "Version Detection & Platform Core",
+      "community": 5,
+      "community_name": "Favorites Feature",
       "norm_label": "handlers.ts"
     },
     {
@@ -4330,8 +4341,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_features_topbar_handlers_createnavarrowsinleft",
-      "community": 9,
-      "community_name": "Version Detection & Platform Core",
+      "community": 5,
+      "community_name": "Favorites Feature",
       "norm_label": "createnavarrowsinleft()"
     },
     {
@@ -5276,8 +5287,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_types_logseq",
-      "community": 2,
-      "community_name": "Platform Adapter & Page API",
+      "community": 11,
+      "community_name": "Feature Registry",
       "norm_label": "logseq.ts"
     },
     {
@@ -5287,8 +5298,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_types_logseq_pageproperties",
-      "community": 2,
-      "community_name": "Platform Adapter & Page API",
+      "community": 11,
+      "community_name": "Feature Registry",
       "norm_label": "pageproperties"
     },
     {
@@ -5320,8 +5331,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_types_logseq_thememode",
-      "community": 2,
-      "community_name": "Platform Adapter & Page API",
+      "community": 11,
+      "community_name": "Feature Registry",
       "norm_label": "thememode"
     },
     {
@@ -9202,7 +9213,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L87",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_scanandinject",
@@ -9371,7 +9382,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L164",
+      "source_location": "L176",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_setupfavoriteobserver",
@@ -11413,7 +11424,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L114",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_scanandinject",
@@ -11781,7 +11792,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L180",
+      "source_location": "L192",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_setupfavoriteobserver",
@@ -12100,7 +12111,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.test.ts",
-      "source_location": "L300",
+      "source_location": "L301",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_test",
@@ -12122,7 +12133,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L198",
+      "source_location": "L210",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer",
@@ -12144,7 +12155,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L145",
+      "source_location": "L157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer",
@@ -12155,7 +12166,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L84",
+      "source_location": "L85",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_features_content_favorites_observer",
+      "target": "src_features_content_favorites_observer_needsstar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/content/favorites/observer.ts",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer",
@@ -12166,7 +12188,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L157",
+      "source_location": "L169",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer",
@@ -12249,7 +12271,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L124",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_scanandinject",
@@ -12273,7 +12295,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L183",
+      "source_location": "L195",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_setupfavoriteobserver",
@@ -12293,11 +12315,23 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "src/features/content/favorites/observer.ts",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_features_content_favorites_observer_scanandinject",
+      "target": "src_features_content_favorites_observer_needsstar",
+      "confidence_score": 0.5
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L150",
+      "source_location": "L162",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_handlemutations",
@@ -12309,7 +12343,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L85",
+      "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_scanandinject",
@@ -12321,7 +12355,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L182",
+      "source_location": "L194",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_setupfavoriteobserver",
@@ -12333,7 +12367,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L167",
+      "source_location": "L179",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_setupfavoriteobserver",
@@ -12345,7 +12379,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L159",
+      "source_location": "L171",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_setupfavoriteobserver",
@@ -12370,7 +12404,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/features/content/favorites/observer.ts",
-      "source_location": "L218",
+      "source_location": "L230",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_features_content_favorites_observer_cleanupfavoriteobserver",
@@ -22638,5 +22672,5 @@
       "source_file": ".github/workflows/release.yml"
     }
   ],
-  "built_at_commit": "29698909af51e6aff65ca700c5d1dfd0bdecef82"
+  "built_at_commit": "e337986104f9aefd05276da7afe0ddc0d197b36c"
 }
