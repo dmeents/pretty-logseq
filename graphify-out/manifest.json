@@ -65,14 +65,14 @@
     "semantic_hash": "01ffabe672fc157a024ffc2da655057e"
   },
   "src/core/theme.test.ts": {
-    "mtime": 1784191876.7192454,
-    "ast_hash": "969b30d6a351dbb7fb9419b58d4d4bf2",
-    "semantic_hash": "969b30d6a351dbb7fb9419b58d4d4bf2"
+    "mtime": 1784501699.5473642,
+    "ast_hash": "9b0e1c37610f6250b4b8d7b6b398624e",
+    "semantic_hash": ""
   },
   "src/core/theme.ts": {
-    "mtime": 1784191876.719292,
-    "ast_hash": "3328ff87037a35584f52e24b6da78d04",
-    "semantic_hash": "3328ff87037a35584f52e24b6da78d04"
+    "mtime": 1784501601.5941267,
+    "ast_hash": "fbc71287cd948d1cf99f60807a4f243a",
+    "semantic_hash": ""
   },
   "src/core/version.test.ts": {
     "mtime": 1784191876.719292,
@@ -105,8 +105,8 @@
     "semantic_hash": "cab0ebc81174446582c2f8d71b4ff26b"
   },
   "src/features/content/favorites/observer.test.ts": {
-    "mtime": 1784500195.1524682,
-    "ast_hash": "7151fc582f530658cbecd80ec0f58be0",
+    "mtime": 1784501598.417672,
+    "ast_hash": "c966bf46b8cc38f26b2bf4a1f6ce5062",
     "semantic_hash": ""
   },
   "src/features/content/favorites/observer.ts": {
@@ -370,8 +370,8 @@
     "semantic_hash": "a426795fe5d8917b8c46e7644abfa6ac"
   },
   "src/index.ts": {
-    "mtime": 1784498858.5413306,
-    "ast_hash": "594b9922732acc9a7b7486db6a0472f9",
+    "mtime": 1784501607.1411967,
+    "ast_hash": "d1891314d9f8dde90a26f7c5ae7b947a",
     "semantic_hash": ""
   },
   "src/lib/api.test.ts": {
@@ -405,9 +405,9 @@
     "semantic_hash": "a4e903ed21195919f4d25d854e20cd85"
   },
   "src/settings/index.test.ts": {
-    "mtime": 1784191876.7206917,
-    "ast_hash": "c5fd05cbc63b5489aa449a8765905e13",
-    "semantic_hash": "c5fd05cbc63b5489aa449a8765905e13"
+    "mtime": 1784501516.5470512,
+    "ast_hash": "d91a4675eda2a0b12ffa2b7615325875",
+    "semantic_hash": ""
   },
   "src/settings/index.ts": {
     "mtime": 1784191876.72071,
@@ -635,13 +635,23 @@
     "semantic_hash": ""
   },
   "src/features/sidebar-tags/observer.test.ts": {
-    "mtime": 1784498892.9712567,
-    "ast_hash": "91a041394e5b85d0a28f4f5d4d207a33",
+    "mtime": 1784501259.0949588,
+    "ast_hash": "9ee39487bcc8853428310607da911f1f",
     "semantic_hash": ""
   },
   "src/features/sidebar-tags/observer.ts": {
     "mtime": 1784498798.0121527,
     "ast_hash": "52cf5c0cfbdbbfe8676fe4ea7b2838e1",
+    "semantic_hash": ""
+  },
+  "src/core/platform/v1.test.ts": {
+    "mtime": 1784501590.1490226,
+    "ast_hash": "21037ee33a5151e6797cc67d16ca46ee",
+    "semantic_hash": ""
+  },
+  "src/core/platform/v2.test.ts": {
+    "mtime": 1784501197.7503242,
+    "ast_hash": "0d0bb5a8e565aea2ef0107744da1f374",
     "semantic_hash": ""
   }
 }

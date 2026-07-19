@@ -3,7 +3,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { generateThemeCSS, setupThemeObserver } from './theme';
+import { detectAccentWhenReady, generateThemeCSS, setupThemeObserver } from './theme';
 import { setVersionForTest } from './version';
 
 describe('Theme Color Management', () => {
@@ -326,6 +326,62 @@ describe('Theme Color Management', () => {
 
       document.documentElement.removeAttribute('data-color');
       setVersionForTest(null);
+    });
+  });
+
+  describe('detectAccentWhenReady', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('re-detects and refreshes once the theme accent becomes readable', () => {
+      // Simulate the cold-start race: the accent var is unusable until the theme
+      // stylesheet lands, then resolves to the real (rust) accent.
+      let themeReady = false;
+      vi.spyOn(window, 'getComputedStyle').mockImplementation(
+        () => ({ color: themeReady ? 'rgb(184, 90, 48)' : 'rgb(0, 0, 0)' }) as CSSStyleDeclaration,
+      );
+      const onReady = vi.fn();
+
+      detectAccentWhenReady(onReady);
+
+      // Theme not applied yet → probe is unusable → no refresh.
+      vi.advanceTimersByTime(200);
+      expect(onReady).not.toHaveBeenCalled();
+
+      // Theme applies its accent → next poll refreshes.
+      themeReady = true;
+      vi.advanceTimersByTime(200);
+      expect(onReady).toHaveBeenCalled();
+    });
+
+    it('stops polling once the accent value settles', () => {
+      vi.spyOn(window, 'getComputedStyle').mockReturnValue({
+        color: 'rgb(184, 90, 48)',
+      } as CSSStyleDeclaration);
+      const onReady = vi.fn();
+
+      detectAccentWhenReady(onReady);
+      vi.advanceTimersByTime(200 * 30);
+
+      // First usable read + two stable confirmations, then it stops.
+      expect(onReady).toHaveBeenCalledTimes(3);
+    });
+
+    it('gives up (keeps the fallback) when no accent ever resolves', () => {
+      vi.spyOn(window, 'getComputedStyle').mockReturnValue({
+        color: 'rgb(0, 0, 0)',
+      } as CSSStyleDeclaration);
+      const onReady = vi.fn();
+
+      detectAccentWhenReady(onReady);
+      vi.advanceTimersByTime(200 * 30);
+
+      expect(onReady).not.toHaveBeenCalled();
     });
   });
 });

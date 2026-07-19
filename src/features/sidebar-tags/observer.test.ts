@@ -131,6 +131,48 @@ describe('Sidebar Tag Observer', () => {
     cleanup();
   });
 
+  it('skips a title that already contains child elements', () => {
+    const sidebar = makeSidebar('placeholder');
+    const el = title(sidebar);
+    // A title carrying its own markup (not a bare text node) is left untouched.
+    el.innerHTML = '<em>Next.JS</em> #Technology';
+    setupSidebarTagObserver();
+
+    expect(el.querySelector('.pl-nav-tag')).toBeNull();
+    expect(el.querySelector('em')).not.toBeNull();
+  });
+
+  it('wraps titles once the sidebar appears after setup (no #left-sidebar at start)', async () => {
+    // No sidebar in the DOM yet — the observer falls back to observing <body>.
+    const cleanup = setupSidebarTagObserver();
+
+    const sidebar = makeSidebar('Rust #Technology');
+    await new Promise(r => setTimeout(r, 0));
+    await new Promise(r => requestAnimationFrame(r));
+
+    expect(title(sidebar).querySelector('.pl-nav-tag')?.textContent).toBe('#Technology');
+
+    cleanup();
+  });
+
+  it('batches rapid mutations into a single scan', async () => {
+    const sidebar = makeSidebar('Technology');
+    const cleanup = setupSidebarTagObserver();
+
+    // Two synchronous mutations before the RAF fires exercise the already-scheduled
+    // (rafId !== null) branch; both items still get wrapped on the one scan.
+    const ul = sidebar.querySelector('ul');
+    ul?.appendChild(createNavItem('Tauri #Technology'));
+    ul?.appendChild(createNavItem('Rust #Technology'));
+    await new Promise(r => setTimeout(r, 0));
+    await new Promise(r => requestAnimationFrame(r));
+
+    expect(title(sidebar, 1).querySelector('.pl-nav-tag')?.textContent).toBe('#Technology');
+    expect(title(sidebar, 2).querySelector('.pl-nav-tag')?.textContent).toBe('#Technology');
+
+    cleanup();
+  });
+
   describe('Cleanup', () => {
     it('restores the original title text on cleanup', () => {
       const sidebar = makeSidebar('Next.JS #Technology');

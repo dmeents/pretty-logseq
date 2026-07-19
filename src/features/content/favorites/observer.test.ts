@@ -4,6 +4,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setVersionForTest } from '../../../core/version';
+import * as favoritesApi from './api';
 import { clearFavoritesCache, refreshFavorites } from './api';
 import { cleanupFavoriteObserver, setupFavoriteObserver } from './observer';
 
@@ -166,6 +167,85 @@ describe('setupFavoriteObserver', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(clickHandler).not.toHaveBeenCalled();
+
+    cleanupFavoriteObserver();
+  });
+
+  it('logs and swallows an error when toggling a favorite fails', async () => {
+    const container = createContainer();
+    const title = createTitleElement();
+    container.appendChild(title);
+    document.body.appendChild(container);
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const star = title.querySelector('.pl-favorite-star') as HTMLButtonElement;
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // The underlying write reads the graph favorites; make that reject.
+    logseq.App.getCurrentGraphFavorites.mockRejectedValue(new Error('boom'));
+
+    expect(() => star.click()).not.toThrow();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[Pretty Logseq] Failed to toggle favorite:',
+      expect.any(Error),
+    );
+
+    errorSpy.mockRestore();
+    cleanupFavoriteObserver();
+  });
+
+  it('logs when the favorites refresh on a route change fails', async () => {
+    let routeCallback: (() => void) | null = null;
+    logseq.App.onRouteChanged.mockImplementation(cb => {
+      routeCallback = cb;
+      return () => {};
+    });
+
+    const container = createContainer();
+    container.appendChild(createTitleElement());
+    document.body.appendChild(container);
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // refreshFavorites swallows its own errors, so reject it at the call site to
+    // exercise the route handler's catch.
+    const refreshSpy = vi
+      .spyOn(favoritesApi, 'refreshFavorites')
+      .mockRejectedValue(new Error('refresh failed'));
+    routeCallback?.();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[Pretty Logseq] Failed to sync favorites on route change:',
+      expect.any(Error),
+    );
+
+    refreshSpy.mockRestore();
+    errorSpy.mockRestore();
+    cleanupFavoriteObserver();
+  });
+
+  it('falls back to originalName when the current page has no name', async () => {
+    logseq.Editor.getCurrentPage.mockResolvedValue({
+      originalName: 'Original Only',
+    } as Awaited<ReturnType<typeof logseq.Editor.getCurrentPage>>);
+
+    const container = createContainer();
+    const title = createTitleElement();
+    container.appendChild(title);
+    document.body.appendChild(container);
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const star = title.querySelector('.pl-favorite-star') as HTMLButtonElement;
+    expect(star).not.toBeNull();
+    expect(star.dataset.plFavoritePage).toBe('Original Only');
 
     cleanupFavoriteObserver();
   });
@@ -337,6 +417,51 @@ describe('setupFavoriteObserver (v2)', () => {
     expect(star?.parentElement).toBe(wrapper);
     expect(star?.nextElementSibling).toBe(text);
     expect(title.getAttribute('data-pl-favorite-resolved')).toBe('true');
+
+    cleanupFavoriteObserver();
+  });
+
+  it('prepends the star to the wrapper when the title text node is not an element', async () => {
+    // `.block-content-wrapper` present but no `.block-content` element (e.g. the
+    // title renders as a bare text node) → the star prepends to the wrapper.
+    const container = document.createElement('div');
+    container.id = 'main-content-container';
+    const title = document.createElement('div');
+    title.className = 'title ls-page-title flex flex-1 w-full';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex flex-1 w-full block-content-wrapper';
+    wrapper.textContent = 'Bare Title';
+    title.appendChild(wrapper);
+    container.appendChild(title);
+    document.body.appendChild(container);
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const star = wrapper.querySelector('.pl-favorite-star');
+    expect(star).not.toBeNull();
+    expect(star?.parentElement).toBe(wrapper);
+    expect(wrapper.firstElementChild).toBe(star);
+
+    cleanupFavoriteObserver();
+  });
+
+  it('prepends the star to the title when there is no block-content wrapper', async () => {
+    // No `.block-content-wrapper` at all → fall back to prepending the title.
+    const container = document.createElement('div');
+    container.id = 'main-content-container';
+    const title = document.createElement('div');
+    title.className = 'title ls-page-title flex flex-1 w-full';
+    title.textContent = 'Plain Title';
+    container.appendChild(title);
+    document.body.appendChild(container);
+
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const star = title.querySelector('.pl-favorite-star');
+    expect(star).not.toBeNull();
+    expect(title.firstElementChild).toBe(star);
 
     cleanupFavoriteObserver();
   });

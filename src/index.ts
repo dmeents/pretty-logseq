@@ -2,7 +2,7 @@ import '@logseq/libs';
 
 import { registry } from './core/registry';
 import { injectStyles, refreshStyles } from './core/styles';
-import { setupThemeObserver } from './core/theme';
+import { detectAccentWhenReady, setupThemeObserver } from './core/theme';
 import { applyVersionAttribute, detectVersion, getVersion } from './core/version';
 import { contentFeature } from './features/content';
 import { linksFeature } from './features/links';
@@ -167,6 +167,9 @@ async function main(): Promise<void> {
 
   injectStyles();
   setupThemeObserver(refreshStyles);
+  // The theme's CSS vars may not be applied yet at cold startup; re-detect the
+  // accent once they settle so we don't get stuck on the default fallback.
+  detectAccentWhenReady(refreshStyles);
 
   await registry.initializeAll();
 
