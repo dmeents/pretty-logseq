@@ -62,9 +62,9 @@ describe('getPlatform', () => {
     expect(v2.api.getPageBlocks).not.toBe(v1.api.getPageBlocks);
     expect(v2.api.clearPageCache).not.toBe(v1.api.clearPageCache);
 
-    // Reading favorites is App-level and version-agnostic — still v1's.
-    expect(v2.api.getFavorites).toBe(v1.api.getFavorites);
-    // Writing diverges: v1 rewrites the graph config, v2 invokes the DB command.
+    // Favorites diverge in both directions: v2 reads DB entities (not name
+    // strings) and writes via the toggle command (not the graph config).
+    expect(v2.api.getFavorites).not.toBe(v1.api.getFavorites);
     expect(v2.api.toggleFavorite).not.toBe(v1.api.toggleFavorite);
   });
 

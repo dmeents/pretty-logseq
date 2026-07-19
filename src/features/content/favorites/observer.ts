@@ -11,6 +11,7 @@ import { isFavorited, refreshFavorites, toggleFavorite } from './api';
 const STAR_MARKER = 'data-pl-favorite-resolved';
 const STAR_BUTTON_CLASS = 'pl-favorite-star';
 const STAR_ACTIVE_CLASS = 'pl-favorite-star--active';
+const STAR_PAGE_ATTR = 'plFavoritePage';
 
 let observer: MutationObserver | null = null;
 let rafId: number | null = null;
@@ -33,10 +34,13 @@ function createStarButton(pageName: string): HTMLButtonElement {
 		</svg>
 	`;
 
+  // Remember which page this star belongs to so its state can be re-synced when
+  // the favorites cache refreshes (e.g. the star may have been injected before an
+  // async refresh completed on navigation).
+  button.dataset[STAR_PAGE_ATTR] = pageName;
+
   // Set initial state
-  if (isFavorited(pageName)) {
-    button.classList.add(STAR_ACTIVE_CLASS);
-  }
+  applyStarState(button, pageName);
 
   // Click handler
   button.addEventListener('click', async e => {
@@ -45,13 +49,33 @@ function createStarButton(pageName: string): HTMLButtonElement {
 
     try {
       await toggleFavorite(pageName);
-      button.classList.toggle(STAR_ACTIVE_CLASS);
+      applyStarState(button, pageName);
     } catch (error) {
       console.error('[Pretty Logseq] Failed to toggle favorite:', error);
     }
   });
 
   return button;
+}
+
+/**
+ * Reflect the current favorite state of `pageName` onto a star button.
+ */
+function applyStarState(button: HTMLElement, pageName: string): void {
+  button.classList.toggle(STAR_ACTIVE_CLASS, isFavorited(pageName));
+}
+
+/**
+ * Re-sync every injected star against the (possibly just-refreshed) favorites
+ * cache. Cheap, and it corrects stars that were injected before a route-change
+ * refresh resolved — the cause of stale/empty stars on revisiting a page.
+ */
+function updateAllStarStates(): void {
+  const doc = getParentDoc();
+  doc.querySelectorAll<HTMLElement>(`.${STAR_BUTTON_CLASS}`).forEach(button => {
+    const pageName = button.dataset[STAR_PAGE_ATTR];
+    if (pageName) applyStarState(button, pageName);
+  });
 }
 
 /**
@@ -146,12 +170,21 @@ export function setupFavoriteObserver(): void {
     subtree: true,
   });
 
-  // Listen for route changes to refresh favorites cache
+  // On navigation, refresh the favorites cache BEFORE (re)scanning so stars are
+  // created with the right state, then re-sync any star the MutationObserver may
+  // have already injected against the stale cache. Ordering matters: the observer
+  // marks a title as resolved on injection, so a star built mid-refresh would
+  // otherwise keep its stale (empty) state forever.
   routeUnsubscribe = logseq.App.onRouteChanged(() => {
     console.log('[Pretty Logseq] Route changed, refreshing favorites');
-    refreshFavorites();
-    // Trigger a rescan on next frame
-    setTimeout(scanAndInject, 100);
+    refreshFavorites()
+      .then(async () => {
+        await scanAndInject();
+        updateAllStarStates();
+      })
+      .catch(error => {
+        console.error('[Pretty Logseq] Failed to sync favorites on route change:', error);
+      });
   });
 
   console.log('[Pretty Logseq] Observer set up, running initial scan');

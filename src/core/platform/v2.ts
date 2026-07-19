@@ -42,6 +42,26 @@ const V2_ACCENT_COLORS: Record<string, string> = {
   gray: 'rgb(139, 141, 152)',
 };
 
+/**
+ * v2 `getCurrentGraphFavorites()` returns DB page-block *entities* (run through
+ * `result->js`), not the plain name strings v1 reads from `config.edn`. Pull the
+ * page's name off each entity using the same field-priority the favorite-star
+ * observer uses to identify the current page (`name` → `originalName` → `title`),
+ * so both sides resolve to the same attribute and match after lower-casing.
+ * (Falls back to the raw string so an unexpected string entry is still handled.)
+ */
+function favoriteEntryName(entry: unknown): string | null {
+  if (typeof entry === 'string') return entry || null;
+  if (entry && typeof entry === 'object') {
+    const e = entry as Record<string, unknown>;
+    for (const key of ['name', 'originalName', 'title', 'block/name', 'block/title']) {
+      const value = e[key];
+      if (typeof value === 'string' && value) return value;
+    }
+  }
+  return null;
+}
+
 export const v2Platform: Platform = {
   ...v1Platform,
   version: 'v2',
@@ -67,6 +87,14 @@ export const v2Platform: Platform = {
     getPageBlocks: name => getPageBlocksV2(name),
     getThemeMode: () => getThemeMode(),
     clearPageCache: name => clearPageCacheV2(name),
+    // DB returns favorite *entities*, not name strings — normalize to names so the
+    // shared name-keyed favorites cache works (v1 already returns strings).
+    getFavorites: async () => {
+      const raw = (await logseq.App.getCurrentGraphFavorites()) as unknown;
+      return Array.isArray(raw)
+        ? raw.map(favoriteEntryName).filter((n): n is string => n !== null)
+        : [];
+    },
     // DB graphs don't store `:favorites` in config.edn (writing it just logs a
     // deprecation), so route through the built-in `logseq.page/toggle-favorite`
     // command. It toggles the *current* page — which is exactly the page whose

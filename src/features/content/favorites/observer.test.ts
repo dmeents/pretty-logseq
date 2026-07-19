@@ -340,6 +340,37 @@ describe('setupFavoriteObserver (v2)', () => {
     cleanupFavoriteObserver();
   });
 
+  it('re-syncs a star to active after the favorites cache refreshes on route change', async () => {
+    // Capture the route-change callback so we can drive it.
+    let routeCallback: (() => void) | null = null;
+    logseq.App.onRouteChanged.mockImplementation(cb => {
+      routeCallback = cb;
+      return () => {};
+    });
+
+    const { row } = createV2Title();
+
+    // Cache is empty when the star is first injected → it starts inactive.
+    logseq.App.getCurrentGraphFavorites.mockResolvedValue([]);
+    setupFavoriteObserver();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const star = row.querySelector('.pl-favorite-star') as HTMLButtonElement;
+    expect(star.classList.contains('pl-favorite-star--active')).toBe(false);
+
+    // The page is in fact favorited (DB returns entities); a route change refresh
+    // must flip the already-injected star to active.
+    logseq.App.getCurrentGraphFavorites.mockResolvedValue([
+      { name: 'test-page', originalName: 'Test Page', uuid: 'uuid-1' },
+    ] as unknown as string[]);
+    routeCallback?.();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(star.classList.contains('pl-favorite-star--active')).toBe(true);
+
+    cleanupFavoriteObserver();
+  });
+
   it('cleanup removes the sibling star and its marker', async () => {
     const { row, title } = createV2Title();
 

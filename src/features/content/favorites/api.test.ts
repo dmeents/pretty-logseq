@@ -248,6 +248,21 @@ describe('toggleFavorite (v2 DB graph)', () => {
     setVersionForTest(null);
   });
 
+  it('normalizes DB favorite entities to page names when refreshing', async () => {
+    // DB `getCurrentGraphFavorites` returns page-block entities, not strings.
+    logseq.App.getCurrentGraphFavorites.mockResolvedValue([
+      { name: 'project alpha', originalName: 'Project Alpha', uuid: 'uuid-1' },
+      { name: 'daily notes', originalName: 'Daily Notes', uuid: 'uuid-2' },
+    ] as unknown as string[]);
+
+    await refreshFavorites();
+
+    // Matched by the same `name` field the observer reads off the current page.
+    expect(isFavorited('project alpha')).toBe(true);
+    expect(isFavorited('Daily Notes')).toBe(true);
+    expect(isFavorited('unknown page')).toBe(false);
+  });
+
   it('toggles via the built-in command instead of writing graph config', async () => {
     logseq.App.getCurrentGraphFavorites.mockResolvedValue([]);
     logseq.App.invokeExternalCommand.mockResolvedValue(undefined);
