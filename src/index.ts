@@ -9,6 +9,7 @@ import { linksFeature } from './features/links';
 import { popoversFeature } from './features/popovers';
 import { propertiesFeature } from './features/properties';
 import { sidebarFeature } from './features/sidebar';
+import { sidebarTagsFeature } from './features/sidebar-tags';
 import { tablesFeature } from './features/tables';
 import { tagsFeature } from './features/tags';
 import { templatesFeature } from './features/templates';
@@ -84,6 +85,14 @@ const FEATURE_BINDINGS: FeatureBinding[] = [
   },
   { keys: ['navArrowsLeft'], action: 'restyle', onChange: applyNavArrowsSetting },
   {
+    // Enum setting ('off'|'hide'|'subtle') — 'off' is truthy, so the boolean
+    // `enableKey` gate doesn't fit. `reinit` (no enableKey) always destroys then
+    // re-inits; the feature self-gates on the setting value in its `init`.
+    keys: ['sidebarPageTags'],
+    action: 'reinit',
+    featureId: 'sidebar-tags',
+  },
+  {
     keys: [
       'enablePrettyTables',
       'enablePrettyTags',
@@ -138,6 +147,7 @@ function registerFeatures(): void {
   registry.register(todosFeature);
   registry.register(topbarFeature);
   registry.register(sidebarFeature);
+  registry.register(sidebarTagsFeature);
   registry.register(tablesFeature);
   registry.register(tagsFeature);
   registry.register(templatesFeature);

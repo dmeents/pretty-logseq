@@ -21,6 +21,7 @@ export interface PluginSettings {
   styleTopbarIcons: boolean;
   topbarGradient: boolean;
   hideWindowControls: boolean;
+  sidebarPageTags: 'off' | 'hide' | 'subtle';
   logseqVersion: 'auto' | 'v1' | 'v2';
 }
 
@@ -45,14 +46,17 @@ export const defaultSettings: PluginSettings = {
   styleTopbarIcons: true,
   topbarGradient: true,
   hideWindowControls: false,
+  sidebarPageTags: 'subtle',
   logseqVersion: 'auto',
 };
 
-/** Keys of `PluginSettings` that hold a boolean (everything except the version). */
-type BooleanSettingKey = Exclude<keyof PluginSettings, 'logseqVersion'>;
+/** Keys of `PluginSettings` that hold a boolean (everything except the enums). */
+type BooleanSettingKey = {
+  [K in keyof PluginSettings]: PluginSettings[K] extends boolean ? K : never;
+}[keyof PluginSettings];
 
 interface SettingToggle {
-  key: BooleanSettingKey;
+  key: BooleanSettingKey | 'sidebarPageTags';
   title: string;
   /** Optional — omit when the title is self-explanatory (Logseq also shows the key). */
   description?: string;
@@ -62,6 +66,10 @@ interface SettingToggle {
    * it (e.g. v1-only toggles whose target element doesn't exist in v2).
    */
   versions?: ('v1' | 'v2')[];
+  /** Control type; defaults to `'boolean'`. */
+  type?: 'boolean' | 'enum';
+  /** Choices for an `enum` toggle (required when `type: 'enum'`). */
+  enumChoices?: string[];
 }
 
 interface SettingGroup {
@@ -167,6 +175,16 @@ const SETTING_GROUPS: SettingGroup[] = [
         title: 'Graph Selector at Bottom',
         description: 'Move the graph/vault selector to the bottom of the sidebar.',
       },
+      {
+        key: 'sidebarPageTags',
+        title: 'Page Tags in Sidebar',
+        description:
+          "Tagged pages show their tag inline (e.g. 'Next.JS #Technology'). 'hide' drops the tag; 'subtle' right-aligns and tints it; 'off' leaves it alone.",
+        type: 'enum',
+        enumChoices: ['off', 'hide', 'subtle'],
+        // v2 renders the tag suffix in sidebar page names; v1 doesn't.
+        versions: ['v2'],
+      },
     ],
   },
   {
@@ -265,13 +283,25 @@ export function buildSettingsSchema(version?: VersionInfo): SettingSchemaDesc[] 
 
     schema.push(heading(`${group.id}Heading`, group.title));
     for (const t of toggles) {
-      schema.push({
-        key: t.key,
-        title: t.title,
-        description: t.description ?? '',
-        type: 'boolean',
-        default: defaultSettings[t.key],
-      });
+      if (t.type === 'enum') {
+        schema.push({
+          key: t.key,
+          title: t.title,
+          description: t.description ?? '',
+          type: 'enum',
+          enumChoices: t.enumChoices ?? [],
+          enumPicker: 'select',
+          default: defaultSettings[t.key],
+        });
+      } else {
+        schema.push({
+          key: t.key,
+          title: t.title,
+          description: t.description ?? '',
+          type: 'boolean',
+          default: defaultSettings[t.key],
+        });
+      }
     }
   }
 
