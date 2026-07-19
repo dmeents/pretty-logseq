@@ -125,14 +125,14 @@
     "semantic_hash": "47b22d9dfc9f596eb1493d5b955d5eac"
   },
   "src/features/links/favicons.test.ts": {
-    "mtime": 1784191876.7193153,
-    "ast_hash": "5f77002307802212deacbd570349fe38",
-    "semantic_hash": "5f77002307802212deacbd570349fe38"
+    "mtime": 1784432764.7942924,
+    "ast_hash": "2d27a86f005a7a6716b1eed6ec15ec89",
+    "semantic_hash": ""
   },
   "src/features/links/favicons.ts": {
-    "mtime": 1784191876.7193153,
-    "ast_hash": "ccdd39895a33d3109273332feb44d523",
-    "semantic_hash": "ccdd39895a33d3109273332feb44d523"
+    "mtime": 1784432696.0543847,
+    "ast_hash": "8ce68eebf770d13ad79f07b67540b547",
+    "semantic_hash": ""
   },
   "src/features/links/index.test.ts": {
     "mtime": 1784169484.0770738,
@@ -170,9 +170,9 @@
     "semantic_hash": "d1f4309d3f7e8a2173f9ce4ae81d3fe2"
   },
   "src/features/links/popover.ts": {
-    "mtime": 1784191876.7196207,
-    "ast_hash": "a80471d6bb807036a74dcd13c6cb85e2",
-    "semantic_hash": "a80471d6bb807036a74dcd13c6cb85e2"
+    "mtime": 1784432733.71085,
+    "ast_hash": "3cf261371fc086b803e181984a85fe0d",
+    "semantic_hash": ""
   },
   "src/features/links/types.ts": {
     "mtime": 1784169484.0770738,
@@ -613,5 +613,15 @@
     "mtime": 1784169484.0761428,
     "ast_hash": "77ace7b48d4415980f338e8ee5ac11f7",
     "semantic_hash": "77ace7b48d4415980f338e8ee5ac11f7"
+  },
+  "src/features/links/render.test.ts": {
+    "mtime": 1784432796.563626,
+    "ast_hash": "fccb8895764849a45b891887442e0ee4",
+    "semantic_hash": ""
+  },
+  "src/features/links/render.ts": {
+    "mtime": 1784432710.805567,
+    "ast_hash": "7c10b8333262eb908b0c9029213c7bae",
+    "semantic_hash": ""
   }
 }
