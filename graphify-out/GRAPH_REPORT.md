@@ -1,16 +1,16 @@
 # Graph Report - pretty-logseq  (2026-07-19)
 
 ## Corpus Check
-- 110 files · ~248,439 words
+- 110 files · ~248,441 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 638 nodes · 1344 edges · 44 communities (40 shown, 4 thin omitted)
+- 638 nodes · 1257 edges · 41 communities (37 shown, 4 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 38 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2838e366`
+- Built from commit: `cc226580`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,7 +26,6 @@
 - TypeScript Compiler Config
 - Version Detection & Platform Core
 - theme.ts
-- Feature Registry
 - blocks.ts
 - Project Documentation
 - logseq.ts
@@ -34,8 +33,6 @@
 - biome.json
 - Plugin Manifest
 - setVersionForTest
-- getSettings
-- formatter
 - Brand Banner Imagery
 - Codebase Popover Screenshot
 - Person Popover Screenshot
@@ -44,7 +41,6 @@
 - Tables Screenshot
 - Todos Screenshot
 - CI & Coverage Config
-- index.ts
 - Logo Design Elements
 - Default Popover Screenshot
 - Properties Screenshot
@@ -53,22 +49,20 @@
 - No-Logo Banner Imagery
 - Links Preview Screenshot
 - Release Automation
-- includes
 - SCSS Type Declarations
 - Dependabot Config
-- suspicious
 
 ## God Nodes (most connected - your core abstractions)
-1. `getParentDoc()` - 48 edges
+1. `getParentDoc()` - 44 edges
 2. `Feature` - 27 edges
-3. `getPlatform()` - 23 edges
-4. `getSettings()` - 22 edges
-5. `getVersion()` - 17 edges
-6. `renderPopover()` - 17 edges
-7. `PluginSettings` - 16 edges
-8. `compilerOptions` - 16 edges
-9. `cleanPropertyValue()` - 15 edges
-10. `setVersionForTest()` - 14 edges
+3. `getPlatform()` - 20 edges
+4. `getSettings()` - 19 edges
+5. `renderPopover()` - 17 edges
+6. `compilerOptions` - 16 edges
+7. `getVersion()` - 15 edges
+8. `cleanPropertyValue()` - 15 edges
+9. `PluginSettings` - 14 edges
+10. `PageData` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `CI Test Job` --shares_data_with--> `Codecov Coverage Config`  [INFERRED]
@@ -89,23 +83,23 @@
 - **CI Pipeline (lint, test, build)** — github_workflows_ci_workflow_lint_job, github_workflows_ci_workflow_test_job, github_workflows_ci_workflow_build_job [EXTRACTED 1.00]
 - **Release & Dependency Automation** — github_workflows_release_workflow, github_workflows_dependabot_auto_merge_workflow, github_dependabot_config, changelog [INFERRED 0.75]
 
-## Communities (44 total, 4 thin omitted)
+## Communities (41 total, 4 thin omitted)
 
 ### Community 0 - "External Links & Favicons"
-Cohesion: 0.08
-Nodes (44): cleanupAllLinks(), cleanupLink(), createFaviconImg(), createGlobeSvg(), decorateLink(), getFaviconUrl(), getRemoteFaviconUrl(), GLOBE_PATHS (+36 more)
+Cohesion: 0.09
+Nodes (42): cleanupAllLinks(), cleanupLink(), createFaviconImg(), createGlobeSvg(), decorateLink(), getFaviconUrl(), getRemoteFaviconUrl(), GLOBE_PATHS (+34 more)
 
 ### Community 1 - "Package Dependencies"
 Cohesion: 0.04
 Nodes (48): @biomejs/biome, jsdom, @logseq/libs, description, devDependencies, @biomejs/biome, jsdom, @logseq/libs (+40 more)
 
 ### Community 2 - "Platform Adapter & Page API"
-Cohesion: 0.11
-Nodes (29): v1Platform, { getPageV2, getPageBlocksV2, clearPageCacheV2, getThemeMode }, V2_ACCENT_COLORS, v2Platform, REF_TITLES, CacheEntry, cleanBlockContent(), clearPageCache() (+21 more)
+Cohesion: 0.06
+Nodes (38): PlatformApi, v1Platform, V2_ACCENT_COLORS, v2Platform, REF_TITLES, CacheEntry, cleanBlockContent(), clearPageCache() (+30 more)
 
 ### Community 3 - "Popover DOM Helpers"
-Cohesion: 0.07
-Nodes (46): PlatformApi, cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills() (+38 more)
+Cohesion: 0.12
+Nodes (34): cleanAllValues(), collectBlockText(), createAvatarSvg(), createDescription(), createDetailRow(), createRatingDisplay(), createTagPills(), createTitle() (+26 more)
 
 ### Community 4 - "Biome Formatter Config"
 Cohesion: 0.06
@@ -128,20 +122,16 @@ Cohesion: 0.07
 Nodes (26): DOM, DOM.Iterable, ES2020, **/*.spec.ts, src, test, **/*.test.ts, vitest/globals (+18 more)
 
 ### Community 9 - "Version Detection & Platform Core"
-Cohesion: 0.15
-Nodes (15): contentFeature, tablesFeature, templatesFeature, initSettings(), onSettingsChanged(), BooleanSettingKey, buildSettingsSchema(), defaultSettings (+7 more)
+Cohesion: 0.20
+Nodes (10): initSettings(), BooleanSettingKey, buildSettingsSchema(), defaultSettings, heading(), SETTING_GROUPS, SettingGroup, SettingToggle (+2 more)
 
 ### Community 10 - "theme.ts"
-Cohesion: 0.13
-Nodes (22): getObserverRoot(), getPlatform(), clearFavoritesCache(), favoritesCache, isFavorited(), refreshFavorites(), toggleFavorite(), favoritesFeature (+14 more)
-
-### Community 11 - "Feature Registry"
-Cohesion: 0.16
-Nodes (3): FeatureRegistry, RegisteredFeature, Feature
+Cohesion: 0.14
+Nodes (23): getObserverRoot(), getPlatform(), clearFavoritesCache(), favoritesCache, isFavorited(), refreshFavorites(), toggleFavorite(), favoritesFeature (+15 more)
 
 ### Community 12 - "blocks.ts"
-Cohesion: 0.18
-Nodes (13): PLATFORMS, setPlatformForTest(), pickStyles(), Platform, PlatformSelectors, PlatformTheme, detectVersion(), getVersion() (+5 more)
+Cohesion: 0.05
+Nodes (42): PLATFORMS, setPlatformForTest(), pickStyles(), Platform, PlatformSelectors, PlatformTheme, FeatureRegistry, RegisteredFeature (+34 more)
 
 ### Community 13 - "Project Documentation"
 Cohesion: 0.20
@@ -152,28 +142,12 @@ Cohesion: 0.47
 Nodes (3): mockLogseqAPI(), mockPageData(), mockPageWithProperties()
 
 ### Community 15 - "index.ts"
-Cohesion: 0.25
-Nodes (12): registry, injectStyles(), refreshStyles(), applyVersionAttribute(), typographyFeature, applyBinding(), BindingAction, FEATURE_BINDINGS (+4 more)
-
-### Community 16 - "biome.json"
-Cohesion: 0.38
-Nodes (9): detectAccentWhenReady(), generateThemeCSS(), getAccentColor(), isDarkTheme(), isUsableColor(), mixChannel(), parseRGB(), rgba() (+1 more)
+Cohesion: 0.17
+Nodes (19): registry, injectStyles(), refreshStyles(), detectAccentWhenReady(), generateThemeCSS(), getAccentColor(), isDarkTheme(), isUsableColor() (+11 more)
 
 ### Community 17 - "Plugin Manifest"
 Cohesion: 0.22
 Nodes (8): author, description, effect, icon, repo, supportsDB, theme, title
-
-### Community 18 - "setVersionForTest"
-Cohesion: 0.20
-Nodes (6): setVersionForTest(), propertiesFeature, sidebarTagsFeature, mockDocument, mockHead, mockLinkElement
-
-### Community 19 - "getSettings"
-Cohesion: 0.39
-Nodes (5): todosFeature, TodosStrategy, todosV1, todosV2, getSettings()
-
-### Community 20 - "formatter"
-Cohesion: 0.39
-Nodes (3): createNavArrowsInLeft(), applyNavArrowsSetting(), topbarFeature
 
 ### Community 21 - "Brand Banner Imagery"
 Cohesion: 0.47
@@ -206,10 +180,6 @@ Nodes (6): Task blocks restyled as dark rounded cards with accent left-border, D
 ### Community 28 - "CI & Coverage Config"
 Cohesion: 0.33
 Nodes (6): Codecov Coverage Config, Codecov Coverage Flags (core/features/lib), CI Workflow, CI Build Job, CI Lint & Format Job, CI Test Job
-
-### Community 29 - "index.ts"
-Cohesion: 0.67
-Nodes (3): PropertiesStrategy, propertiesV1, propertiesV2
 
 ### Community 30 - "Logo Design Elements"
 Cohesion: 0.50
@@ -244,24 +214,24 @@ Cohesion: 0.67
 Nodes (3): Changelog, Release Please Action, Release Workflow
 
 ## Knowledge Gaps
-- **187 isolated node(s):** `$schema`, `enabled`, `clientKind`, `useIgnoreFile`, `ignoreUnknown` (+182 more)
+- **188 isolated node(s):** `{ getPageV2, getPageBlocksV2, clearPageCacheV2, getThemeMode }`, `BindingAction`, `FEATURE_BINDINGS`, `$schema`, `enabled` (+183 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `getParentDoc()` connect `External Links & Favicons` to `Favorites Feature`, `Popover Hover Manager`, `theme.ts`, `blocks.ts`, `index.ts`, `biome.json`, `formatter`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
-- **Why does `Feature` connect `Feature Registry` to `External Links & Favicons`, `Popover DOM Helpers`, `includes`, `Version Detection & Platform Core`, `theme.ts`, `suspicious`, `blocks.ts`, `index.ts`, `setVersionForTest`, `getSettings`, `formatter`, `index.ts`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **What connects `$schema`, `enabled`, `clientKind` to the rest of the system?**
-  _187 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `getParentDoc()` connect `External Links & Favicons` to `theme.ts`, `blocks.ts`, `Favorites Feature`, `Popover Hover Manager`?**
+  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+- **Why does `Feature` connect `blocks.ts` to `External Links & Favicons`, `theme.ts`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **What connects `{ getPageV2, getPageBlocksV2, clearPageCacheV2, getThemeMode }`, `BindingAction`, `FEATURE_BINDINGS` to the rest of the system?**
+  _188 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `External Links & Favicons` be split into smaller, more focused modules?**
-  _Cohesion score 0.07787698412698413 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08531073446327683 - nodes in this community are weakly interconnected._
 - **Should `Package Dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.04081632653061224 - nodes in this community are weakly interconnected._
 - **Should `Platform Adapter & Page API` be split into smaller, more focused modules?**
-  _Cohesion score 0.10512820512820513 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0632996632996633 - nodes in this community are weakly interconnected._
 - **Should `Popover DOM Helpers` be split into smaller, more focused modules?**
-  _Cohesion score 0.06829488919041157 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11733615221987315 - nodes in this community are weakly interconnected._
