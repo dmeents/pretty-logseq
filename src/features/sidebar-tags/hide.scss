@@ -1,0 +1,7 @@
+// Sidebar page tags — "hide" mode (v2 / DB app).
+// Hide the tag suffix the observer wraps, leaving just the page name in the
+// Favorites/Recent lists.
+
+#left-sidebar .link-item .page-title .pl-nav-tag {
+  display: none;
+}

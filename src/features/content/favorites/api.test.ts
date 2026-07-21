@@ -2,7 +2,8 @@
  * Tests for Favorites API
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { setVersionForTest } from '../../../core/version';
 import { clearFavoritesCache, isFavorited, refreshFavorites, toggleFavorite } from './api';
 
 describe('refreshFavorites', () => {
@@ -232,6 +233,58 @@ describe('toggleFavorite', () => {
     expect(logseq.App.setCurrentGraphConfigs).toHaveBeenCalledWith({
       favorites: ['Test', 'Test Page Two'],
     });
+  });
+});
+
+describe('toggleFavorite (v2 DB graph)', () => {
+  beforeEach(() => {
+    clearFavoritesCache();
+    setVersionForTest('v2');
+    logseq.App.invokeExternalCommand.mockClear();
+    logseq.App.setCurrentGraphConfigs.mockClear();
+  });
+
+  afterEach(() => {
+    setVersionForTest(null);
+  });
+
+  it('normalizes DB favorite entities to page names when refreshing', async () => {
+    // DB `getCurrentGraphFavorites` returns page-block entities, not strings.
+    logseq.App.getCurrentGraphFavorites.mockResolvedValue([
+      { name: 'project alpha', originalName: 'Project Alpha', uuid: 'uuid-1' },
+      { name: 'daily notes', originalName: 'Daily Notes', uuid: 'uuid-2' },
+    ] as unknown as string[]);
+
+    await refreshFavorites();
+
+    // Matched by the same `name` field the observer reads off the current page.
+    expect(isFavorited('project alpha')).toBe(true);
+    expect(isFavorited('Daily Notes')).toBe(true);
+    expect(isFavorited('unknown page')).toBe(false);
+  });
+
+  it('toggles via the built-in command instead of writing graph config', async () => {
+    logseq.App.getCurrentGraphFavorites.mockResolvedValue([]);
+    logseq.App.invokeExternalCommand.mockResolvedValue(undefined);
+
+    await toggleFavorite('New Page');
+
+    // DB graphs must NOT write `:favorites` to config (that only logs a deprecation).
+    expect(logseq.App.setCurrentGraphConfigs).not.toHaveBeenCalled();
+    expect(logseq.App.invokeExternalCommand).toHaveBeenCalledWith('logseq.page/toggle-favorite');
+    expect(isFavorited('New Page')).toBe(true);
+  });
+
+  it('unfavorites via the same command and rolls back the cache on failure', async () => {
+    logseq.App.getCurrentGraphFavorites.mockResolvedValue(['Existing Page']);
+    await refreshFavorites();
+    expect(isFavorited('Existing Page')).toBe(true);
+
+    logseq.App.invokeExternalCommand.mockRejectedValueOnce(new Error('command failed'));
+
+    await expect(toggleFavorite('Existing Page')).rejects.toThrow('command failed');
+    // Optimistic removal is rolled back so the star stays in sync with reality.
+    expect(isFavorited('Existing Page')).toBe(true);
   });
 });
 

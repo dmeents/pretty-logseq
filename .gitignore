@@ -31,3 +31,6 @@ coverage/
 
 # Test Pages for developing
 .samples/
+
+graphify-out/cost.json
+graphify-out/cache/

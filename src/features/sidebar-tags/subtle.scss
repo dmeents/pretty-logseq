@@ -1,0 +1,27 @@
+// Sidebar page tags — "subtle" mode (v2 / DB app).
+// Push the wrapped tag suffix to the trailing edge, shrink it, and tint it with
+// the theme accent so the page name leads and the tag reads as a quiet label.
+
+#left-sidebar .link-item .page-title {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+
+  .pl-nav-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .pl-nav-tag {
+    margin-left: auto;
+    padding-left: 8px;
+    flex-shrink: 0;
+    font-size: 0.72em;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--pl-accent-text);
+    opacity: 0.85;
+  }
+}

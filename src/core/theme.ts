@@ -138,11 +138,57 @@ export function generateThemeCSS(): string {
 }
 
 /**
+ * Re-detect the accent once the theme's CSS variables are available.
+ *
+ * At cold app startup the plugin loads before Logseq applies the active theme's
+ * stylesheet, so the first `getAccentColor()` probe reads no usable accent and
+ * `generateThemeCSS()` falls back to the default purple. No attribute change
+ * fires for an already-active theme, so the MutationObserver never corrects it
+ * (the user would have to manually reload the plugin). This polls until a usable
+ * accent resolves and the value stops changing (theme fully settled), refreshing
+ * each time so styles converge on the real accent, then stops.
+ *
+ * @param onReady - callback to invoke when the accent should be re-applied
+ */
+export function detectAccentWhenReady(onReady: () => void): void {
+  const intervalMs = 200;
+  const maxAttempts = 25; // ~5s ceiling before giving up (keeps the fallback)
+  let attempts = 0;
+  let stableCount = 0;
+  let last: string | null = null;
+
+  const tick = (): void => {
+    attempts += 1;
+    const current = getAccentColor();
+
+    if (current !== null) {
+      // A usable accent is readable — apply it, and track whether it has settled
+      // (a theme may briefly expose a default accent before its own override lands).
+      onReady();
+      stableCount = current === last ? stableCount + 1 : 0;
+      last = current;
+    }
+
+    if (stableCount >= 2 || attempts >= maxAttempts) return;
+    setTimeout(tick, intervalMs);
+  };
+
+  setTimeout(tick, intervalMs);
+}
+
+/**
  * Setup theme color observer to update when theme changes
  * @param onThemeChange - callback to invoke when theme changes (should refresh styles)
  */
 export function setupThemeObserver(onThemeChange: () => void): void {
   const doc = getParentDoc();
+
+  // Logseq's own theme/mode change events are the reliable signal for a *live*
+  // theme switch — those don't always flip a watched attribute on html/body, so
+  // the MutationObserver below can miss them. Guarded so tests (and any host
+  // lacking the hook) don't break.
+  logseq.App?.onThemeChanged?.(() => setTimeout(onThemeChange, 100));
+  logseq.App?.onThemeModeChanged?.(() => setTimeout(onThemeChange, 100));
 
   // Attributes whose change may flip the accent: `class` (dark/light + skins) and
   // the version's accent attribute (v2 `data-color`), if any.

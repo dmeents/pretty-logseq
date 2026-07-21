@@ -177,6 +177,22 @@ describe('Settings Management', () => {
       expect(keys).not.toContain('enablePrettyTags');
     });
 
+    it('emits sidebarPageTags as a v2-only enum with its choices', () => {
+      // Hidden on v1 (the file app has no sidebar tag suffix)…
+      expect(
+        buildSettingsSchema({ active: 'v1', source: 'auto' }).some(
+          i => i.key === 'sidebarPageTags',
+        ),
+      ).toBe(false);
+      // …and rendered as an enum select on v2.
+      const item = buildSettingsSchema({ active: 'v2', source: 'auto' }).find(
+        i => i.key === 'sidebarPageTags',
+      );
+      expect(item?.type).toBe('enum');
+      expect(item?.enumChoices).toEqual(['off', 'hide', 'subtle']);
+      expect(item?.default).toBe('subtle');
+    });
+
     it('includes a status row only when version info is provided', () => {
       expect(buildSettingsSchema().some(item => item.key === 'detectedVersionStatus')).toBe(false);
 

@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   cleanupAllLinks,
   cleanupLink,
+  createFaviconImg,
   createGlobeSvg,
   decorateLink,
   FALLBACK_ICON,
@@ -42,6 +43,46 @@ describe('createGlobeSvg', () => {
     const svg = createGlobeSvg(14);
     expect(svg.getAttribute('width')).toBe('14');
     expect(svg.getAttribute('height')).toBe('14');
+  });
+});
+
+describe('createFaviconImg', () => {
+  const style = 'width:14px;height:14px';
+
+  it('builds an <img> with the given src, size, class and inline style', () => {
+    const img = createFaviconImg({
+      src: 'https://example.com/favicon.ico',
+      size: 14,
+      className: 'my-favicon',
+      style,
+    });
+
+    expect(img.tagName.toLowerCase()).toBe('img');
+    expect(img.src).toContain('example.com/favicon.ico');
+    expect(img.getAttribute('class')).toBe('my-favicon');
+    expect(img.width).toBe(14);
+    expect(img.height).toBe(14);
+    expect(img.style.cssText).toContain('width: 14px');
+  });
+
+  it('swaps to an inline globe svg (same class/size) when the image errors', () => {
+    const container = document.createElement('div');
+    const img = createFaviconImg({
+      src: 'https://example.com/favicon.ico',
+      size: 14,
+      className: 'my-favicon',
+      style,
+    });
+    container.appendChild(img);
+
+    // Simulate the real favicon failing (offline / 404 / CSP img-src block).
+    img.onerror?.(new Event('error'));
+
+    expect(container.querySelector('img.my-favicon')).toBeNull();
+    const globe = container.querySelector('svg.my-favicon') as SVGSVGElement | null;
+    expect(globe).not.toBeNull();
+    expect(globe?.getAttribute('width')).toBe('14');
+    expect(globe?.getAttribute('height')).toBe('14');
   });
 });
 

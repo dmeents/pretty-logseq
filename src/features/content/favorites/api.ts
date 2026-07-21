@@ -42,20 +42,9 @@ export async function toggleFavorite(pageName: string): Promise<void> {
   }
 
   try {
-    // Read current favorites to preserve original case
-    const currentFavorites = await getPlatform().api.getFavorites();
-
-    let newFavorites: string[];
-    if (wasFavorited) {
-      // Remove from favorites (case-insensitive)
-      newFavorites = currentFavorites.filter(name => name.toLowerCase() !== lowerName);
-    } else {
-      // Add to favorites (preserve user's input case)
-      newFavorites = [...currentFavorites, pageName];
-    }
-
-    // Write back to config
-    await getPlatform().api.setFavorites(newFavorites);
+    // The write mechanism is version-specific (v1 rewrites the graph config; v2
+    // invokes the built-in toggle command), so delegate to the platform.
+    await getPlatform().api.toggleFavorite(pageName, !wasFavorited);
   } catch (error) {
     console.error('[Pretty Logseq] Failed to toggle favorite:', error);
 

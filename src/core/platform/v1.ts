@@ -24,7 +24,14 @@ export const v1Platform: Platform = {
     getThemeMode: () => getThemeMode(),
     clearPageCache: name => clearPageCache(name),
     getFavorites: async () => (await logseq.App.getCurrentGraphFavorites()) || [],
-    setFavorites: async favorites => {
+    toggleFavorite: async (pageName, shouldFavorite) => {
+      // v1 stores favorites in the graph config; rewrite the list. Read current
+      // favorites first to preserve the other entries' original case.
+      const current = (await logseq.App.getCurrentGraphFavorites()) || [];
+      const lower = pageName.toLowerCase();
+      const favorites = shouldFavorite
+        ? [...current, pageName]
+        : current.filter(name => name.toLowerCase() !== lower);
       await logseq.App.setCurrentGraphConfigs({ favorites });
     },
   },

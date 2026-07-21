@@ -57,3 +57,15 @@
 		outline-offset: 2px;
 	}
 }
+
+// v2 (DB): the star is injected in-flow at the start of the title, right before
+// the title text inside the title block's `.block-content-wrapper`. It no longer
+// collides with the DB app's page-tag pill (which renders to the right in
+// `.ls-block-right`), and because it lives in the title's own row it stays
+// vertically aligned and doesn't steal width from the page-properties block
+// nested lower in the same title. Flip the base `margin-left` to a trailing gap
+// so the star sits snug against the left edge with breathing room before the text.
+[data-pl-version='v2'] .pl-favorite-star {
+	margin-left: 0;
+	margin-right: 6px;
+}

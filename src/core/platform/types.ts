@@ -33,7 +33,14 @@ export interface PlatformApi {
   getThemeMode(): Promise<ThemeMode>;
   clearPageCache(name?: string): void;
   getFavorites(): Promise<string[]>;
-  setFavorites(favorites: string[]): Promise<void>;
+  /**
+   * Favorite or unfavorite `pageName`. The write mechanism differs by edition, so
+   * this is a platform method rather than a shared list-write: v1 rewrites the
+   * `:favorites` graph config, while v2 (DB) has no config `:favorites` key and
+   * instead invokes the built-in `logseq.page/toggle-favorite` command (which
+   * acts on the *current* page — the only page the favorite star is shown on).
+   */
+  toggleFavorite(pageName: string, shouldFavorite: boolean): Promise<void>;
 }
 
 /** Theme accent-color detection inputs, which vary by Logseq skin/version. */
