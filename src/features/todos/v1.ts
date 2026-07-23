@@ -1,5 +1,6 @@
 import { getSettings } from '../../settings';
 import type { Feature } from '../../types';
+import dimChildrenStyles from './dim-children.scss?inline';
 import { setupTodoObserver } from './observer';
 import styles from './styles.scss?inline';
 
@@ -15,7 +16,12 @@ let cleanup: (() => void) | null = null;
  */
 export const todosV1: TodosStrategy = {
   getStyles() {
-    return getSettings().enablePrettyTodos ? styles : '';
+    const settings = getSettings();
+    if (!settings.enablePrettyTodos) return '';
+
+    const parts = [styles];
+    if (settings.dimTodoChildBlocks) parts.push(dimChildrenStyles);
+    return parts.join('\n');
   },
 
   init() {

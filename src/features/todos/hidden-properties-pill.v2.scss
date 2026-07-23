@@ -1,0 +1,15 @@
+// Hide the "Show hidden properties" pill — Logseq v2 (DB) only.
+//
+// v2 task cards show a bottom-properties pill row (Scheduled/Deadline pill +
+// a "Show hidden properties" toggle) inside the same wrapper the status card
+// background applies to (see styles.v2.scss's `.block-main-container` card
+// comment). Nesting under that same `div:has(...)` selector scopes the hide to
+// task cards only — other blocks' property rows are unaffected.
+.block-main-container {
+  div:has(> .block-main-content .ls-icon-Todo) .bottom-property-hidden-toggle-btn,
+  div:has(> .block-main-content [class*='ls-icon-InProgress']) .bottom-property-hidden-toggle-btn,
+  div:has(> .block-main-content .ls-icon-Done) .bottom-property-hidden-toggle-btn,
+  div:has(> .block-main-content .ls-icon-Cancelled) .bottom-property-hidden-toggle-btn {
+    display: none;
+  }
+}

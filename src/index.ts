@@ -97,6 +97,8 @@ const FEATURE_BINDINGS: FeatureBinding[] = [
       'enablePrettyTables',
       'enablePrettyTags',
       'enablePrettyTemplates',
+      'dimTodoChildBlocks',
+      'hideTodoHiddenPropertiesPill',
       'compactSidebarNav',
       'hideCreateButton',
       'graphSelectorBottom',

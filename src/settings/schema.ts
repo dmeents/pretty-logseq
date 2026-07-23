@@ -9,6 +9,8 @@ export interface PluginSettings {
   showPropertyIcons: boolean;
   enablePrettyLinks: boolean;
   enablePrettyTodos: boolean;
+  dimTodoChildBlocks: boolean;
+  hideTodoHiddenPropertiesPill: boolean;
   enablePrettyTags: boolean;
   enableFavoriteStar: boolean;
   enableBulletThreading: boolean;
@@ -34,6 +36,8 @@ export const defaultSettings: PluginSettings = {
   showPropertyIcons: true,
   enablePrettyLinks: true,
   enablePrettyTodos: true,
+  dimTodoChildBlocks: true,
+  hideTodoHiddenPropertiesPill: true,
   enablePrettyTags: true,
   enableFavoriteStar: true,
   enableBulletThreading: true,
@@ -108,6 +112,19 @@ const SETTING_GROUPS: SettingGroup[] = [
         key: 'enablePrettyTodos',
         title: 'Pretty Todos',
         description: 'Status, priority, and past-due styling for task blocks.',
+      },
+      {
+        key: 'dimTodoChildBlocks',
+        title: 'Dim Task Child Blocks',
+        description: "Add a subtle background to a task's child blocks (needs Pretty Todos).",
+      },
+      {
+        key: 'hideTodoHiddenPropertiesPill',
+        title: "Hide 'Show Hidden Properties' Pill",
+        description:
+          "Hide the pill that toggles a task card's hidden properties (needs Pretty Todos).",
+        // Targets v2's bottom-properties pill row; the v1 property UI has no equivalent.
+        versions: ['v2'],
       },
       {
         key: 'enablePrettyTags',

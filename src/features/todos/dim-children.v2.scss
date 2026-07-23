@@ -1,0 +1,62 @@
+// Dim task child blocks — Logseq v2 (DB).
+//
+// Same intent as the v1 variant (dim-children.scss): give a task's own children
+// a subtle background so notes/subtasks read as grouped under their task.
+//
+// A task's own content spans two siblings of `.block-main-container` (also
+// direct children of `.ls-block`): `.ls-block-content-indent` (the block's own
+// "Show hidden properties" drawer, often empty) sits between the card and
+// `.block-children-container` (the actual children) — both need the background
+// so it reads as one continuous region instead of leaving a gap at the drawer.
+//
+// `> .block-main-container` restricts the status-glyph match to the task's OWN
+// content row — a descendant task's `.block-main-container` is never a direct
+// child of an ancestor `.ls-block` (it lives inside the ancestor's
+// `.block-children-container`), so this can't leak onto ancestor blocks.
+//
+// Both siblings render flush with the task's own left edge, but the card
+// (inside `.block-main-container`) starts further right, after its own
+// bullet + collapse-arrow chrome. `margin-left` insets the background to line
+// up with the card instead of overshooting past its left border.
+.ls-block {
+  &:has(> .block-main-container .ls-icon-Todo) > .ls-block-content-indent,
+  &:has(> .block-main-container [class*='ls-icon-InProgress']) > .ls-block-content-indent,
+  &:has(> .block-main-container .ls-icon-Done) > .ls-block-content-indent,
+  &:has(> .block-main-container .ls-icon-Cancelled) > .ls-block-content-indent,
+  &:has(> .block-main-container .ls-icon-Todo) > .block-children-container,
+  &:has(> .block-main-container [class*='ls-icon-InProgress']) > .block-children-container,
+  &:has(> .block-main-container .ls-icon-Done) > .block-children-container,
+  &:has(> .block-main-container .ls-icon-Cancelled) > .block-children-container {
+    background: rgba(128, 128, 128, 0.05);
+    border-radius: 6px;
+    margin-left: 40px;
+  }
+
+  // The `margin-left: 40px` above shifts the whole `.ls-block-content-indent`
+  // right to inset the dim background under the card — but that also drags the
+  // native "Show hidden properties" toggle row (which lives inside the indent)
+  // 40px off the card's left edge. Cancel the shift on just that row so its
+  // dropdown arrow stays flush with the card while the child background stays
+  // inset. (When this feature is off there's no shift, and the toggle is already
+  // flush — see styles.v2.scss's toggle rule — so this only compensates here.)
+  &:has(> .block-main-container .ls-icon-Todo) > .ls-block-content-indent .hidden-properties-toggle-row,
+  &:has(> .block-main-container [class*='ls-icon-InProgress']) > .ls-block-content-indent .hidden-properties-toggle-row,
+  &:has(> .block-main-container .ls-icon-Done) > .ls-block-content-indent .hidden-properties-toggle-row,
+  &:has(> .block-main-container .ls-icon-Cancelled) > .ls-block-content-indent .hidden-properties-toggle-row {
+    margin-left: -40px;
+  }
+
+  // The 1px nesting thread is a border on `.block-children` (the sibling of
+  // `.block-children-left-border` inside `.block-children-container`), not on
+  // `.block-children-left-border` itself. The margin-left above shifts it out of
+  // alignment with the parent bullet, so drop it on the task's own (first-level)
+  // children — the direct-child chain leaves deeper nesting untouched.
+  &:has(> .block-main-container .ls-icon-Todo) > .block-children-container > .block-children,
+  &:has(> .block-main-container [class*='ls-icon-InProgress'])
+    > .block-children-container
+    > .block-children,
+  &:has(> .block-main-container .ls-icon-Done) > .block-children-container > .block-children,
+  &:has(> .block-main-container .ls-icon-Cancelled) > .block-children-container > .block-children {
+    border: none !important;
+  }
+}

@@ -17,40 +17,68 @@
     line-height: 1.25;
   }
 
-  // Spacing sits below headings (margin-bottom) rather than above so the
-  // heading text stays aligned with its bullet in the block gutter.
+  // Most of a heading's spacing sits below it as margin-bottom (rather than
+  // margin-top) so the heading text stays aligned with its own bullet in the
+  // block gutter — see the `.ls-block:has(...)` rules below for the
+  // complementary "space before" half, which targets the block wrapper
+  // instead so the bullet moves down with the heading rather than being
+  // left behind above it.
   h2 {
     font-weight: var(--pl-font-weight-bold);
-    margin-bottom: 24px;
+    margin-bottom: 8px;
     letter-spacing: -0.017em;
     line-height: 1.28;
   }
 
   h3 {
     font-weight: var(--pl-font-weight-bold);
-    margin-bottom: 20px;
+    margin-bottom: 6px;
     letter-spacing: -0.014em;
     line-height: 1.32;
   }
 
   h4 {
     font-weight: var(--pl-font-weight-semibold);
-    margin-bottom: 16px;
+    margin-bottom: 6px;
     letter-spacing: -0.01em;
     line-height: 1.35;
   }
 
   h5 {
     font-weight: var(--pl-font-weight-semibold);
-    margin-bottom: 12px;
+    margin-bottom: 4px;
     letter-spacing: -0.008em;
   }
 
   h6 {
     font-weight: var(--pl-font-weight-medium);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     letter-spacing: -0.005em;
   }
+}
+
+// The larger "space before" half of each heading's spacing. Applied to the
+// block wrapper (not the heading element) and scoped to `> .block-main-container`
+// so it only matches a block whose own row is the heading — not an ancestor
+// block that merely has a heading somewhere among its nested children.
+.ls-block:has(> .block-main-container h2) {
+  margin-top: 24px;
+}
+
+.ls-block:has(> .block-main-container h3) {
+  margin-top: 20px;
+}
+
+.ls-block:has(> .block-main-container h4) {
+  margin-top: 16px;
+}
+
+.ls-block:has(> .block-main-container h5) {
+  margin-top: 12px;
+}
+
+.ls-block:has(> .block-main-container h6) {
+  margin-top: 8px;
 }
 
 // Page title
