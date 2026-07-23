@@ -27,6 +27,18 @@ vi.mock('./styles.v2.scss?inline', () => ({
   default: '.todo-styles-v2 { }',
 }));
 
+vi.mock('./dim-children.scss?inline', () => ({
+  default: '.dim-children { }',
+}));
+
+vi.mock('./dim-children.v2.scss?inline', () => ({
+  default: '.dim-children-v2 { }',
+}));
+
+vi.mock('./hidden-properties-pill.v2.scss?inline', () => ({
+  default: '.hidden-properties-pill-v2 { }',
+}));
+
 describe('Todos Feature', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -87,6 +99,54 @@ describe('Todos Feature', () => {
       } as PluginSettings);
 
       expect(todosFeature.getStyles()).toBe('');
+    });
+
+    it('appends dim-children styles when dimTodoChildBlocks is enabled (v1)', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyTodos: true,
+        dimTodoChildBlocks: true,
+      } as PluginSettings);
+
+      expect(todosFeature.getStyles()).toBe('.todo-styles { }\n.dim-children { }');
+    });
+
+    it('omits dim-children styles when dimTodoChildBlocks is disabled (v1)', () => {
+      vi.mocked(settingsModule.getSettings).mockReturnValue({
+        enablePrettyTodos: true,
+        dimTodoChildBlocks: false,
+      } as PluginSettings);
+
+      expect(todosFeature.getStyles()).toBe('.todo-styles { }');
+    });
+
+    describe('on v2', () => {
+      afterEach(() => {
+        setVersionForTest(null);
+      });
+
+      it('appends dim-children and hidden-properties-pill styles when both are enabled', () => {
+        vi.mocked(settingsModule.getSettings).mockReturnValue({
+          enablePrettyTodos: true,
+          dimTodoChildBlocks: true,
+          hideTodoHiddenPropertiesPill: true,
+        } as PluginSettings);
+        setVersionForTest('v2');
+
+        expect(todosFeature.getStyles()).toBe(
+          '.todo-styles-v2 { }\n.hidden-properties-pill-v2 { }\n.dim-children-v2 { }',
+        );
+      });
+
+      it('omits both sub-toggle styles when disabled', () => {
+        vi.mocked(settingsModule.getSettings).mockReturnValue({
+          enablePrettyTodos: true,
+          dimTodoChildBlocks: false,
+          hideTodoHiddenPropertiesPill: false,
+        } as PluginSettings);
+        setVersionForTest('v2');
+
+        expect(todosFeature.getStyles()).toBe('.todo-styles-v2 { }');
+      });
     });
   });
 

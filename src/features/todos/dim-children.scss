@@ -1,0 +1,58 @@
+// Dim task child blocks — Logseq v1 (file/markdown).
+//
+// Gives a task's own children a subtle background, visually grouping
+// notes/subtasks under the task they belong to.
+//
+// A task's own content spans two siblings of `.block-main-container` (also
+// direct children of `.ls-block`): `.ls-block-content-indent` (the block's own
+// "Show hidden properties" drawer, often empty) sits between the card and
+// `.block-children-container` (the actual children) — both need the background
+// so it reads as one continuous region instead of leaving a gap at the drawer.
+//
+// `> .block-main-container` restricts the marker match to the task's OWN content
+// row, not a descendant task's — a child task's `.block-main-container` lives
+// several levels down inside `.block-children-container`, never as a direct
+// child of an ancestor `.ls-block`, so this can't leak onto ancestor blocks.
+//
+// Both siblings render flush with the task's own left edge, but the card
+// (inside `.block-main-container`) starts further right, after its own
+// bullet + collapse-arrow chrome. `margin-left` insets the background to line
+// up with the card instead of overshooting past its left border.
+.ls-block {
+  &:has(> .block-main-container .todo) > .ls-block-content-indent,
+  &:has(> .block-main-container .doing) > .ls-block-content-indent,
+  &:has(> .block-main-container .now) > .ls-block-content-indent,
+  &:has(> .block-main-container .later) > .ls-block-content-indent,
+  &:has(> .block-main-container .waiting) > .ls-block-content-indent,
+  &:has(> .block-main-container .done) > .ls-block-content-indent,
+  &:has(> .block-main-container .canceled) > .ls-block-content-indent,
+  &:has(> .block-main-container .cancelled) > .ls-block-content-indent,
+  &:has(> .block-main-container .todo) > .block-children-container,
+  &:has(> .block-main-container .doing) > .block-children-container,
+  &:has(> .block-main-container .now) > .block-children-container,
+  &:has(> .block-main-container .later) > .block-children-container,
+  &:has(> .block-main-container .waiting) > .block-children-container,
+  &:has(> .block-main-container .done) > .block-children-container,
+  &:has(> .block-main-container .canceled) > .block-children-container,
+  &:has(> .block-main-container .cancelled) > .block-children-container {
+    background: rgba(128, 128, 128, 0.05);
+    border-radius: 6px;
+    margin-left: 40px;
+  }
+
+  // The 1px nesting thread is a border on `.block-children` (the sibling of
+  // `.block-children-left-border` inside `.block-children-container`), not on
+  // `.block-children-left-border` itself. The margin-left above shifts it out of
+  // alignment with the parent bullet, so drop it on the task's own (first-level)
+  // children — the direct-child chain leaves deeper nesting untouched.
+  &:has(> .block-main-container .todo) > .block-children-container > .block-children,
+  &:has(> .block-main-container .doing) > .block-children-container > .block-children,
+  &:has(> .block-main-container .now) > .block-children-container > .block-children,
+  &:has(> .block-main-container .later) > .block-children-container > .block-children,
+  &:has(> .block-main-container .waiting) > .block-children-container > .block-children,
+  &:has(> .block-main-container .done) > .block-children-container > .block-children,
+  &:has(> .block-main-container .canceled) > .block-children-container > .block-children,
+  &:has(> .block-main-container .cancelled) > .block-children-container > .block-children {
+    border: none !important;
+  }
+}

@@ -109,3 +109,30 @@
     opacity: 0.85;
   }
 }
+
+// Bullet-thread continuity ---------------------------------------------------
+// A task with any own properties (e.g. Deadline) gets a native "Show hidden
+// properties" toggle row, rendered in `.ls-block-content-indent` — a SIBLING of
+// `.block-main-container`, sitting between the card above and
+// `.block-children-container` below (home of `.block-children-left-border`,
+// the nesting thread guide styled in `content/threading.scss`). That toggle
+// row's own height pushes the guide well below the card, so the thread looks
+// like it "starts late" instead of continuing from the task's bullet. Shrink
+// the toggle so the thread picks up right after the card. Scoped the same way
+// as the card rules above (`:has()` on `.ls-block` rather than
+// `.block-main-container`, since the indent panel isn't a descendant of it).
+.ls-block:has(> .block-main-container div:has(> .block-main-content .ls-icon-Todo)),
+.ls-block:has(> .block-main-container div:has(> .block-main-content [class*="ls-icon-InProgress"])),
+.ls-block:has(> .block-main-container div:has(> .block-main-content .ls-icon-Done)),
+.ls-block:has(> .block-main-container div:has(> .block-main-content .ls-icon-Cancelled)) {
+  > .ls-block-content-indent .hidden-properties-toggle-row {
+    padding: 2px 0;
+    min-height: 0;
+    font-size: 0.85em;
+    opacity: 0.6;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

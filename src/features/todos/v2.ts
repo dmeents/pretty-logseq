@@ -1,4 +1,6 @@
 import { getSettings } from '../../settings';
+import dimChildrenStyles from './dim-children.v2.scss?inline';
+import hiddenPropertiesPillStyles from './hidden-properties-pill.v2.scss?inline';
 import styles from './styles.v2.scss?inline';
 import type { TodosStrategy } from './v1';
 
@@ -13,7 +15,13 @@ import type { TodosStrategy } from './v1';
  */
 export const todosV2: TodosStrategy = {
   getStyles() {
-    return getSettings().enablePrettyTodos ? styles : '';
+    const settings = getSettings();
+    if (!settings.enablePrettyTodos) return '';
+
+    const parts = [styles];
+    if (settings.hideTodoHiddenPropertiesPill) parts.push(hiddenPropertiesPillStyles);
+    if (settings.dimTodoChildBlocks) parts.push(dimChildrenStyles);
+    return parts.join('\n');
   },
 
   init() {},
