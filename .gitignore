@@ -32,5 +32,7 @@ coverage/
 # Test Pages for developing
 .samples/
 
-graphify-out/cost.json
-graphify-out/cache/
+# CodeGraph local code index — SQLite DB, auto-synced on file changes and rebuilt
+# per checkout (regenerable, local-only, no API cost). Nothing to share in git;
+# each clone builds its own via `codegraph init .`.
+.codegraph/

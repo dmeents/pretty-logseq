@@ -401,12 +401,11 @@ auto-merged via `.github/workflows/dependabot-auto-merge.yml`.
 
 Works with the companion Logseq graph at `~/Documents/projects/logseq/`.
 
-## graphify
+## codegraph
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+This project has a local code knowledge graph via [CodeGraph](https://github.com/colbymchenry/codegraph): a SQLite index under `.codegraph/` (gitignored, rebuilt per checkout) that a background daemon **auto-syncs on file changes** — no manual rebuild step. It is exposed to agents as MCP tools (`mcp__codegraph__*`) and mirrored by the `codegraph` CLI.
 
 Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+- For codebase questions, orient with CodeGraph before broad grepping. `codegraph_explore` (the primary tool) answers most "how does X work / what touches Y" questions in one call — the relevant symbols' source, the call paths between them, and a blast-radius summary. Use `codegraph_impact` / `codegraph_callers` / `codegraph_callees` for change-impact. CLI equivalents: `codegraph explore "<question>"`, `codegraph impact <symbol>`, etc. These return a scoped result far smaller than raw grep output.
+- The index auto-syncs, so there is normally nothing to run. If a result looks stale, `codegraph sync .` (incremental) refreshes it and `codegraph status .` shows index health. A fresh checkout with no `.codegraph/` needs a one-time `codegraph init .`.
+- Grep or read raw files only after CodeGraph has oriented you, or to modify/debug specific lines.
